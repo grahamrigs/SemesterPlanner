@@ -528,9 +528,9 @@ namespace SemesterPlanner
             grid_entry_title_blocks.Children.Add(dummy_border_for_height);
 
 
-            foreach (EntryData cur_EntryData in glo_ProjectData.EntryData_lst_param)
+            foreach (EntryData cur_entryData in glo_ProjectData.EntryData_lst_param)
             {
-                CreateAndPlaceNewTitleBlock(cur_EntryData);
+                CreateAndPlaceNewTitleBlock(cur_entryData);
             }
 
         }
@@ -919,7 +919,7 @@ namespace SemesterPlanner
 
 
                 //grabbing the EntryData using the built-in method
-                EntryData cur_EntryData = glo_ProjectData.GetEntryDataFromEntryID(cur_entryID);
+                EntryData cur_entryData = glo_ProjectData.GetEntryDataFromEntryID(cur_entryID);
 
                 //this is the structure of the titleblock
                 /*
@@ -937,15 +937,15 @@ namespace SemesterPlanner
 
                 if (reset_names)
                 {
-                    cur_border.Name = "bor_titleblock_dataID_" + cur_EntryData.EntryID;
+                    cur_border.Name = "bor_titleblock_dataID_" + cur_entryData.EntryID;
                 }
                 if (reset_list_pos)
                 {
-                    Grid.SetRow(cur_border, Convert.ToInt32(cur_EntryData.ListPosition));
+                    Grid.SetRow(cur_border, Convert.ToInt32(cur_entryData.ListPosition));
                 }
                 if (reset_colours)
                 {
-                    cur_border.Background = GetSolidColorBrushFromHex(cur_EntryData.ColourHex);
+                    cur_border.Background = GetSolidColorBrushFromHex(cur_entryData.ColourHex);
                 }
                 if (reset_titles | reset_subtitles)
                 {
@@ -955,12 +955,12 @@ namespace SemesterPlanner
                     if (reset_titles)
                     {
                         TextBlock cur_txtblc_title = cur_inner_stack.Children[0] as TextBlock;
-                        cur_txtblc_title.Text = cur_EntryData.Title;
+                        cur_txtblc_title.Text = cur_entryData.Title;
                     }
                     if (reset_subtitles)
                     {
                         TextBlock cur_txtblc_subtitle = cur_inner_stack.Children[2] as TextBlock;
-                        cur_txtblc_subtitle.Text = cur_EntryData.Subtitle;
+                        cur_txtblc_subtitle.Text = cur_entryData.Subtitle;
                     }
                 }
 
@@ -2042,7 +2042,7 @@ namespace SemesterPlanner
 
 
 
-            //Border new_titleblock = CreateEntryTitleBlock(cur_EntryData) as Border;
+            //Border new_titleblock = CreateEntryTitleBlock(cur_entryData) as Border;
             //grid_entry_title_blocks.Children.Add(new_titleblock);
         }
 
@@ -2142,15 +2142,28 @@ namespace SemesterPlanner
             //this method will go through all stored EntryData, and if one doesn't have a block, it will add it
 
             List<string> entryIDs_in_datalists = glo_ProjectData.entryIDs_lst_param;
-            List<string> entryIDs_in_titleblocks = CreateBlockTagList_IndexOrder("title");
-            List<string> entryIDs_in_calendarblocks = CreateBlockTagList_IndexOrder("calendar");
 
-            List<string> entryIDs_in_datalists_not_in_borders = entryIDs_in_datalists.
+            //this just gets the tags from all the titleblocks
+            List<string> tags_in_titleblocks = CreateBlockTagList_IndexOrder("title");
+            List<string> tags_in_calendarblocks = CreateBlockTagList_IndexOrder("calendar");
 
-            // first takes placed_entryID_lst  and trims out anything not in  cur_entryData.PrereqEntryIDs, then checks that its the same length as cur_entryData.PrereqEntryIDs
-            //essentially, ensures that everying in  cur_entryData.PrereqEntryIDs  is in  placed_entryID_lst
-            //i.e. all prereqs placed already; if no prereqs at all then it also works
-            if (placed_entryID_lst.Intersect(cur_entryData.PrereqEntryIDs).ToList().Count() == cur_entryData.PrereqEntryIDs.Count()) ;
+            //this method will strip out all non-entryID values
+            List<string> entryIDs_in_titleblocks = ExtractEntryIDsFromTagList(tags_in_titleblocks, true);
+            List<string> entryIDs_in_calendarblocks = ExtractEntryIDsFromTagList(tags_in_calendarblocks, true);
+
+            //this will determine which entryIDs exist in the datalists but not in the block lists
+            List<string> entryIDs_in_datalists_not_in_titleblocks = 
+                (List<string>)entryIDs_in_datalists.Except(entryIDs_in_titleblocks);
+            List<string> entryIDs_in_datalists_not_in_calendarblocks = 
+                (List<string>)entryIDs_in_datalists.Except(entryIDs_in_calendarblocks);
+
+
+            //now to add the blocks to the titleblocks pane and the calendar
+            foreach (string cur_entryID in entryIDs_in_datalists_not_in_titleblocks)
+            {
+                EntryData cur_entryData = glo_ProjectData.GetEntryDataFromEntryID(cur_entryID);
+                CreateAndPlaceNewTitleBlock(cur_entryData);
+            }
 
         }
         public void RemoveDeletedBlocks()
@@ -2183,6 +2196,37 @@ namespace SemesterPlanner
                 return_list.Add(cur_border.Tag.ToString());
             }
 
+
+            return return_list;
+        }
+        public List<string> ExtractEntryIDsFromTagList(List<string> tag_list, bool strip_non_entryIDs)
+        {
+            //this method will go through the list of tags and only include the entryID values
+            //if strip_non_entryIDs it will delete that indice completely, otherwise that indice will be ""
+            //  in order to keep the correct index order
+
+            List<string> return_list = new List<string>();
+
+
+            foreach (string cur_tag in tag_list)
+            {
+                List<string> tag_split = ExtractTagInfo(cur_tag);
+
+                bool is_entryID = (tag_split[0] == glo_tag_entryID);
+
+                if (is_entryID)
+                {
+                    return_list.Add(tag_split[1]);
+                }
+                else if(strip_non_entryIDs)
+                {
+                    //do not put it in
+                }
+                else
+                {
+                    return_list.Add("");
+                }
+            }
 
             return return_list;
         }
