@@ -1,0 +1,49 @@
+﻿project-name=Test Semesters 1
+
+----------------------------------------
+
+project-data_
+
+pro-data;column-type=custom;header-width=160
+
+----------------------------------------
+
+column-data_
+
+col-data;col-id=20_fa;col-title=Fall 2020;col-subtitle=;col-pos=0
+col-data;col-id=21_wi;col-title=Winter 2021;col-subtitle=;col-pos=1
+col-data;col-id=21_su;col-title=Summer 2021;col-subtitle=;col-pos=2
+col-data;col-id=21_fa;col-title=Fall 2021;col-subtitle=;col-pos=3
+col-data;col-id=22_wi;col-title=Winter 2022;col-subtitle=;col-pos=4
+col-data;col-id=22_su;col-title=Summer 2022;col-subtitle=;col-pos=5
+col-data;col-id=22_fa;col-title=Fall 2022;col-subtitle=;col-pos=6
+col-data;col-id=23_wi;col-title=Winter 2023;col-subtitle=;col-pos=7
+col-data;col-id=23_su;col-title=Summer 2023;col-subtitle=;col-pos=8
+col-data;col-id=23_fa;col-title=Fall 2023;col-subtitle=;col-pos=9
+col-data;col-id=24_wi;col-title=Winter 2024;col-subtitle=;col-pos=10
+
+----------------------------------------
+
+entry-data_
+
+ent-data;entry-id=geog_222;title=GEOG 222;subtitle=Introduction to Geomatics;colour=#FFFF7272;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=0
+ent-data;entry-id=geog_240;title=GEOG 240;subtitle=Sustainable Cities and Regions;colour=#FFFF7272;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=1
+ent-data;entry-id=geog_280;title=GEOG 280;subtitle=Environmental Geography;colour=#FFFF7272;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=2
+ent-data;entry-id=geog_322;title=GEOG 322;subtitle=Introduction to Geographic Information Systems;colour=#FFFF7272;prerequisites=[geog_222];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=21_w;list-pos=3
+ent-data;entry-id=geog_420;title=GEOG 420;subtitle=Cartography and Professional Communication;colour=#FFFF7272;prerequisites=[geog_322];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=4
+ent-data;entry-id=plan_329;title=PLAN 329;subtitle=Integrated Water Resource Planning;colour=#FFFF7272;prerequisites=[geog_240,geog_280];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=5
+ent-data;entry-id=plan_341;title=PLAN 341;subtitle=Urban Planning;colour=#FFFF7272;prerequisites=[geog_240];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=6
+ent-data;entry-id=plan_343;title=PLAN 343;subtitle=Legal Issues in Planning;colour=#FFFF7272;prerequisites=[geog_240];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=7
+ent-data;entry-id=plan_346;title=PLAN 346;subtitle=Introduction to Urban Design;colour=#FFFF7272;prerequisites=[geog_240];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=8
+ent-data;entry-id=plan_360;title=PLAN 360;subtitle=Urban Data Analysis and Visualization;colour=#FFFF7272;prerequisites=[geog_222,econ_211];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=9
+ent-data;entry-id=plan_390;title=PLAN 390;subtitle=Research and Field Methods in Planning;colour=#FFFF7272;prerequisites=[geog_240,geog_280];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=10
+ent-data;entry-id=plan_395;title=PLAN 395;subtitle=Planning History and Theory;colour=#FFFF7272;prerequisites=[geog_240];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=11
+ent-data;entry-id=plan_442;title=PLAN 442;subtitle=Regional Planning;colour=#FFFF7272;prerequisites=[plan_390,plan_395];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=12
+ent-data;entry-id=plan_490;title=PLAN 490;subtitle=Senior Planning Studio;colour=#FFFF7272;prerequisites=[plan_390,plan_395];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=13
+ent-data;entry-id=plan_495;title=PLAN 495;subtitle=Professional Planning Practice;colour=#FFFF7272;prerequisites=[plan_395];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=14
+ent-data;entry-id=econ_111;title=ECON 111;subtitle=Introductory Microeconomics;colour=#FFFF7272;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=15
+ent-data;entry-id=econ_211;title=ECON 211;subtitle=Intermediate Microeconomics;colour=#FFFF7272;prerequisites=[econ_111];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=;list-pos=16
+
+
+
+

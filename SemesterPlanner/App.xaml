@@ -1,0 +1,196 @@
+﻿<Application
+    x:Class="SemesterPlanner.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SemesterPlanner">
+
+    <Application.Resources>
+        
+        <ResourceDictionary>
+
+            <!--this makes rounded corners-->
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
+
+
+
+
+
+            <SolidColorBrush x:Key="SeparationBlue" Color="#FF0086B4"/>
+
+            <SolidColorBrush x:Key="colour_DefaultEntryTitleBlockBackground" Color="#FFC3C3C3"/>
+            
+            
+            <SolidColorBrush x:Key="colour_VeryDarkGreyText" Color="#FF282828"/>
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <!-- BASIC STYLES -->
+            <Style x:Key="txtblc_Default_medium" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Foreground" Value="{StaticResource colour_VeryDarkGreyText}"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontWeight" Value="SemiLight"/>
+            </Style>
+            <Style x:Key="txtblc_Default_small" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_medium}">
+                <Setter Property="FontSize" Value="12"/>
+            </Style>
+            <Style x:Key="txtblc_Default_large" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_medium}">
+                <Setter Property="FontSize" Value="20"/>
+            </Style>
+
+            <Style x:Key="btn_Default_symbol_small" TargetType="Button">
+                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="4"/>
+                <Setter Property="CornerRadius" Value="2"/>
+            </Style>
+
+
+
+            <Style x:Key="bor_AddNewEntryPreviewTitleBlock" TargetType="Border" BasedOn="{StaticResource bor_EntryTitleBlock}">
+                <Setter Property="Width" Value="240"/>
+            </Style>
+            <Style x:Key="bor_AddNewEntryPreviewTitleBlock_default" TargetType="Border" BasedOn="{StaticResource bor_AddNewEntryPreviewTitleBlock}">
+                <Setter Property="Height" Value="28"/>
+            </Style>
+
+
+
+
+            <Style x:Key="bor_EntryTitleBlock" TargetType="Border">
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="Padding" Value="2"/>
+                <Setter Property="Background" Value="{StaticResource colour_DefaultEntryTitleBlockBackground}"/>
+                <Setter Property="CornerRadius" Value="3"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style>
+            <Style x:Key="bor_EntryTitleBlock_Selected" TargetType="Border" BasedOn="{StaticResource bor_EntryTitleBlock}">
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+
+            <Style x:Key="grid_EntryTitleBlockInnerGrid" TargetType="Grid">
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+            <Style x:Key="grid_EntryTitleBlockTapGrid" TargetType="Grid">
+                <Setter Property="Background" Value="AliceBlue"/>
+                <Setter Property="Opacity" Value="0.1"/>
+            </Style>
+
+            <Style x:Key="stack_EntryTitleBlockTitleStack_vert" TargetType="StackPanel">
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Orientation" Value="Vertical"/>
+                <Setter Property="Margin" Value="4, 4, 8, 4"/>
+            </Style>
+            <Style x:Key="stack_EntryTitleBlockTitleStack_hori" TargetType="StackPanel" BasedOn="{StaticResource stack_EntryTitleBlockTitleStack_vert}">
+                <Setter Property="Orientation" Value="Horizontal"/>
+            </Style>
+
+            <Style x:Key="txtblc_EntryTitleBlockTitle" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
+            </Style>
+
+            <Style x:Key="txtblc_EntryTitleBlockSubtitle_vert" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
+                <Setter Property="Margin" Value="8, 0, 0, 0"/>
+            </Style>
+            <Style x:Key="txtblc_EntryTitleBlockSubtitle_hori" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
+                <Setter Property="Margin" Value="0"/>
+            </Style>
+
+            <Style x:Key="txtblc_EntryTitleBlockSeparator_vert" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
+                <Setter Property="Text" Value="-"/>
+                <Setter Property="Margin" Value="4,0,4,0"/>
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </Style> 
+            <Style x:Key="txtblc_EntryTitleBlockSeparator_hori" TargetType="TextBlock" BasedOn="{StaticResource txtblc_EntryTitleBlockSeparator_vert}">
+                <Setter Property="Visibility" Value="Visible"/>
+            </Style>
+
+            <Style x:Key="btn_EntryTitleBlockInfoButton" TargetType="Button" BasedOn="{StaticResource btn_Default_symbol_small}">
+                <Setter Property="Content" Value="&#xE946;"/>
+                <Setter Property="Height" Value="28"/>
+                <Setter Property="Width" Value="28"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Margin" Value="4"/>
+            </Style>
+
+
+
+            <Style x:Key="btn_EntryTitleBlockSectionButtons" TargetType="Button" BasedOn="{StaticResource btn_Default_symbol_small}">
+                <Setter Property="Height" Value="30"/>
+                <Setter Property="Width" Value="40"/>
+                <Setter Property="IsEnabled" Value="False"/>
+                <Setter Property="IsDoubleTapEnabled" Value="False"/>
+                <Setter Property="IsRightTapEnabled" Value="False"/>
+                <Setter Property="IsHoldingEnabled" Value="False"/>
+            </Style>
+
+
+
+
+            <Style x:Key="scroll_BasicScrollViewer" TargetType="ScrollViewer">
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="HorizontalScrollMode" Value="Enabled"/>
+                <Setter Property="VerticalScrollMode" Value="Enabled"/>
+                <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            </Style>
+            <Style x:Key="scroll_BasicScrollViewer_NoHoriBar" TargetType="ScrollViewer" BasedOn="{StaticResource scroll_BasicScrollViewer}">
+                <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"/>
+            </Style>
+            <Style x:Key="scroll_BasicScrollViewer_NoVertBar" TargetType="ScrollViewer" BasedOn="{StaticResource scroll_BasicScrollViewer}">
+                <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
+            </Style>
+
+
+
+
+            <Style x:Key="grid_UsedColour" TargetType="Grid">
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Tag" Value="not_selected"/>
+            </Style>
+            <Style x:Key="grid_UsedColour_Selected" TargetType="Grid" BasedOn="{StaticResource grid_UsedColour}">
+                <Setter Property="Margin" Value="2"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="Tag" Value="selected"/>
+            </Style>
+
+
+            <Style x:Name="txtblc_PropertyName" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_medium}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="4,4,8,4"/>
+            </Style>
+
+
+            <Style x:Name="txtbox_Property" TargetType="TextBox">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="CornerRadius" Value="2"/>
+                <Setter Property="Margin" Value="4"/>
+            </Style>
+            <Style x:Name="txtbox_Property_Changed" TargetType="TextBox" BasedOn="{StaticResource txtbox_Property}">
+                <Setter Property="BorderBrush" Value="#9917FF00"/>
+                <Setter Property="Background" Value="#2617FF00"/>
+            </Style>
+
+
+            
+        </ResourceDictionary>
+
+    </Application.Resources>
+
+</Application>

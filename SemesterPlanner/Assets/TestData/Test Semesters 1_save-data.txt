@@ -1,0 +1,45 @@
+﻿project-name=Test Semesters 1
+
+----------------------------------------
+
+project-data_
+
+pro-data;column-type=custom;header-width=160
+
+----------------------------------------
+
+column-data_
+
+col-data;col-id=20_fa;col-title=Fall 2020;col-subtitle=;col-pos=0
+col-data;col-id=21_wi;col-title=Winter 2021;col-subtitle=;col-pos=1
+col-data;col-id=21_su;col-title=Summer 2021;col-subtitle=;col-pos=2
+col-data;col-id=21_fa;col-title=Fall 2021;col-subtitle=;col-pos=3
+col-data;col-id=22_wi;col-title=Winter 2022;col-subtitle=;col-pos=4
+col-data;col-id=22_su;col-title=Summer 2022;col-subtitle=;col-pos=5
+col-data;col-id=22_fa;col-title=Fall 2022;col-subtitle=;col-pos=6
+col-data;col-id=23_wi;col-title=Winter 2023;col-subtitle=;col-pos=7
+col-data;col-id=23_su;col-title=Summer 2023;col-subtitle=;col-pos=8
+col-data;col-id=23_fa;col-title=Fall 2023;col-subtitle=;col-pos=9
+col-data;col-id=24_wi;col-title=Winter 2024;col-subtitle=;col-pos=10
+
+----------------------------------------
+
+entry-data_
+
+ent-data;entry-id=mech_2222;title=MECH 2222;subtitle=Thermodynamics;colour=#FFFF7272;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=2;list-pos=0
+ent-data;entry-id=mech_3640;title=MECH 3640;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=1
+ent-data;entry-id=mech_3641;title=MECH 3641;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=2
+ent-data;entry-id=mech_3642;title=MECH 3642;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=3
+ent-data;entry-id=mech_3643;title=MECH 3643;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=4
+ent-data;entry-id=mech_3644;title=MECH 3644;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=5
+ent-data;entry-id=mech_3645;title=MECH 3645;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=6
+ent-data;entry-id=mech_3646;title=MECH 3646;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=7
+ent-data;entry-id=mech_3647;title=MECH 3647;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=8
+ent-data;entry-id=mech_3648;title=MECH 3648;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=9
+ent-data;entry-id=mech_3649;title=MECH 3649;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=10
+ent-data;entry-id=mech_3650;title=MECH 3650;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=11
+ent-data;entry-id=mech_3651;title=MECH 3651;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=12
+ent-data;entry-id=mech_3652;title=MECH 3652;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=13
+ent-data;entry-id=mech_3653;title=MECH 3653;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=14
+ent-data;entry-id=mech_3654;title=MECH 3654;subtitle=Heat Transfer;colour=#FF8CFF72;prerequisites=[];corequisites=[];avail-col-ids=[20_fa,21_wi,21_fa,22_wi,22_fa,23_wi,23_fa,24_wi];set-col-id=1;list-pos=15
+
