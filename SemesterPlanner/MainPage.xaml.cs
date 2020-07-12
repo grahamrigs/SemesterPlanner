@@ -161,6 +161,10 @@ namespace SemesterPlanner
             }
             Debug.WriteLine("File loaded into list: " + fileName_str_projectdata);
 
+            //hi there buddy
+            //I'm doing a blah blah blah little buddy
+
+
 
 
             //PrintList("list_projectdata", list_projectdata);
@@ -2138,7 +2142,8 @@ namespace SemesterPlanner
             //this method will go through all stored EntryData, and if one doesn't have a block, it will add it
 
             List<string> entryIDs_in_datalists = glo_ProjectData.entryIDs_lst_param;
-            List<string> entryIDs_in_titleblocks = CreateBlockTagList_IndexOrder
+            List<string> entryIDs_in_titleblocks = CreateBlockTagList_IndexOrder("title");
+            List<string> entryIDs_in_calendarblocks = CreateBlockTagList_IndexOrder("calendar");
 
             List<string> entryIDs_in_datalists_not_in_borders = entryIDs_in_datalists.
 
