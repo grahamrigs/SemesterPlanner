@@ -73,7 +73,7 @@
                 <Setter Property="Margin" Value="4"/>
                 <Setter Property="Padding" Value="2"/>
                 <Setter Property="Background" Value="{StaticResource colour_DefaultEntryTitleBlockBackground}"/>
-                <Setter Property="CornerRadius" Value="3"/>
+                <Setter Property="CornerRadius" Value="2"/>
                 <Setter Property="BorderBrush" Value="Black"/>
                 <Setter Property="BorderThickness" Value="0"/>
             </Style>
@@ -136,6 +136,16 @@
                 <Setter Property="IsDoubleTapEnabled" Value="False"/>
                 <Setter Property="IsRightTapEnabled" Value="False"/>
                 <Setter Property="IsHoldingEnabled" Value="False"/>
+            </Style>
+
+
+
+            <Style x:Key="bor_CalendarBlock" TargetType="Border" BasedOn="{StaticResource bor_EntryTitleBlock}">
+                
+            </Style>
+            <Style x:Key="txtblc_CalendarBlockTitle" TargetType="TextBlock" BasedOn="{StaticResource txtblc_EntryTitleBlockTitle}">
+                <Setter Property="Margin" Value="4,0,0,0"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
             </Style>
 
 
