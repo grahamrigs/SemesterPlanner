@@ -99,6 +99,9 @@ namespace SemesterPlanner
             //show loading dialogue
             //TODO
 
+            //because there's a template in the xaml
+            grid_entry_title_blocks.Children.Clear();
+
             //loads the save files
             await LoadProjectDataMethod(path, project_name);
 
@@ -511,7 +514,7 @@ namespace SemesterPlanner
         {
 
             //gets rid of all previous title blocks
-            grid_entry_title_blocks.Children.Clear();
+            //grid_entry_title_blocks.Children.Clear();
 
             Debug.WriteLine("Rowdefinitions: " + grid_entry_title_blocks.RowDefinitions.Count());
 
@@ -527,6 +530,8 @@ namespace SemesterPlanner
             //dummy_border_for_height.Background = new SolidColorBrush(Colors.Pink);
             grid_entry_title_blocks.Children.Add(dummy_border_for_height);
 
+            AddMisingBlocks("title");
+            return;
 
             foreach (EntryData cur_entryData in glo_ProjectData.EntryData_lst_param)
             {
@@ -1516,7 +1521,7 @@ namespace SemesterPlanner
                     //so checking if it's in the correct spot originally, just to find out if the order is corrupt
                     if (Grid.GetRow(cur_bor_titleblock) != position_original_EntryData)
                     {
-                        MassRefreshTitleCalendarBlocks(false, false, false, true, false, false, new List<string>());
+                        FixBlockInfo(false, false, false, true, false, false, new List<string>());
                         return;
                     }
 
@@ -1531,7 +1536,7 @@ namespace SemesterPlanner
                     //so checking if it's in the correct spot originally, just to find out if the order is corrupt
                     if (Grid.GetRow(cur_bor_titleblock) != position_new_EntryData)
                     {
-                        MassRefreshTitleCalendarBlocks(false, false, false, true, false, false, new List<string>());
+                        FixBlockInfo(false, false, false, true, false, false, new List<string>());
                         return;
                     }
 
@@ -1682,7 +1687,7 @@ namespace SemesterPlanner
 
 
             //this will refresh all the titleblocks to be in their new position
-            MassRefreshTitleCalendarBlocks(false, false, false, true, false, false, new List<string>());
+            FixBlockInfo(false, false, false, true, false, false, new List<string>());
 
 
 
@@ -2089,7 +2094,7 @@ namespace SemesterPlanner
             glo_ProjectData.DeleteEntryDataAtIndex(selected_entryID_to_delete);
 
             //remove it from grids
-            MassRefreshTitleCalendarBlocks(false, false, false, true, false, true, new List<string>());
+            FixBlockInfo(false, false, false, true, false, true, new List<string>());
 
 
 
@@ -2137,33 +2142,54 @@ namespace SemesterPlanner
 
 
 
-        public void AddMisingBlocks()
+        public void AddMisingBlocks(string title_calendar_both)
         {
             //this method will go through all stored EntryData, and if one doesn't have a block, it will add it
 
+            Debug.WriteLine("\nAddMisingBlocks: " + title_calendar_both);
+
             List<string> entryIDs_in_datalists = glo_ProjectData.entryIDs_lst_param;
 
-            //this just gets the tags from all the titleblocks
-            List<string> tags_in_titleblocks = CreateBlockTagList_IndexOrder("title");
-            List<string> tags_in_calendarblocks = CreateBlockTagList_IndexOrder("calendar");
-
-            //this method will strip out all non-entryID values
-            List<string> entryIDs_in_titleblocks = ExtractEntryIDsFromTagList(tags_in_titleblocks, true);
-            List<string> entryIDs_in_calendarblocks = ExtractEntryIDsFromTagList(tags_in_calendarblocks, true);
-
-            //this will determine which entryIDs exist in the datalists but not in the block lists
-            List<string> entryIDs_in_datalists_not_in_titleblocks = 
-                (List<string>)entryIDs_in_datalists.Except(entryIDs_in_titleblocks);
-            List<string> entryIDs_in_datalists_not_in_calendarblocks = 
-                (List<string>)entryIDs_in_datalists.Except(entryIDs_in_calendarblocks);
-
-
-            //now to add the blocks to the titleblocks pane and the calendar
-            foreach (string cur_entryID in entryIDs_in_datalists_not_in_titleblocks)
+            //this creates the titleblocks
+            if (title_calendar_both == "title" || title_calendar_both == "both")
             {
-                EntryData cur_entryData = glo_ProjectData.GetEntryDataFromEntryID(cur_entryID);
-                CreateAndPlaceNewTitleBlock(cur_entryData);
+                //this just gets the tags from all the titleblocks
+                List<string> tags_in_titleblocks = CreateBlockTagList_IndexOrder("title");
+
+                //this method will strip out all non-entryID values
+                List<string> entryIDs_in_titleblocks = ExtractEntryIDsFromTagList(tags_in_titleblocks, true);
+
+                //this will determine which entryIDs exist in the datalists but not in the block lists
+                List<string> entryIDs_in_datalists_not_in_titleblocks =
+                    entryIDs_in_datalists.Except(entryIDs_in_titleblocks).ToList();
+
+                Debug.WriteLine("Titleblocks to add: " + entryIDs_in_datalists_not_in_titleblocks.Count + "\n");
+
+                //now to add the blocks to the titleblocks pane and the calendar
+                foreach (string cur_title_entryID in entryIDs_in_datalists_not_in_titleblocks)
+                {
+                    EntryData cur_entryData = glo_ProjectData.GetEntryDataFromEntryID(cur_title_entryID);
+                    CreateAndPlaceNewTitleBlock(cur_entryData);
+                }
             }
+
+            //this creates the calendarblocks (works the exact same as above)
+            if (title_calendar_both == "calendar" || title_calendar_both == "both")
+            {
+                List<string> tags_in_calendarblocks = CreateBlockTagList_IndexOrder("calendar");
+                List<string> entryIDs_in_calendarblocks = ExtractEntryIDsFromTagList(tags_in_calendarblocks, true);
+                List<string> entryIDs_in_datalists_not_in_calendarblocks =
+                    entryIDs_in_datalists.Except(entryIDs_in_calendarblocks).ToList();
+
+                Debug.WriteLine("Calendarblocks to add: " + entryIDs_in_datalists_not_in_calendarblocks.Count + "\n");
+
+                foreach (string cur_calendar_entryID in entryIDs_in_datalists_not_in_calendarblocks)
+                {
+                    EntryData cur_entryData = glo_ProjectData.GetEntryDataFromEntryID(cur_calendar_entryID);
+                    CreateAndPlaceNewCalendarBlock(cur_entryData);
+                }
+            }
+
 
         }
         public void RemoveDeletedBlocks()
@@ -2191,7 +2217,8 @@ namespace SemesterPlanner
                 working_grid = grid_calendar;
             }
 
-            foreach(Border cur_border in working_grid.Children)
+
+            foreach (Border cur_border in working_grid.Children)
             {
                 return_list.Add(cur_border.Tag.ToString());
             }
@@ -3044,6 +3071,10 @@ namespace SemesterPlanner
             Debug.WriteLine("\nUpdateCalendarDisplay");
 
 
+            AddMisingBlocks("calendar");
+            return;
+
+
             //will go through each EntryData one-by-one
             foreach (EntryData cur_entryData in glo_ProjectData.EntryData_lst_param)
             {
@@ -3122,7 +3153,33 @@ namespace SemesterPlanner
 
         }
 
+        
+        private void CreateAndPlaceNewCalendarBlock(EntryData creating_entryData)
+        {
+            string cur_actual_colID = creating_entryData.ActualColID;
+            Debug.WriteLine(string.Format("   EntryID = {0,-10}   ActualColID = {1,-10}", creating_entryData.EntryID, cur_actual_colID));
 
+
+            //just to ensure that there was an actual colID
+            if (cur_actual_colID == "")
+            {
+                Debug.WriteLine("      ActualColID was empty; skipping\n");
+                return;
+            }
+
+
+            //the corresponding ColumnData
+            ColumnData cur_columnData = glo_ProjectData.GetColumnDataFromColID(cur_actual_colID);
+
+            //glo_ProjectData.PrintProjectDataValues(true, false, true);
+
+            int entry_row = creating_entryData.ListPosition;
+            int entry_col = cur_columnData.ColPosition;
+
+
+            Border new_calendar_block = CreateCalendarBlock(creating_entryData, entry_row, entry_col) as Border;
+            grid_calendar.Children.Add(new_calendar_block);
+        }
 
 
 
@@ -3475,7 +3532,7 @@ namespace SemesterPlanner
 
             if (need_to_update_titleblocks)
             {
-                MassRefreshTitleCalendarBlocks(true, true, true, true, true, false, new List<string>());
+                FixBlockInfo(true, true, true, true, true, false, new List<string>());
             }
             if (need_to_update_calendar)
             {
