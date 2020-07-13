@@ -251,7 +251,7 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="1" Style="{StaticResource bor_EntryTitleBlock}" Tapped="TitleBlockTapped" RightTapped="TitleBlockRightTapped">
+                    <Border Grid.Row="1" Style="{StaticResource bor_EntryTitleBlock}">
                         <Grid Style="{StaticResource grid_EntryTitleBlockInnerGrid}" Padding="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>

@@ -140,8 +140,12 @@
 
 
 
-            <Style x:Key="bor_CalendarBlock" TargetType="Border" BasedOn="{StaticResource bor_EntryTitleBlock}">
-                
+            <Style x:Key="bor_EntryCalendarBlock" TargetType="Border" BasedOn="{StaticResource bor_EntryTitleBlock}">
+
+            </Style>
+            <Style x:Key="bor_EntryCalendarBlock_Selected" TargetType="Border" BasedOn="{StaticResource bor_EntryCalendarBlock}">
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="Padding" Value="0"/>
             </Style>
             <Style x:Key="txtblc_CalendarBlockTitle" TargetType="TextBlock" BasedOn="{StaticResource txtblc_EntryTitleBlockTitle}">
                 <Setter Property="Margin" Value="4,0,0,0"/>
