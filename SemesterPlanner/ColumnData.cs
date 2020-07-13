@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 
 namespace SemesterPlanner
 {
@@ -17,6 +18,8 @@ namespace SemesterPlanner
 
         public List<string> Parameter_Names = new List<string> { "Col_ProjectName", "ColID", "ColTitle", "ColSubtitle", "ColPosition" };
         public List<string> Parameter_Save_Names = new List<string> { "", "col-id", "col-title", "col-subtitle", "col-pos" };
+
+        public Border ColumnHeader { get; set; }
 
 
         public void GetColumnDataFromLine(string project_name, string cur_line)
