@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.Web.Syndication;
 
 namespace SemesterPlanner
@@ -486,6 +487,35 @@ namespace SemesterPlanner
 
             return return_EntryData;
         }
+        public int GetListPositionFromEntryID(string given_entryID)
+        {
+            foreach (EntryData cur_entryData in EntryData_lst_param)
+            {
+                string cur_entryID = cur_entryData.EntryID;
+
+                if (cur_entryID == given_entryID)
+                {
+                    return cur_entryData.ListPosition;
+                }
+            }
+
+            return -1;
+        }
+        public Border GetTitleBlockFromEntryID(string given_entryID)
+        {
+            return GetEntryDataFromEntryID(given_entryID).TitleBlock;
+        }
+        public Border GetCalendarBlockFromEntryID(string given_entryID)
+        {
+            return GetEntryDataFromEntryID(given_entryID).CalendarBlock;
+        }
+
+        public int GetColumnPositionFromColID(string sent_colID)
+        {
+            //first gets the referred columndata
+            ColumnData cur_columnData = GetColumnDataFromColID(sent_colID);
+            return cur_columnData.ColPosition;
+        }
         public ColumnData GetColumnDataFromColID(string given_colID)
         {
             ColumnData return_ColumnData = new ColumnData();
@@ -510,26 +540,6 @@ namespace SemesterPlanner
 
 
             return return_ColumnData;
-        }
-        public int GetColumnPositionFromColID(string sent_colID)
-        {
-            //first gets the referred columndata
-            ColumnData cur_columnData = GetColumnDataFromColID(sent_colID);
-            return cur_columnData.ColPosition;
-        }
-        public int GetListPositionFromEntryID(string given_entryID)
-        {
-            foreach (EntryData cur_entryData in EntryData_lst_param)
-            {
-                string cur_entryID = cur_entryData.EntryID;
-
-                if (cur_entryID == given_entryID)
-                {
-                    return cur_entryData.ListPosition;
-                }
-            }
-
-            return -1;
         }
 
 

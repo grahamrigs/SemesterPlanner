@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 
 namespace SemesterPlanner
 {
@@ -49,6 +50,9 @@ namespace SemesterPlanner
 
         //this one isn't saved, it's calculated at runtime
         public string ActualColID { get; set; }
+
+        public Border TitleBlock { get; set; }
+        public Border CalendarBlock { get; set; }
 
 
 

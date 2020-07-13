@@ -574,6 +574,8 @@ namespace SemesterPlanner
         {
             Border new_titleblock = CreateEntryTitleBlock(creating_entryData, false) as Border;
             grid_entry_title_blocks.Children.Add(new_titleblock);
+
+            creating_entryData.TitleBlock = new_titleblock;
         }
 
 
@@ -1241,20 +1243,25 @@ namespace SemesterPlanner
             Debug.WriteLine("SelectedEntryTitleBlockHighlighted     chosen_entryID = '" + chosen_entryID + "'");
 
             //finds the border that will be affected; unfortunately C# doesn't have a findbyID method...
-            Border affected_border = new Border();
-            bool found_affected = false;
-            foreach (Border cur_border in grid_entry_title_blocks.Children)
-            {
-                if (cur_border.Tag.ToString() == glo_tag_entryID + chosen_entryID.ToString())
-                {
-                    affected_border = cur_border;
-                    found_affected = true;
-                    break;
-                }
-            }
+            //(a couple days later)OH WAIT IT KINDA DOES NOW BIATCH
 
-            //if we didn't find a border with that entryID tag, we exit
-            if (!found_affected) { Debug.WriteLine("Did not find correct border. Exiting"); return; }
+            if (chosen_entryID == null || chosen_entryID == "") { return; }
+            Border affected_border = glo_ProjectData.GetTitleBlockFromEntryID(chosen_entryID);
+
+            //Border affected_border = new Border();
+            //bool found_affected = false;
+            //foreach (Border cur_border in grid_entry_title_blocks.Children)
+            //{
+            //    if (cur_border.Tag.ToString() == glo_tag_entryID + chosen_entryID.ToString())
+            //    {
+            //        affected_border = cur_border;
+            //        found_affected = true;
+            //        break;
+            //    }
+            //}
+
+            ////if we didn't find a border with that entryID tag, we exit
+            //if (!found_affected) { Debug.WriteLine("Did not find correct border. Exiting"); return; }
 
             //otherwise we will change its selected visual state
             switch (select_unselect)
@@ -2159,15 +2166,17 @@ namespace SemesterPlanner
                 //this method will strip out all non-entryID values
                 List<string> entryIDs_in_titleblocks = ExtractEntryIDsFromTagList(tags_in_titleblocks, true);
 
-                //this will determine which entryIDs exist in the datalists but not in the block lists
+                //this will determine which entryIDs exist in the datalists but not in the titleblocks
                 List<string> entryIDs_in_datalists_not_in_titleblocks =
                     entryIDs_in_datalists.Except(entryIDs_in_titleblocks).ToList();
 
-                Debug.WriteLine("Titleblocks to add: " + entryIDs_in_datalists_not_in_titleblocks.Count + "\n");
+                Debug.WriteLine("Titleblocks to add: " + entryIDs_in_datalists_not_in_titleblocks.Count);
 
-                //now to add the blocks to the titleblocks pane and the calendar
+                //now to add the blocks to the titleblocks pane
                 foreach (string cur_title_entryID in entryIDs_in_datalists_not_in_titleblocks)
                 {
+                    Debug.WriteLine("  Adding: " + cur_title_entryID);
+
                     EntryData cur_entryData = glo_ProjectData.GetEntryDataFromEntryID(cur_title_entryID);
                     CreateAndPlaceNewTitleBlock(cur_entryData);
                 }
@@ -2185,6 +2194,8 @@ namespace SemesterPlanner
 
                 foreach (string cur_calendar_entryID in entryIDs_in_datalists_not_in_calendarblocks)
                 {
+                    Debug.WriteLine("  Adding: " + cur_calendar_entryID);
+
                     EntryData cur_entryData = glo_ProjectData.GetEntryDataFromEntryID(cur_calendar_entryID);
                     CreateAndPlaceNewCalendarBlock(cur_entryData);
                 }
@@ -2192,9 +2203,65 @@ namespace SemesterPlanner
 
 
         }
-        public void RemoveDeletedBlocks()
+        public void RemoveDeletedBlocks(string title_calendar_both)
         {
+            //this method will go through all stored titleblocks and calendarblocks, 
+            //  and if one doesn't have a corresponding EntryData, it will remove it
 
+            Debug.WriteLine("\nRemoveDeletedBlocks: " + title_calendar_both);
+
+            List<string> entryIDs_in_datalists = glo_ProjectData.entryIDs_lst_param;
+
+            //this removes the titleblocks
+            if (title_calendar_both == "title" || title_calendar_both == "both")
+            {
+                //this just gets the tags from all the titleblocks
+                List<string> tags_in_titleblocks = CreateBlockTagList_IndexOrder("title");
+
+                //this method will strip out all non-entryID values
+                List<string> entryIDs_in_titleblocks = ExtractEntryIDsFromTagList(tags_in_titleblocks, true);
+
+                //this will determine which entryIDs exist in the block list but not in the datalist
+                List<string> entryIDs_in_titleblocks_not_in_datalists =
+                    entryIDs_in_titleblocks.Except(entryIDs_in_datalists).ToList();
+
+                Debug.WriteLine("Titleblocks to delete: " + entryIDs_in_titleblocks_not_in_datalists.Count);
+
+                //removing from the grid.children is hard
+                //solution here  https://codeaddiction.net/articles/7/remove-items-while-iterating-a-collection-in-c
+
+                //now to remove the blocks from the titleblocks pane
+                foreach (Border cur_border in grid_entry_title_blocks.Children.ToList())
+                {
+                    //the tag info from the border
+                    List<string> tag_info = ExtractTagInfo(cur_border.Tag.ToString());
+
+                    //if the tag starts with  entryID|  and then checks if the  entryID is in the removing list
+                    if (tag_info[0] == glo_tag_entryID && entryIDs_in_titleblocks_not_in_datalists.Contains(tag_info[1]))
+                    {
+                        grid_entry_title_blocks.Children.Remove(cur_border);
+                    }
+                }
+            }
+
+            //this removes the calendarblocks (works the exact same as above)
+            if (title_calendar_both == "calendar" || title_calendar_both == "both")
+            {
+                List<string> tags_in_calendarblocks = CreateBlockTagList_IndexOrder("calendar");
+                List<string> entryIDs_in_calendarblocks = ExtractEntryIDsFromTagList(tags_in_calendarblocks, true);
+                List<string> entryIDs_in_calendarblocks_not_in_datalists =
+                    entryIDs_in_calendarblocks.Except(entryIDs_in_datalists).ToList();
+
+                foreach (Border cur_border in grid_calendar.Children.ToList())
+                {
+                    List<string> tag_info = ExtractTagInfo(cur_border.Tag.ToString());
+
+                    if (tag_info[0] == glo_tag_entryID && entryIDs_in_calendarblocks_not_in_datalists.Contains(tag_info[1]))
+                    {
+                        grid_calendar.Children.Remove(cur_border);
+                    }
+                }
+            }
         }
         public List<string> CreateBlockTagList_IndexOrder(string title_calendar)
         {
@@ -3179,6 +3246,7 @@ namespace SemesterPlanner
 
             Border new_calendar_block = CreateCalendarBlock(creating_entryData, entry_row, entry_col) as Border;
             grid_calendar.Children.Add(new_calendar_block);
+            creating_entryData.CalendarBlock = new_calendar_block;
         }
 
 
@@ -3490,6 +3558,7 @@ namespace SemesterPlanner
                         Debug.WriteLine(string.Format("Changing Title to '{0}'", new_value_string));
                         master_EntryData.Title = new_value_string;
                         need_to_update_titleblocks = true;
+                        need_to_update_calendar = true;
                         break;
 
                     case "Subtitle":
@@ -3532,11 +3601,12 @@ namespace SemesterPlanner
 
             if (need_to_update_titleblocks)
             {
-                FixBlockInfo(true, true, true, true, true, false, new List<string>());
+                FixSingleTitleBlock(applying_entryID);
+                //FixBlockInfo(true, true, true, true, true, false, new List<string>());
             }
             if (need_to_update_calendar)
             {
-                //TODO
+                FixSingleCalendarBlock(applying_entryID);
             }
             if (need_to_update_order_logic)
             {
@@ -3546,6 +3616,138 @@ namespace SemesterPlanner
             OpenPropertiesMethod();
 
         }
+
+        public void FixSingleTitleBlock(string fixing_entryID)
+        {
+            //this method will find the titleblock of the given entryID and update its fields according to its EntryData
+
+            Debug.WriteLine("FixSingleTitleBlock     fixing_entryID = '" + fixing_entryID + "'");
+
+            if (fixing_entryID == null || fixing_entryID == "" || !glo_ProjectData.entryIDs_lst_param.Contains(fixing_entryID))
+            {
+                Debug.WriteLine("ERROR: invalid entryID. Exiting.");
+                return;
+            }
+
+            //the entryData and the titleblock (border)
+            EntryData fixing_entryData = glo_ProjectData.GetEntryDataFromEntryID(fixing_entryID);
+            Border fixing_titleblock = fixing_entryData.TitleBlock;
+
+            //this is the structure of the titleblock
+            /*
+             
+            <Border>  ------------------------  this has the entryID as its tag, and the Grid.Row property, the background colour, and the border name
+                <Grid>  ----------------------
+                    <StackPanel>  ------------
+                        <TextBlock/>  --------  this is the title
+                        <TextBlock/>  --------  this is the separator
+                        <TextBlock/>  --------  this is the subtitle
+                    </StackPanel>  -----------
+                </Grid>  ---------------------
+            </Border>  -----------------------
+
+            */
+
+            Grid inner_grid = fixing_titleblock.Child as Grid;
+            StackPanel inner_stack = inner_grid.Children[0] as StackPanel;
+            TextBlock txtblc_title = inner_stack.Children[0] as TextBlock;
+            TextBlock txtblc_subtitle = inner_stack.Children[2] as TextBlock;
+
+
+            //the data that will be put into the titleblock
+            string data_title = fixing_entryData.Title;
+            string data_subtitle = fixing_entryData.Subtitle;
+            string data_colour_hex = fixing_entryData.ColourHex;
+            int data_list_pos = fixing_entryData.ListPosition;
+
+
+            //now to apply the data
+
+            //the entryID
+            fixing_titleblock.Tag = glo_tag_entryID + fixing_entryID;
+
+            //the colour
+            if (data_colour_hex != null && data_colour_hex.Length == 9)
+                fixing_titleblock.Background = GetSolidColorBrushFromHex(data_colour_hex);
+
+            //the title
+            if (data_title != null && data_title.Length > 0)
+                txtblc_title.Text = data_title;
+
+            //the subtitle
+            if (data_subtitle != null && data_subtitle.Length > 0)
+                txtblc_subtitle.Text = data_subtitle;
+
+            //the list position
+            if (data_list_pos != -1)
+                Grid.SetRow(fixing_titleblock, fixing_entryData.ListPosition);
+
+        }
+        public void FixSingleCalendarBlock(string fixing_entryID)
+        {
+            //this method will find the calendarblock of the given entryID and update its fields according to its EntryData
+
+            Debug.WriteLine("FixSingleCalendarBlock     fixing_entryID = '" + fixing_entryID + "'");
+
+            if (fixing_entryID == null || fixing_entryID == "" || !glo_ProjectData.entryIDs_lst_param.Contains(fixing_entryID))
+            {
+                Debug.WriteLine("ERROR: invalid entryID. Exiting.");
+                return;
+            }
+
+            //the entryData and the calendarblock (border)
+            EntryData fixing_entryData = glo_ProjectData.GetEntryDataFromEntryID(fixing_entryID);
+            Border fixing_calendarblock = fixing_entryData.CalendarBlock;
+
+            //the corresponding ColumnData
+            string fixing_colID = fixing_entryData.ActualColID;
+            ColumnData cur_columnData = glo_ProjectData.GetColumnDataFromColID(fixing_colID);
+
+
+            //this is the structure of the calendarblock
+            /*
+            
+            <Border>  ------------  this has the entryID as its tag, and the Grid.Row and Grid.Column properties, and the background colour
+                <TextBlock/>  ----  this is the title
+            </Border>  -----------
+
+            */
+
+            TextBlock txtblc_title = fixing_calendarblock.Child as TextBlock;
+
+
+            //the data that will be put into the titleblock
+            string data_title = fixing_entryData.Title;
+            string data_subtitle = fixing_entryData.Title;
+            string data_colour_hex = fixing_entryData.ColourHex;
+
+            int data_entry_row = fixing_entryData.ListPosition;
+            int data_entry_col = cur_columnData.ColPosition;
+
+
+            //now to apply the data
+
+            //the entryID
+            fixing_calendarblock.Tag = glo_tag_entryID + fixing_entryID;
+
+            //the colour
+            if (data_colour_hex != null && data_colour_hex.Length == 9)
+                fixing_calendarblock.Background = GetSolidColorBrushFromHex(data_colour_hex);
+
+            //the title
+            if (data_title != null && data_title.Length > 0)
+                txtblc_title.Text = data_title;
+
+            //the row
+            if (data_entry_row != -1)
+                Grid.SetRow(fixing_calendarblock, fixing_entryData.ListPosition);
+
+            //the column
+            if (data_entry_col != -1)
+                Grid.SetRow(fixing_calendarblock, fixing_entryData.ListPosition);
+
+        }
+
 
         private void EnableApplyPropertiesButton()
         {
@@ -3641,6 +3843,9 @@ namespace SemesterPlanner
             return_EntryData.PrereqEntryIDs = CreateDeepCopyOfList_string(entryData_to_be_copied.PrereqEntryIDs);
             return_EntryData.CoreqEntryIDs = CreateDeepCopyOfList_string(entryData_to_be_copied.CoreqEntryIDs);
             return_EntryData.AvailColIDs = CreateDeepCopyOfList_string(entryData_to_be_copied.AvailColIDs);
+
+            return_EntryData.TitleBlock = entryData_to_be_copied.TitleBlock;
+            return_EntryData.CalendarBlock = entryData_to_be_copied.CalendarBlock;
 
 
             /*
@@ -3957,6 +4162,12 @@ namespace SemesterPlanner
         {
             Debug.WriteLine("grid_entry_title_blocks.Children.Count = " + grid_entry_title_blocks.Children.Count);
             Debug.WriteLine("grid_calendar.Children.Count = " + grid_calendar.Children.Count);
+
+            string test_entryID = "geog_240";
+
+            Border test_border = glo_ProjectData.GetEntryDataFromEntryID(test_entryID).TitleBlock;
+
+            test_border.Height = 200;
         }
 
         private void DeleteDoNotAskAgainChecked(object sender, RoutedEventArgs e)
