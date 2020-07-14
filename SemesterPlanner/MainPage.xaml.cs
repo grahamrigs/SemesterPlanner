@@ -91,7 +91,106 @@ namespace SemesterPlanner
             glo_txtbox_props_lst.Add(txtbox_prop_subtitle);
 
             glo_CalculatedData.ColourPickerChosenHex = "#FFC3C3C3";
+
         }
+        private void MainPageLoaded(object sender, RoutedEventArgs e)
+        {
+            //on app start, we will open the file menu
+            OpenFileMenu();
+        }
+
+
+
+
+
+        //these methods deal with the file menu
+
+        private void FileMenuButton(object sender, RoutedEventArgs e)
+        {
+            OpenFileMenu();
+        }
+        public async void OpenFileMenu()
+        {
+            //on app load, we open the file menu
+            contentdialog_file_menu.Visibility = Visibility.Visible;
+
+            ContentDialogResult file_menu_result = await contentdialog_file_menu.ShowAsync();
+
+            if (file_menu_result == ContentDialogResult.Primary)
+            {
+                //this is for New Project
+
+                if (await VerifiedNewOrLoadProject())
+                {
+                    MakeNewProject();
+                }
+            }
+            else if (file_menu_result == ContentDialogResult.Secondary)
+            {
+                //this is for Load Project
+
+                if (await VerifiedNewOrLoadProject())
+                {
+                    LoadProjectData(@"ms-appx:///Assets/TestData/", "Test Semesters 2");
+                }
+            }
+            else // if (file_menu_result == ContentDialogResult.None)
+            {
+                //this is for Cancel
+                FileMenuCancelled();
+            }
+        }
+        private void FileMenuCancelled()
+        {
+            //if the user cancelled the file menu but no project is loaded, then we reopen
+            if (!glo_ProjectData.ProjectLoaded)
+            {
+                OpenFileMenu();
+            }
+        }
+        public async Task<bool> VerifiedNewOrLoadProject()
+        {
+            if (!glo_ProjectData.ProjectLoaded)
+            {
+                return true;
+            }
+
+            ContentDialog contentdialog_close_project = new ContentDialog
+            {
+                Title = "Close Current Project?",
+                Content = "Do you wish to close the current project?",
+                PrimaryButtonText = "Close Project",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            ContentDialogResult result = await contentdialog_close_project.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                return true;
+            }
+            else // if (result == ContentDialogResult.None)
+            {
+                return false;
+            }
+        }
+        public async void MakeNewProject()
+        {
+            Debug.WriteLine("MakeNewProject");
+            ContentDialogResult make_new_result = await contentdialog_make_new_project.ShowAsync();
+
+            if (make_new_result == ContentDialogResult.Primary)
+            {
+
+            }
+            else // if (make_new_result == ContentDialogResult.None)
+            {
+                FileMenuCancelled();
+            }
+        }
+
+
 
 
 
@@ -185,6 +284,7 @@ namespace SemesterPlanner
 
 
             glo_ProjectData = GetSavedDataFromList(list_projectdata, show_all_troubleshooting);
+            glo_ProjectData.ProjectLoaded = true;
 
             glo_ProjectData.PrintProjectDataValues(false, false, false);
 
@@ -3679,7 +3779,6 @@ namespace SemesterPlanner
             return return_EntryData;
         }
 
-
         public SolidColorBrush GetSolidColorBrushFromHex(string hex)
         {
             //from http://www.joeljoseph.net/converting-hex-to-color-in-universal-windows-platform-uwp/
@@ -3711,7 +3810,6 @@ namespace SemesterPlanner
 
             return hex_value;
         }
-
 
         private void PrintList(string list_name, List<string> list_to_print)
         {
@@ -3755,17 +3853,6 @@ namespace SemesterPlanner
 
 
         //these methods are the tap handlers for the temporary commandbar buttons, for testing purposes
-        private void FileMenuButton(object sender, RoutedEventArgs e)
-        {
-            Debug.WriteLine("grid_entry_title_blocks.Children.Count = " + grid_entry_title_blocks.Children.Count);
-            Debug.WriteLine("grid_calendar.Children.Count = " + grid_calendar.Children.Count);
-
-            string test_entryID = "geog_240";
-
-            Border test_border = glo_ProjectData.GetEntryDataFromEntryID(test_entryID).TitleBlock;
-
-            test_border.Height = 200;
-        }
         private void LoadTestDataButton(object sender, RoutedEventArgs e)
         {
             //LoadProjectData(@"ms-appx:///Assets/TestData/", "Test Semesters 1");
@@ -3775,11 +3862,18 @@ namespace SemesterPlanner
         {
             UpdateCalendarLogicDisplay(false, true);
         }
-        private void PrintButton(object sender, RoutedEventArgs e)
+        private void PrintGlobalData(object sender, RoutedEventArgs e)
         {
             glo_ProjectData.PrintProjectDataValues(true, true, true);
         }
-        private void ShareButton(object sender, RoutedEventArgs e)
+        private void EditButton(object sender, RoutedEventArgs e)
+        {
+            //test_button_datatemplate.ContentTemplate = this.Resources["control_template_test"] as DataTemplate;
+            //test_button_datatemplate.DataContext = glo_ProjectData.EntryData_lst_param[2];
+
+
+        }
+        private void ContactButton(object sender, RoutedEventArgs e)
         {
             //this is a misc button that I'll use for testing commands
 
@@ -3793,5 +3887,17 @@ namespace SemesterPlanner
 
 
         }
+        private void GlobeButton(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("grid_entry_title_blocks.Children.Count = " + grid_entry_title_blocks.Children.Count);
+            Debug.WriteLine("grid_calendar.Children.Count = " + grid_calendar.Children.Count);
+
+            //string test_entryID = "geog_240";
+
+            //Border test_border = glo_ProjectData.GetEntryDataFromEntryID(test_entryID).TitleBlock;
+
+            //test_border.Height = 200;
+        }
+
     }
 }

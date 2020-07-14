@@ -1,0 +1,13 @@
+﻿TemplateName=Trimester: Fall Winter Summer
+
+TermName_1=Fall
+TermName_2=Winter
+TermName_3=Summer
+
+FirstTermOfYear=Term_2
+
+ProjectStartTerm=Term_1
+ProjectStartYear=current
+
+ProjectDurationType=years
+ProjectDurationCount=5

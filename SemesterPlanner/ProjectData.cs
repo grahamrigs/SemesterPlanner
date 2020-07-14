@@ -13,9 +13,13 @@ namespace SemesterPlanner
     class ProjectData
     {
 
+        public bool ProjectLoaded = false;
         public string ProjectName { get; set; }
         public string ColumnType { get; set; }
         public GridLength HeaderWidth { get; set; }
+
+        public DateTime LastModified = DateTime.Now;
+        public string LocalRoaming { get; set; }
 
         public List<string> Parameter_Names = new List<string> { "ProjectName", "ColumnType", "HeaderWidth" };
         public List<string> Parameter_Save_Names = new List<string> { "", "column-type", "header-width" };

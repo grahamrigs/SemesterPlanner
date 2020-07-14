@@ -4,8 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SemesterPlanner">
 
+
     <Application.Resources>
-        
+
+
+
         <ResourceDictionary>
 
             <!--this makes rounded corners-->
@@ -24,15 +27,17 @@
             
             <SolidColorBrush x:Key="colour_VeryDarkGreyText" Color="#FF282828"/>
 
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+
+
+            <x:Double x:Key="ContentDialogMaxWidth">800</x:Double>
+            <x:Double x:Key="ContentDialogMaxHeight">756</x:Double>
+
+
+
+
+
+
             <!-- BASIC STYLES -->
             <Style x:Key="txtblc_Default_medium" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="16"/>

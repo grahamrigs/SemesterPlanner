@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SemesterPlanner"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="MainPageLoaded">
 
     <Page.Resources>
         <Flyout x:Key="flyout_colour_picker" Opened="ColourPickerFlyout_Opened" >
@@ -151,6 +151,22 @@
         </Flyout>
         
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+
+        <DataTemplate x:Key="control_template_test" x:DataType="local:EntryData">
+            <StackPanel>
+                <TextBlock Text="{x:Bind Title}"/>
+                <TextBlock Text="{x:Bind Subtitle}"/>
+            </StackPanel>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="project_list_template" x:DataType="local:ProjectData">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{x:Bind ProjectName}"/>
+                <TextBlock Text="{x:Bind LastModified}"/>
+                <TextBlock Text="{x:Bind LocalRoaming}"/>
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid x:Name="grid_overall_window">
@@ -170,12 +186,16 @@
                     <FontIcon Glyph="&#xF12B;"/>
                 </AppBarButton.Icon>
             </AppBarButton>
+            <AppBarButton Icon="Add" Label="Add Entry" Click="AddButtonTapped"/>
+            <AppBarSeparator/>
+            
             <AppBarButton Icon="OpenFile" Label="Open Test File" Click="LoadTestDataButton"/>
             <AppBarButton Icon="Calculator" Label="Compute" Click="ComputeCalendarButton"/>
             <AppBarButton Icon="Print" Label="Print" Click="PrintGlobalData"/>
-            <AppBarButton Icon="Add" Label="Add Entry" Click="AddButtonTapped"/>
-            <AppBarButton Icon="Edit" Label="Edit"/>
-            <AppBarButton Icon="Share" Label="Share" Click="ShareButton"/>
+            <AppBarButton Icon="Edit" Label="Edit" Click="EditButton"/>
+            <AppBarButton Icon="Contact" Label="Contact" Click="ContactButton"/>
+            <AppBarButton Icon="Globe"  Label="Globe" Click="GlobeButton"/>
+            
             <CommandBar.SecondaryCommands>
                 <AppBarButton Icon="Setting" Label="Settings">
                     <AppBarButton.KeyboardAccelerators>
@@ -362,10 +382,17 @@
             </Grid>
 
 
+            <!--<StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border x:Name="test_border_datatemplate"/>
+                <Button x:Name="test_button_datatemplate"/>
+            </StackPanel>-->
+            
 
 
 
         </Grid>
+        
+        
 
 
         <ContentDialog x:Name="contentdialog_add_new_entry"
@@ -471,6 +498,146 @@
             </StackPanel>
         </ContentDialog>
 
+        <ContentDialog x:Name="contentdialog_file_menu"
+                       Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed"
+                       Title="Semester Planner"
+                       PrimaryButtonText="New Project"
+                       SecondaryButtonText="Load Project"
+                       CloseButtonText="Cancel"
+                       Background="#FFF6F6F6"
+                       DefaultButton="Primary">
+
+            <Grid Width="450">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Recent projects" FontSize="16" Grid.Row="0" Grid.Column="0" Margin="0,0,0,8"/>
+
+                <ListView Grid.Row="1" Grid.Column="0">
+                </ListView>
+
+
+                <TextBlock Text="Project Name" FontSize="16" Grid.Row="0" Grid.Column="1"/>
+
+                <ScrollViewer Grid.Row="1" Grid.Column="1">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Description" FontSize="11"/>
+                        <TextBlock Text="Modified:  Jul 13, 2020 at 5:01 pm" FontSize="11"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+
+            </Grid>
+
+        </ContentDialog>
+
+        <ContentDialog x:Name="contentdialog_make_new_project"
+                       Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Visible"
+                       Title="Create New Project"
+                       PrimaryButtonText="Create"
+                       IsPrimaryButtonEnabled="False"
+                       CloseButtonText="Cancel"
+                       Background="#FFF6F6F6"
+                       DefaultButton="Primary">
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Horizontal" Margin="0" Spacing="8">
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="180"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Project Name" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,8,16,8"/>
+                        <TextBox x:Name="txtbox_make_new_project_name" Text="" HorizontalAlignment="Stretch" Grid.Column="1" 
+                                 Margin="0,4,8,4" VerticalAlignment="Center"/>
+
+                        <TextBlock Text="Description" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,8,16,8"
+                                   Grid.Row="1"/>
+                        <TextBox x:Name="txtbox_make_new_project_desc" Text="" HorizontalAlignment="Stretch" Grid.Column="1" 
+                                 Grid.Row="1" Margin="0,4,8,4" VerticalAlignment="Center"/>
+
+                        <TextBlock Text="Project Type" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                   Margin="8,8,16,8" Grid.Row="2"/>
+                        <ComboBox x:Name="combo_make_new_project_type" Grid.Row="2" Grid.Column="1" Margin="0,4,8,4" 
+                                  SelectedIndex="1" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <ComboBoxItem Content="Days"/>
+                            <ComboBoxItem Content="Terms"/>
+                            <ComboBoxItem Content="Years"/>
+                        </ComboBox>
+
+                        <TextBlock Text="Template" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                   Margin="8,8,16,8" Grid.Row="3"/>
+
+                        <ComboBox x:Name="combo_make_new_project_template" Grid.Row="3" Grid.Column="1" Margin="0,4,8,4" 
+                                  SelectedIndex="0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <ComboBoxItem Content="None"/>
+                        </ComboBox>
+
+
+                    </Grid>
+
+
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="180"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Terms per Year" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,8,16,8"/>
+
+                        <muxc:NumberBox x:Name="asd" Value="3" Margin="0,4,8,4" 
+                                        SpinButtonPlacementMode="Inline" SmallChange="1" VerticalAlignment="Center"
+                                        ValidationMode="InvalidInputOverwritten" Grid.Column="1"/>
+
+
+
+                        <TextBlock Text="Terms Names" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,8,16,8"
+                                   Grid.Row="1"/>
+
+                        <ScrollViewer Grid.Row="1" Grid.Column="1" MaxHeight="140" Margin="0,4,8,4">
+                            <StackPanel Orientation="Vertical" Margin="0,4,20,4" Spacing="8">
+                                <TextBox Tag="TermName_1" Text="" PlaceholderText="Term 1 Name"/>
+                                <TextBox Tag="TermName_2" Text="" PlaceholderText="Term 2 Name"/>
+                                <TextBox Tag="TermName_3" Text="" PlaceholderText="Term 3 Name"/>
+                            </StackPanel>
+                        </ScrollViewer>
+
+
+
+
+
+
+                        <StackPanel Grid.Row="20" Grid.Column="1" Margin="0,8,8,4" HorizontalAlignment="Center" 
+                                    VerticalAlignment="Bottom" Spacing="8">
+                            <Button Content="Reset Fields" HorizontalAlignment="Stretch"/>
+                            <Button Content="Save New Template" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+
+        </ContentDialog>
 
 
 

@@ -135,6 +135,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\ColumnTemplates\Trimester_Fall-Winter-Summer.txt" />
     <Content Include="Assets\TestData\Test Semesters 2_save-data.txt" />
     <Content Include="Assets\TestData\Test Semesters 1_save-data.txt" />
     <Content Include="Properties\Default.rd.xml" />
