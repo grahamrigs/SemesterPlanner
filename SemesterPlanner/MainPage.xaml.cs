@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -96,7 +97,7 @@ namespace SemesterPlanner
         private void MainPageLoaded(object sender, RoutedEventArgs e)
         {
             //on app start, we will open the file menu
-            OpenFileMenu();
+            //OpenFileMenu();
         }
 
 
@@ -1072,25 +1073,21 @@ namespace SemesterPlanner
             {
                 outer_border.Name = "bor_titleblock_dataID_" + cur_entrydata.EntryID;
                 outer_border.Tag = glo_tag_entryID + cur_entrydata.EntryID;
-            }
-            outer_border.Background = GetSolidColorBrushFromHex(cur_entrydata.ColourHex);
-            if (!for_preview)
-            {
                 outer_border.Style = Application.Current.Resources["bor_EntryTitleBlock"] as Style;
+
+                outer_border.RightTapped += TitleCalendarBlockRightTapped;
+                outer_border.DoubleTapped += TitleCalendarBlockDoubleTapped;
+
+                outer_border.ContextFlyout = CreateTitleCalendarBlockFlyout();
             }
             else
             {
+                outer_border.Tag = "preview";
                 outer_border.Style = Application.Current.Resources["bor_AddNewEntryPreviewTitleBlock"] as Style;
             }
-            outer_border.RightTapped += TitleCalendarBlockRightTapped;
+            outer_border.Background = GetSolidColorBrushFromHex(cur_entrydata.ColourHex);
             outer_border.Tapped += TitleCalendarBlockTapped;
-            outer_border.DoubleTapped += TitleCalendarBlockDoubleTapped;
 
-
-            if (!for_preview)
-            {
-                outer_border.ContextFlyout = CreateTitleCalendarBlockFlyout();
-            }
 
 
 
@@ -2032,8 +2029,22 @@ namespace SemesterPlanner
             //Grid parent_grid = sending_grid.Parent as Grid;
             //Border sending_border = parent_grid.Parent as Border;
 
+
+
+
+
+
             //if it's just the border itself
             Border sending_border = (Border)sender;
+            string sending_tag = sending_border.Tag.ToString();
+
+
+            if (sending_tag == "preview")
+            {
+                AddNewEntryPreviewBlockTapped(sending_border);
+                return;
+            }
+
 
 
             //the tag information
@@ -2769,6 +2780,26 @@ namespace SemesterPlanner
             //and puts in the new one
             stack_add_new_entry_preview.Children.Add(preview_border);
         }
+        private void AddNewEntryPreviewBlockTapped(Border sending_preview_titleblock)
+        {
+            Style unselected_style = Application.Current.Resources["bor_AddNewEntryPreviewTitleBlock"] as Style;
+            Style selected_style = Application.Current.Resources["bor_AddNewEntryPreviewTitleBlock_selected"] as Style;
+
+            Style change_to_style;
+
+            if (sending_preview_titleblock.Style == unselected_style)
+            {
+                change_to_style = selected_style;
+            }
+            else
+            {
+                change_to_style = unselected_style;
+            }
+
+            sending_preview_titleblock.Style = change_to_style;
+
+
+        }
         public bool AddNewEntryValid()
         {
             //will determine if the add new entry is valid
@@ -3026,6 +3057,7 @@ namespace SemesterPlanner
             //Border new_titleblock = CreateEntryTitleBlock(cur_entryData) as Border;
             //grid_entry_title_blocks.Children.Add(new_titleblock);
         }
+
 
 
 
@@ -3871,6 +3903,66 @@ namespace SemesterPlanner
             //test_button_datatemplate.ContentTemplate = this.Resources["control_template_test"] as DataTemplate;
             //test_button_datatemplate.DataContext = glo_ProjectData.EntryData_lst_param[2];
 
+            //relpan_custom_window.Visibility = Visibility.Visible;
+            //relpan_custom_window.Translation += new Vector3(0, 0, 32);
+            //rec_frame_background.Visibility = Visibility.Visible;
+
+
+            Border blah_border = new Border();
+            blah_border.Background = new SolidColorBrush(Colors.Cyan);
+
+            StackPanel blah_stack = new StackPanel();
+
+            TextBlock blah_title = new TextBlock();
+
+            // Set the DataContext of the TextBox MyTextBox.
+            blah_title.DataContext = glo_entryDataTesting;
+
+            // Create the binding and associate it with the text box.
+            Binding binding_title = new Binding() { Path = new PropertyPath("Title"), Mode = BindingMode.OneWay };
+            blah_title.SetBinding(TextBlock.TextProperty, binding_title);
+
+
+            TextBlock blah_subtitle = new TextBlock();
+
+            // Set the DataContext of the TextBox MyTextBox.
+            blah_subtitle.DataContext = glo_entryDataTesting;
+
+            // Create the binding and associate it with the text box.
+            Binding binding_subtitle = new Binding() { Path = new PropertyPath("Subtitle"), Mode = BindingMode.OneTime };
+            blah_subtitle.SetBinding(TextBlock.TextProperty, binding_subtitle);
+
+
+            //glo_entryDataTesting = new EntryDataTest();
+            //Binding myBinding = new Binding()
+            //{
+
+            //    Source = EntryDataTest;
+
+            //};
+            //// Bind the new data source to the myText TextBlock control's Text dependency property.
+            //myText.SetBinding(TextBlock.TextProperty, myBinding);
+
+
+            //new Binding() { Source = twitterTextBox, Path = new PropertyPath("RemainingLength"), Mode = BindingMode.TwoWay });
+
+
+
+
+
+
+
+
+
+            blah_stack.Children.Add(blah_title);
+            blah_stack.Children.Add(blah_subtitle);
+            blah_border.Child = blah_stack;
+
+            grid_calendar.Children.Add(blah_border);
+
+
+
+
 
         }
         private void ContactButton(object sender, RoutedEventArgs e)
@@ -3878,12 +3970,15 @@ namespace SemesterPlanner
             //this is a misc button that I'll use for testing commands
 
 
-            List<string> save_list = FormatCurrentSaveFile();
+            //List<string> save_list = FormatCurrentSaveFile();
 
-            foreach (string cur_line in save_list)
-            {
-                Debug.WriteLine(cur_line);
-            }
+            //foreach (string cur_line in save_list)
+            //{
+            //    Debug.WriteLine(cur_line);
+            //}
+
+
+            glo_entryDataTesting.Title = "changed";
 
 
         }
@@ -3899,5 +3994,6 @@ namespace SemesterPlanner
             //test_border.Height = 200;
         }
 
+        EntryDataTest glo_entryDataTesting = new EntryDataTest();
     }
 }

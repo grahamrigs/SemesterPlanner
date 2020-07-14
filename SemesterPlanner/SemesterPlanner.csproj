@@ -122,7 +122,11 @@
     <Compile Include="BoolToVisibilityConverter.cs" />
     <Compile Include="CalculatedData.cs" />
     <Compile Include="ColumnData.cs" />
+    <Compile Include="CreateNewProjectForm.xaml.cs">
+      <DependentUpon>CreateNewProjectForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EntryData.cs" />
+    <Compile Include="EntryDataTest.cs" />
     <Compile Include="ProjectData.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -152,6 +156,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="CreateNewProjectForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
@@ -11,29 +12,37 @@ namespace SemesterPlanner
 {
     class EntryData : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // Create the OnPropertyChanged method to raise the event
+        // The calling member's name will be used as the parameter.
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
         //could never get the binding to update
 
-        //private string title_; 
-        //public string Title
-        //{
-        //    get { return title_; }
-        //    set
-        //    {
-        //        if (value != title_)
-        //        {
-        //            title_ = value;
-        //            // Call OnPropertyChanged whenever the property is updated
-        //            OnPropertyChanged("PersonName");
-        //        }
-        //    }
-        //}
+        private string title_ = "";
+        public string Title
+        {
+            get { return title_; }
+            set
+            {
+                if (value != title_)
+                {
+                    title_ = value;
+                    // Call OnPropertyChanged whenever the property is updated
+                    OnPropertyChanged();
+                }
+            }
+        }
 
 
 
         public string Entry_ProjectName { get; set; }
         public string EntryID { get; set; }
-        public string Title { get; set; }
+        //public string Title { get; set; }
         public string Subtitle { get; set; }
         public string ColourHex { get; set; }
         public List<string> PrereqEntryIDs { get; set; }
@@ -56,13 +65,6 @@ namespace SemesterPlanner
 
 
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        // Create the OnPropertyChanged method to raise the event
-        protected void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
 
 
 
