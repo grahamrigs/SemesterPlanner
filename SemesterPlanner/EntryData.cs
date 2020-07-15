@@ -6,7 +6,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Streaming.Adaptive;
 using Windows.UI.Xaml.Controls;
+using Windows.Web.Syndication;
 
 namespace SemesterPlanner
 {
@@ -21,9 +23,61 @@ namespace SemesterPlanner
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        //could never get the binding to update
 
+
+        private string entry_projectname_ = "";
+        private string entryID_ = "";
         private string title_ = "";
+        private string subtitle_ = "";
+        private string colourhex_ = "";
+        private string setcolid_ = "";
+        private string actualcolid_ = "";
+        private int rowposition_ = -1;
+        private int colposition_ = -1;
+        private bool is_selected_ = false;
+        private string stylename_title_ = stylename_title_lst_[0];
+        private string stylename_calendar_ = stylename_calendar_lst_[0];
+        private string stylename_preview_ = stylename_preview_lst_[0];
+
+
+        static private readonly List<string> stylename_title_lst_ = new List<string>
+        { "bor_EntryTitleBlock", "bor_EntryTitleBlock_Selected" };
+
+        static private readonly List<string> stylename_calendar_lst_ = new List<string>
+        { "bor_EntryCalendarBlock", "bor_EntryCalendarBlock_Selected" };
+
+        static private readonly List<string> stylename_preview_lst_ = new List<string>
+        { "bor_AddNewEntryPreviewTitleBlock", "bor_AddNewEntryPreviewTitleBlock_Selected" };
+
+
+
+
+
+
+        public string Entry_ProjectName
+        {
+            get { return entry_projectname_; }
+            set
+            {
+                if (value != entry_projectname_)
+                {
+                    entry_projectname_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string EntryID
+        {
+            get { return entryID_; }
+            set
+            {
+                if (value != entryID_)
+                {
+                    entryID_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public string Title
         {
             get { return title_; }
@@ -32,7 +86,144 @@ namespace SemesterPlanner
                 if (value != title_)
                 {
                     title_ = value;
-                    // Call OnPropertyChanged whenever the property is updated
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string Subtitle
+        {
+            get { return subtitle_; }
+            set
+            {
+                if (value != subtitle_)
+                {
+                    subtitle_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string ColourHex
+        {
+            get { return colourhex_; }
+            set
+            {
+                if (value != colourhex_)
+                {
+                    colourhex_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string SetColID
+        {
+            get { return setcolid_; }
+            set
+            {
+                if (value != setcolid_)
+                {
+                    setcolid_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public int RowPosition
+        {
+            get { return rowposition_; }
+            set
+            {
+                if (value != rowposition_)
+                {
+                    rowposition_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public int ColPosition
+        {
+            get { return colposition_; }
+            set
+            {
+                if (value != colposition_)
+                {
+                    colposition_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public bool Is_Selected
+        {
+            get { return is_selected_; }
+            set
+            {
+                if (value != is_selected_)
+                {
+                    is_selected_ = value;
+                    DetermineStyles();
+                    //OnPropertyChanged();
+                }
+            }
+        }
+        public string StyleName_Title
+        {
+            get { return stylename_title_; }
+            private set
+            {
+                if (value != stylename_title_)
+                {
+                    stylename_title_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string StyleName_Calendar
+        {
+            get { return stylename_calendar_; }
+            private set
+            {
+                if (value != stylename_calendar_)
+                {
+                    stylename_calendar_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string StyleName_Preview
+        {
+            get { return stylename_preview_; }
+            private set
+            {
+                if (value != stylename_preview_)
+                {
+                    stylename_preview_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private void DetermineStyles()
+        {
+            int name_index = 0;
+
+            if (is_selected_)
+            {
+                name_index = 1;
+            }
+
+            StyleName_Title = stylename_title_lst_[name_index];
+            StyleName_Calendar = stylename_calendar_lst_[name_index];
+            StyleName_Preview = stylename_preview_lst_[name_index];
+        }
+
+
+        //this one isn't saved, it's calculated at runtime
+        public string ActualColID
+        {
+            get { return actualcolid_; }
+            set
+            {
+                if (value != actualcolid_)
+                {
+                    actualcolid_ = value;
                     OnPropertyChanged();
                 }
             }
@@ -40,31 +231,21 @@ namespace SemesterPlanner
 
 
 
-        public string Entry_ProjectName { get; set; }
-        public string EntryID { get; set; }
-        //public string Title { get; set; }
-        public string Subtitle { get; set; }
-        public string ColourHex { get; set; }
         public List<string> PrereqEntryIDs { get; set; }
         public List<string> CoreqEntryIDs { get; set; }
         public List<string> AvailColIDs { get; set; }
-        public string SetColID { get; set; }
-        public int ListPosition { get; set; }
 
-        public List<string> Parameter_Names = new List<string> { "Entry_ProjectName", "EntryID", "Title", "Subtitle", 
-            "ColourHex", "PrereqEntryIDs", "CoreqEntryIDs", "AvailColIDs", "SetColID", "ListPosition" };
-        public List<string> Parameter_Save_Names = new List<string> { "", "entry-id", "title", "subtitle",
-            "colour", "prerequisites", "corequisites", "avail-col-ids", "set-col-id", "list-pos" };
-
-
-        //this one isn't saved, it's calculated at runtime
-        public string ActualColID { get; set; }
 
         public Border TitleBlock { get; set; }
         public Border CalendarBlock { get; set; }
 
 
 
+
+        private readonly List<string> Parameter_Names = new List<string> { "Entry_ProjectName", "EntryID", "Title", "Subtitle",
+            "ColourHex", "PrereqEntryIDs", "CoreqEntryIDs", "AvailColIDs", "SetColID", "RowPosition" };
+        private readonly List<string> Parameter_Save_Names = new List<string> { "", "entry-id", "title", "subtitle",
+            "colour", "prerequisites", "corequisites", "avail-col-ids", "set-col-id", "list-pos" };
 
 
 
@@ -86,7 +267,7 @@ namespace SemesterPlanner
             CoreqEntryIDs = new List<string>();
             SetColID = "";
             AvailColIDs = new List<string>();
-            ListPosition = -1;
+            RowPosition = -1;
             ActualColID = "";
 
 
@@ -171,7 +352,7 @@ namespace SemesterPlanner
                         break;
 
                     case "list-pos":
-                        ListPosition = Convert.ToInt32(property_value);
+                        RowPosition = Convert.ToInt32(property_value);
                         inputted_data_types.Add(property_name);
                         break;
 
@@ -284,8 +465,8 @@ namespace SemesterPlanner
                         basic_formatting = true;
                         break;
 
-                    case "ListPosition":
-                        cur_param_val = ListPosition.ToString();
+                    case "RowPosition":
+                        cur_param_val = RowPosition.ToString();
                         basic_formatting = true;
                         break;
 
@@ -337,7 +518,7 @@ namespace SemesterPlanner
             {
                 //should be like this
                 // Parameter_Names = { "Entry_ProjectName", "EntryID", "Title", "Subtitle", 
-                //    "ColourHex", "PrereqEntryIDs", "CoreqEntryIDs", "AvailColIDs", "SetColID", "ListPosition" };
+                //    "ColourHex", "PrereqEntryIDs", "CoreqEntryIDs", "AvailColIDs", "SetColID", "RowPosition" };
                 // Parameter_Save_Names = { "", "entry-id", "title", "subtitle",
                 //    "colour", "prerequisites", "corequisites", "avail-col-ids", "set-col-id", "list-pos" };
 
@@ -384,8 +565,8 @@ namespace SemesterPlanner
                         data_val = SetColID.ToString();
                         break;
 
-                    case "ListPosition":
-                        data_val = ListPosition.ToString();
+                    case "RowPosition":
+                        data_val = RowPosition.ToString();
                         break;
                 }
 
@@ -432,10 +613,12 @@ namespace SemesterPlanner
             CoreqEntryIDs = new List<string>();
             AvailColIDs = new List<string>();
             SetColID = "";
-            ListPosition = -1;
+            RowPosition = -1;
             ActualColID = "";
 
         }
+
+
 
     }
 }

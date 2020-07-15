@@ -53,10 +53,10 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_hori}">
+                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_Hori}">
                                     <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_hori}"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_hori}" Text="Subtitle"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -67,10 +67,10 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_hori}">
+                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_Hori}">
                                     <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_hori}"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_hori}" Text="Subtitle"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -81,10 +81,10 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_hori}">
+                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_Hori}">
                                     <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_hori}"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_hori}" Text="Subtitle"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -95,10 +95,10 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_hori}">
+                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_Hori}">
                                     <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_hori}"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_hori}" Text="Subtitle"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -109,10 +109,10 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_hori}">
+                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_Hori}">
                                     <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_hori}"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_hori}" Text="Subtitle"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -123,10 +123,10 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_hori}">
+                                <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_Hori}">
                                     <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_hori}"/>
-                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_hori}" Text="Subtitle"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                    <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -150,7 +150,7 @@
 
         </Flyout>
         
-        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <local:Converter_BoolToVisibility x:Key="BoolToVisibilityConverter" />
 
 
         <DataTemplate x:Key="control_template_test" x:DataType="local:EntryData">
@@ -167,6 +167,7 @@
                 <TextBlock Text="{x:Bind LocalRoaming}"/>
             </StackPanel>
         </DataTemplate>
+
         
         
 
@@ -288,10 +289,10 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_hori}">
+                            <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_Hori}">
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
-                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_hori}"/>
-                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_hori}" Text="Subtitle"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
 
                             <!--<Grid Style="{StaticResource grid_EntryTitleBlockTapGrid}"/>-->
@@ -309,13 +310,13 @@
 
 
             <ScrollViewer x:Name="scroll_column_headers" Grid.Column="1" Grid.Row="0" Style="{StaticResource scroll_BasicScrollViewer_NoHoriBar}" ViewChanged="SynchronizedScrollerOnViewChanged">
-                <Grid x:Name="grid_column_headers" Margin="8,0,8,0" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                <Grid x:Name="grid_column_headers" Margin="8,0,8,0" VerticalAlignment="Stretch" HorizontalAlignment="Left">
                     <!--column headers-->
                 </Grid>
             </ScrollViewer>
 
             <ScrollViewer x:Name="scroll_calendar" Grid.Column="1" Grid.Row="1" Style="{StaticResource scroll_BasicScrollViewer}" ViewChanged="SynchronizedScrollerOnViewChanged">
-                <Grid x:Name="grid_calendar" Margin="8,4,8,12" VerticalAlignment="Top" HorizontalAlignment="Left" Background="#FFFFABAB">
+                <Grid x:Name="grid_calendar" Margin="8,4,8,12" VerticalAlignment="Top" HorizontalAlignment="Left" Background="#FFFFDADA">
                     <!--calendar entries-->
                 </Grid>
             </ScrollViewer>
@@ -450,7 +451,7 @@
 
                     <StackPanel x:Name="stack_add_new_entry_preview" Spacing="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.ColumnSpan="5" Grid.Row="3">
                         <TextBlock Text="Preview:" HorizontalAlignment="Center" Visibility="Collapsed"/>
-                        <Border x:Name="bor_add_new_entry_preview_empty" Style="{StaticResource bor_AddNewEntryPreviewTitleBlock_default}"/>
+                        <Border x:Name="bor_add_new_entry_preview_empty" Style="{StaticResource bor_AddNewEntryPreviewTitleBlock_Default}"/>
                     </StackPanel>
 
 

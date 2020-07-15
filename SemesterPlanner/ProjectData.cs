@@ -257,7 +257,7 @@ namespace SemesterPlanner
             List<int> list_position_lst = new List<int>();
             foreach (EntryData cur_entryData in EntryData_lst_param)
             {
-                list_position_lst.Add(Convert.ToInt32(cur_entryData.ListPosition));
+                list_position_lst.Add(Convert.ToInt32(cur_entryData.RowPosition));
             }
 
 
@@ -499,7 +499,7 @@ namespace SemesterPlanner
 
                 if (cur_entryID == given_entryID)
                 {
-                    return cur_entryData.ListPosition;
+                    return cur_entryData.RowPosition;
                 }
             }
 
@@ -563,9 +563,9 @@ namespace SemesterPlanner
             return_EntryData = EntryData_lst_param[entryDataListPos_lst_param.IndexOf(given_list_pos)];
 
             //juuuuust in case this didn't work...
-            if (return_EntryData.ListPosition != given_list_pos)
+            if (return_EntryData.RowPosition != given_list_pos)
             {
-                Debug.WriteLine("ERROR: The list_pos given, '" + given_list_pos + "', does not match the list_pos found in the indexed EntryData, '" + return_EntryData.ListPosition + "'");
+                Debug.WriteLine("ERROR: The list_pos given, '" + given_list_pos + "', does not match the list_pos found in the indexed EntryData, '" + return_EntryData.RowPosition + "'");
                 return null;
             }
 
@@ -785,9 +785,9 @@ namespace SemesterPlanner
             //we now need to go back through the remaining EntryData's to update their list positions
             foreach (EntryData cur_entryData in EntryData_lst_param)
             {
-                if (cur_entryData.ListPosition >= deleting_list_pos)
+                if (cur_entryData.RowPosition >= deleting_list_pos)
                 {
-                    cur_entryData.ListPosition -= 1;
+                    cur_entryData.RowPosition -= 1;
                 }
             }
 

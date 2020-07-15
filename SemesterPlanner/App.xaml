@@ -19,7 +19,6 @@
 
 
 
-
             <SolidColorBrush x:Key="SeparationBlue" Color="#FF0086B4"/>
 
             <SolidColorBrush x:Key="colour_DefaultEntryTitleBlockBackground" Color="#FFC3C3C3"/>
@@ -65,11 +64,11 @@
             <Style x:Key="bor_AddNewEntryPreviewTitleBlock" TargetType="Border" BasedOn="{StaticResource bor_EntryTitleBlock}">
                 <Setter Property="Width" Value="240"/>
             </Style>
-            <Style x:Key="bor_AddNewEntryPreviewTitleBlock_selected" TargetType="Border" BasedOn="{StaticResource bor_AddNewEntryPreviewTitleBlock}">
+            <Style x:Key="bor_AddNewEntryPreviewTitleBlock_Selected" TargetType="Border" BasedOn="{StaticResource bor_AddNewEntryPreviewTitleBlock}">
                 <Setter Property="BorderThickness" Value="2"/>
                 <Setter Property="Padding" Value="0"/>
             </Style>
-            <Style x:Key="bor_AddNewEntryPreviewTitleBlock_default" TargetType="Border" BasedOn="{StaticResource bor_AddNewEntryPreviewTitleBlock}">
+            <Style x:Key="bor_AddNewEntryPreviewTitleBlock_Default" TargetType="Border" BasedOn="{StaticResource bor_AddNewEntryPreviewTitleBlock}">
                 <Setter Property="Height" Value="28"/>
             </Style>
 
@@ -97,32 +96,32 @@
                 <Setter Property="Opacity" Value="0.1"/>
             </Style>
 
-            <Style x:Key="stack_EntryTitleBlockTitleStack_vert" TargetType="StackPanel">
+            <Style x:Key="stack_EntryTitleBlockTitleStack_Vert" TargetType="StackPanel">
                 <Setter Property="HorizontalAlignment" Value="Left"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
                 <Setter Property="Orientation" Value="Vertical"/>
                 <Setter Property="Margin" Value="4, 4, 8, 4"/>
             </Style>
-            <Style x:Key="stack_EntryTitleBlockTitleStack_hori" TargetType="StackPanel" BasedOn="{StaticResource stack_EntryTitleBlockTitleStack_vert}">
+            <Style x:Key="stack_EntryTitleBlockTitleStack_Hori" TargetType="StackPanel" BasedOn="{StaticResource stack_EntryTitleBlockTitleStack_Vert}">
                 <Setter Property="Orientation" Value="Horizontal"/>
             </Style>
 
             <Style x:Key="txtblc_EntryTitleBlockTitle" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
             </Style>
 
-            <Style x:Key="txtblc_EntryTitleBlockSubtitle_vert" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
+            <Style x:Key="txtblc_EntryTitleBlockSubtitle_Vert" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
                 <Setter Property="Margin" Value="8, 0, 0, 0"/>
             </Style>
-            <Style x:Key="txtblc_EntryTitleBlockSubtitle_hori" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
+            <Style x:Key="txtblc_EntryTitleBlockSubtitle_Hori" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
                 <Setter Property="Margin" Value="0"/>
             </Style>
 
-            <Style x:Key="txtblc_EntryTitleBlockSeparator_vert" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
+            <Style x:Key="txtblc_EntryTitleBlockSeparator_Vert" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_small}">
                 <Setter Property="Text" Value="-"/>
                 <Setter Property="Margin" Value="4,0,4,0"/>
                 <Setter Property="Visibility" Value="Collapsed"/>
             </Style> 
-            <Style x:Key="txtblc_EntryTitleBlockSeparator_hori" TargetType="TextBlock" BasedOn="{StaticResource txtblc_EntryTitleBlockSeparator_vert}">
+            <Style x:Key="txtblc_EntryTitleBlockSeparator_Hori" TargetType="TextBlock" BasedOn="{StaticResource txtblc_EntryTitleBlockSeparator_Vert}">
                 <Setter Property="Visibility" Value="Visible"/>
             </Style>
 

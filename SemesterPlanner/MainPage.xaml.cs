@@ -67,11 +67,11 @@ namespace SemesterPlanner
         bool glo_properties_apply_need_verification = false;
 
         //this is the default titleblock colour
-        string glo_default_titleblock_colour_hex = "#FFC3C3C3";
+        static public string glo_default_titleblock_colour_hex = "#FFC3C3C3";
 
         //this is the tag start for entryID
-        string glo_tag_entryID = "entryID|";
-        string glo_tag_colID = "colID|";
+        static public string glo_tag_entryID_prefix = "entryID|";
+        static public string glo_tag_colID_prefix = "colID|";
 
 
         //these are for handling synchronous scrolling
@@ -959,31 +959,65 @@ namespace SemesterPlanner
         }
         private Border CreateColumnHeader(ColumnData cur_columndata)
         {
-            Border cur_border = new Border();
-            TextBlock cur_txtblc = new TextBlock();
-            cur_border.Child = cur_txtblc;
+            Border outer_border = new Border();
 
-            cur_border.Height = 32;
-            Grid.SetColumn(cur_border, Convert.ToInt32(cur_columndata.ColPosition));
-
-            cur_txtblc.HorizontalAlignment = HorizontalAlignment.Center;
-            cur_txtblc.VerticalAlignment = VerticalAlignment.Center;
-            cur_txtblc.Text = cur_columndata.ColTitle;
-
-            cur_border.Tag = glo_tag_colID + cur_columndata.ColID;
-
-
-            return cur_border;
+            TextBlock txtblc_title = new TextBlock();
 
 
 
-            /*
 
-            <Border Height="32" Grid.Column="4" Background="#FFFF7474">
-                <TextBlock Text="Blah blah blah" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
+            // Set the DataContext of the border
+            outer_border.DataContext = cur_columndata;
 
-            */
+
+
+
+            // Create the colID tag binding
+            Binding binding_ID_tag = new Binding()
+            {
+                Path = new PropertyPath("ColID"),
+                Mode = BindingMode.OneWay,
+                Converter = new Converter_ColIDToBorderTag()
+            };
+            outer_border.SetBinding(TagProperty, binding_ID_tag);
+
+
+            // Create the title binding
+            Binding binding_title = new Binding()
+            {
+                Path = new PropertyPath("ColTitle"),
+                Mode = BindingMode.OneWay
+            };
+            txtblc_title.SetBinding(TextBlock.TextProperty, binding_title);
+
+
+            // Create the column binding
+            Binding binding_column = new Binding()
+            {
+                Path = new PropertyPath("ColPosition"),
+                Mode = BindingMode.OneWay
+            };
+            outer_border.SetBinding(Grid.ColumnProperty, binding_column);
+
+
+
+
+
+
+
+
+            outer_border.Child = txtblc_title;
+
+            outer_border.Height = 32;
+
+            txtblc_title.HorizontalAlignment = HorizontalAlignment.Center;
+            txtblc_title.VerticalAlignment = VerticalAlignment.Center;
+
+
+            return outer_border;
+
+
+
         }
 
 
@@ -1031,7 +1065,7 @@ namespace SemesterPlanner
                     List<string> tag_info = ExtractTagInfo(cur_border.Tag.ToString());
 
                     //if the tag starts with  entryID|  and then checks if the  entryID is in the removing list
-                    if (tag_info[0] == glo_tag_entryID.Trim('|') && entryIDs_in_titleblocks_not_in_datalists.Contains(tag_info[1]))
+                    if (tag_info[0] == glo_tag_entryID_prefix.Trim('|') && entryIDs_in_titleblocks_not_in_datalists.Contains(tag_info[1]))
                     {
                         grid_entry_title_blocks.Children.Remove(cur_border);
                     }
@@ -1052,7 +1086,7 @@ namespace SemesterPlanner
                 {
                     List<string> tag_info = ExtractTagInfo(cur_border.Tag.ToString());
 
-                    if (tag_info[0] == glo_tag_entryID.Trim('|') && entryIDs_in_calendarblocks_not_in_datalists.Contains(tag_info[1]))
+                    if (tag_info[0] == glo_tag_entryID_prefix.Trim('|') && entryIDs_in_calendarblocks_not_in_datalists.Contains(tag_info[1]))
                     {
                         grid_calendar.Children.Remove(cur_border);
                     }
@@ -1066,73 +1100,107 @@ namespace SemesterPlanner
 
             creating_entryData.TitleBlock = new_titleblock;
         }
-        private Border CreateEntryTitleBlock(EntryData cur_entrydata, bool for_preview)
+        private Border CreateEntryTitleBlock(EntryData cur_entryData, bool for_preview)
         {
+
             Border outer_border = new Border();
+
+            StackPanel name_stack = new StackPanel();
+            name_stack.Style = Application.Current.Resources["stack_EntryTitleBlockTitleStack_Hori"] as Style;
+
+            TextBlock txtblc_title = new TextBlock();
+            txtblc_title.Style = Application.Current.Resources["txtblc_EntryTitleBlockTitle"] as Style;
+
+            TextBlock txtblc_separator = new TextBlock();
+            txtblc_separator.Style = Application.Current.Resources["txtblc_EntryTitleBlockSeparator_Hori"] as Style;
+
+            TextBlock txtblc_subtitle = new TextBlock();
+            txtblc_subtitle.Style = Application.Current.Resources["txtblc_EntryTitleBlockSubtitle_Hori"] as Style;
+
+
+
+
+            // Set the DataContext of the border
+            outer_border.DataContext = cur_entryData;
+
+
+
+
+            // Create the entryID tag binding
+            Binding binding_ID_tag = new Binding() 
+            { 
+                Path = new PropertyPath("EntryID"), 
+                Mode = BindingMode.OneWay,
+                Converter = new Converter_EntryIDToBorderTag()
+            };
+            outer_border.SetBinding(TagProperty, binding_ID_tag);
+
+
+            // Create the style binding
+            string style_property_;
+            if (!for_preview) { style_property_ = "StyleName_Title"; }
+            else { style_property_ = "StyleName_Preview"; }
+
+            Binding binding_style = new Binding()
+            {
+                Path = new PropertyPath(style_property_),
+                Mode = BindingMode.OneWay,
+                Converter = new Converter_StyleNameToStyle()
+            };
+            outer_border.SetBinding(StyleProperty, binding_style);
+
+
+            // Create the colour binding
+            Binding binding_colour = new Binding()
+            {
+                Path = new PropertyPath("ColourHex"),
+                Mode = BindingMode.OneWay,
+                Converter = new Converter_ColourHexToSolidColorBrush()
+            };
+            outer_border.SetBinding(BackgroundProperty, binding_colour);
+
+
+            // Create the title binding
+            Binding binding_title = new Binding() 
+            {
+                Path = new PropertyPath("Title"), 
+                Mode = BindingMode.OneWay 
+            };
+            txtblc_title.SetBinding(TextBlock.TextProperty, binding_title);
+
+
+            // Create the subtitle binding
+            Binding binding_subtitle = new Binding()
+            {
+                Path = new PropertyPath("Subtitle"),
+                Mode = BindingMode.OneWay
+            };
+            txtblc_subtitle.SetBinding(TextBlock.TextProperty, binding_subtitle);
+
+
+            // Create the row binding
+            Binding binding_row = new Binding()
+            {
+                Path = new PropertyPath("RowPosition"),
+                Mode = BindingMode.OneWay
+            };
+            outer_border.SetBinding(Grid.RowProperty, binding_row);
+
+
+
+
             if (!for_preview)
             {
-                outer_border.Name = "bor_titleblock_dataID_" + cur_entrydata.EntryID;
-                outer_border.Tag = glo_tag_entryID + cur_entrydata.EntryID;
-                outer_border.Style = Application.Current.Resources["bor_EntryTitleBlock"] as Style;
-
                 outer_border.RightTapped += TitleCalendarBlockRightTapped;
                 outer_border.DoubleTapped += TitleCalendarBlockDoubleTapped;
 
                 outer_border.ContextFlyout = CreateTitleCalendarBlockFlyout();
             }
-            else
-            {
-                outer_border.Tag = "preview";
-                outer_border.Style = Application.Current.Resources["bor_AddNewEntryPreviewTitleBlock"] as Style;
-            }
-            outer_border.Background = GetSolidColorBrushFromHex(cur_entrydata.ColourHex);
             outer_border.Tapped += TitleCalendarBlockTapped;
 
 
-
-
-            Grid inner_grid = new Grid();
-            inner_grid.Style = Application.Current.Resources["grid_EntryTitleBlockInnerGrid"] as Style;
-
-            ColumnDefinition new_col_def1 = new ColumnDefinition();
-            new_col_def1.Width = new GridLength(1, GridUnitType.Star);
-            ColumnDefinition new_col_def2 = new ColumnDefinition();
-            new_col_def2.Width = new GridLength(1, GridUnitType.Auto);
-
-            inner_grid.ColumnDefinitions.Add(new_col_def1);
-            inner_grid.ColumnDefinitions.Add(new_col_def2);
-
-
-            //Grid tap_grid = new Grid();
-            //tap_grid.Style = Application.Current.Resources["grid_EntryTitleBlockTapGrid"] as Style;
-
-
-            StackPanel name_stack = new StackPanel();
-            name_stack.Style = Application.Current.Resources["stack_EntryTitleBlockTitleStack_hori"] as Style;
-
-
-            TextBlock txtblc_title = new TextBlock();
-            txtblc_title.Style = Application.Current.Resources["txtblc_EntryTitleBlockTitle"] as Style;
-            txtblc_title.Text = cur_entrydata.Title;
-
-            TextBlock txtblc_separator = new TextBlock();
-            txtblc_separator.Style = Application.Current.Resources["txtblc_EntryTitleBlockSeparator_hori"] as Style;
-
-            TextBlock txtblc_subtitle = new TextBlock();
-            txtblc_subtitle.Style = Application.Current.Resources["txtblc_EntryTitleBlockSubtitle_hori"] as Style;
-            txtblc_subtitle.Text = cur_entrydata.Subtitle;
-
-
-            //this is a properties button in the titleblock
-
-            //Button info_btn = new Button();
-            //info_btn.Style = Application.Current.Resources["btn_EntryTitleBlockInfoButton"] as Style;
-            //Grid.SetColumn(info_btn, 1);
-            //info_btn.Tapped += PropertiesButtonTapped;
-
-
-            bool is_title = (txtblc_title.Text.Length > 0);
-            bool is_subtitle = (txtblc_subtitle.Text.Length > 0);
+            bool is_title = (cur_entryData.Title.Length > 0);
+            bool is_subtitle = (cur_entryData.Subtitle.Length > 0);
 
             if (!is_title | !is_subtitle)
             {
@@ -1143,44 +1211,10 @@ namespace SemesterPlanner
             name_stack.Children.Add(txtblc_separator);
             name_stack.Children.Add(txtblc_subtitle);
 
-            inner_grid.Children.Add(name_stack);
-            //inner_grid.Children.Add(tap_grid);
-            //inner_grid.Children.Add(info_btn);
-
-            outer_border.Child = inner_grid;
-
-            if (!for_preview)
-            {
-                Grid.SetRow(outer_border, Convert.ToInt32(cur_entrydata.ListPosition));
-            }
-
-
-
-
+            outer_border.Child = name_stack;
 
             return outer_border;
 
-
-
-            /*
-
-                <Border Grid.Row="1" Style="{StaticResource bor_EntryTitleBlock}">
-                    <Grid Style="{StaticResource grid_EntryTitleBlockInnerGrid}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_hori}">
-                            <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
-                            <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_hori}"/>
-                            <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_hori}" Text="Subtitle"/>
-                        </StackPanel>
-                        <Button Grid.Column="1" Style="{StaticResource btn_EntryTitleBlockInfoButton}"/>
-                    </Grid>
-                </Border>
-
-            */
         }
         private MenuFlyout CreateTitleCalendarBlockFlyout()
         {
@@ -1251,7 +1285,7 @@ namespace SemesterPlanner
 
             //glo_ProjectData.PrintProjectDataValues(true, false, true);
 
-            int entry_row = creating_entryData.ListPosition;
+            int entry_row = creating_entryData.RowPosition;
             int entry_col = cur_columnData.ColPosition;
 
 
@@ -1262,9 +1296,77 @@ namespace SemesterPlanner
         private Border CreateCalendarBlock(EntryData cur_entryData, int entry_row, int entry_col)
         {
             Border outer_border = new Border();
-            outer_border.Tag = glo_tag_entryID + cur_entryData.EntryID;
-            outer_border.Background = GetSolidColorBrushFromHex(cur_entryData.ColourHex);
-            outer_border.Style = Application.Current.Resources["bor_EntryCalendarBlock"] as Style;
+
+            TextBlock txtblc_title = new TextBlock();
+            txtblc_title.Style = Application.Current.Resources["txtblc_CalendarBlockTitle"] as Style;
+
+
+
+
+            // Set the DataContext of the border
+            outer_border.DataContext = cur_entryData;
+
+
+
+
+            // Create the entryID tag binding
+            Binding binding_ID_tag = new Binding()
+            {
+                Path = new PropertyPath("EntryID"),
+                Mode = BindingMode.OneWay,
+                Converter = new Converter_EntryIDToBorderTag()
+            };
+            outer_border.SetBinding(TagProperty, binding_ID_tag);
+
+
+            // Create the style binding
+            Binding binding_style = new Binding()
+            {
+                Path = new PropertyPath("StyleName_Calendar"),
+                Mode = BindingMode.OneWay,
+                Converter = new Converter_StyleNameToStyle()
+            };
+            outer_border.SetBinding(StyleProperty, binding_style);
+
+
+            // Create the colour binding
+            Binding binding_colour = new Binding()
+            {
+                Path = new PropertyPath("ColourHex"),
+                Mode = BindingMode.OneWay,
+                Converter = new Converter_ColourHexToSolidColorBrush()
+            };
+            outer_border.SetBinding(BackgroundProperty, binding_colour);
+
+
+            // Create the title binding
+            Binding binding_title = new Binding()
+            {
+                Path = new PropertyPath("Title"),
+                Mode = BindingMode.OneWay
+            };
+            txtblc_title.SetBinding(TextBlock.TextProperty, binding_title);
+
+
+            // Create the row binding
+            Binding binding_row = new Binding()
+            {
+                Path = new PropertyPath("RowPosition"),
+                Mode = BindingMode.OneWay
+            };
+            outer_border.SetBinding(Grid.RowProperty, binding_row);
+
+
+            //// Create the column binding
+            //Binding binding_column = new Binding()
+            //{
+            //    Path = new PropertyPath("ColPosition"),
+            //    Mode = BindingMode.OneWay
+            //};
+            //outer_border.SetBinding(Grid.ColumnProperty, binding_column);
+
+
+
 
             outer_border.RightTapped += TitleCalendarBlockRightTapped;
             outer_border.Tapped += TitleCalendarBlockTapped;
@@ -1273,44 +1375,13 @@ namespace SemesterPlanner
             outer_border.ContextFlyout = CreateTitleCalendarBlockFlyout();
 
 
-
-
-            TextBlock txtblc_title = new TextBlock();
-            txtblc_title.Style = Application.Current.Resources["txtblc_CalendarBlockTitle"] as Style;
-            txtblc_title.Text = cur_entryData.Title;
-
-
-
-            //never got the binding to update
-
-
-            //txtblc_title.DataContext = cur_entryData;
-
-            ////found here https://stackoverflow.com/questions/44814443/changing-binding-mode-in-code
-            //Binding bind_title = new Binding();
-            //bind_title.Source = cur_entryData;
-            //bind_title.Mode = BindingMode.TwoWay;
-            //bind_title.Path = new PropertyPath("Title");
-            //bind_title.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-
-            //txtblc_title.SetBinding(TextBlock.TextProperty, bind_title);
-
-
-
-
-
             outer_border.Child = txtblc_title;
 
             Grid.SetRow(outer_border, entry_row);
             Grid.SetColumn(outer_border, entry_col);
 
 
-
-
-
             return outer_border;
-
-
         }
 
 
@@ -1366,11 +1437,11 @@ namespace SemesterPlanner
             string cur_global_tag;
             if (entryID_or_colID == "entryID")
             {
-                cur_global_tag = glo_tag_entryID.Trim('|');
+                cur_global_tag = glo_tag_entryID_prefix.Trim('|');
             }
             else if (entryID_or_colID == "colID")
             {
-                cur_global_tag = glo_tag_colID.Trim('|');
+                cur_global_tag = glo_tag_colID_prefix.Trim('|');
             }
             else
             {
@@ -1468,7 +1539,7 @@ namespace SemesterPlanner
                 }
                 if (reset_list_pos)
                 {
-                    Grid.SetRow(cur_titleblock, Convert.ToInt32(cur_title_EntryData.ListPosition));
+                    Grid.SetRow(cur_titleblock, Convert.ToInt32(cur_title_EntryData.RowPosition));
                 }
                 if (reset_colours)
                 {
@@ -1529,7 +1600,7 @@ namespace SemesterPlanner
                 }
                 if (reset_list_pos)
                 {
-                    Grid.SetRow(cur_calendarblock, cur_calendar_EntryData.ListPosition);
+                    Grid.SetRow(cur_calendarblock, cur_calendar_EntryData.RowPosition);
                 }
                 if (reset_colours)
                 {
@@ -1637,7 +1708,7 @@ namespace SemesterPlanner
                 string data_subtitle = fixing_entryData.Subtitle;
                 string data_colour_hex = fixing_entryData.ColourHex;
 
-                int data_entry_row = fixing_entryData.ListPosition;
+                int data_entry_row = fixing_entryData.RowPosition;
                 int data_entry_col;
 
 
@@ -1645,7 +1716,7 @@ namespace SemesterPlanner
                 //now to apply the data
 
                 //the entryID
-                fixing_border.Tag = glo_tag_entryID + fixing_entryID;
+                fixing_border.Tag = glo_tag_entryID_prefix + fixing_entryID;
 
                 //the colour
                 if (data_colour_hex != null && data_colour_hex.Length == 9)
@@ -1677,7 +1748,7 @@ namespace SemesterPlanner
 
                     //the column
                     if (data_entry_col != -1)
-                        Grid.SetRow(fixing_border, fixing_entryData.ListPosition);
+                        Grid.SetRow(fixing_border, fixing_entryData.RowPosition);
                 }
 
 
@@ -2120,7 +2191,7 @@ namespace SemesterPlanner
 
 
             //changes the enabled of the buttons
-            EnableTitleBlockButtons(true, glo_selected_EntryData.ListPosition);
+            EnableTitleBlockButtons(true, glo_selected_EntryData.RowPosition);
 
 
             //TODO this really needs some sort of verification to ensure that it's a valid selection
@@ -2451,7 +2522,7 @@ namespace SemesterPlanner
             }
 
             //this is the list position that the titleblock is supposed to be in originally
-            int position_original_EntryData = Convert.ToInt32(entryData_to_move.ListPosition);
+            int position_original_EntryData = Convert.ToInt32(entryData_to_move.RowPosition);
 
 
             //this is the list position that we are wanting to move to
@@ -2476,8 +2547,8 @@ namespace SemesterPlanner
             Debug.WriteLine(entryData_to_be_moved.Title + "(" + entryID_to_be_moved + "): " + position_new_EntryData + " to " + position_original_EntryData);
 
 
-            entryData_to_move.ListPosition = position_new_EntryData;
-            entryData_to_be_moved.ListPosition = position_original_EntryData;
+            entryData_to_move.RowPosition = position_new_EntryData;
+            entryData_to_be_moved.RowPosition = position_original_EntryData;
 
             //updates the list position list
             glo_ProjectData.CreateEntryDataListPositionList();
@@ -2492,7 +2563,7 @@ namespace SemesterPlanner
 
 
             //this will enable/disable the move up and down buttons if needed
-            EnableTitleBlockButtons(true, Convert.ToInt32(entryData_to_move.ListPosition));
+            EnableTitleBlockButtons(true, Convert.ToInt32(entryData_to_move.RowPosition));
 
 
             return;
@@ -2513,7 +2584,7 @@ namespace SemesterPlanner
                 //finding the to_move and to_be_moved borders
 
                 //the selected one to move
-                if (cur_bor_titleblock.Tag.ToString() == glo_tag_entryID + entryID_to_move.ToString())
+                if (cur_bor_titleblock.Tag.ToString() == glo_tag_entryID_prefix + entryID_to_move.ToString())
                 {
                     //so checking if it's in the correct spot originally, just to find out if the order is corrupt
                     if (Grid.GetRow(cur_bor_titleblock) != position_original_EntryData)
@@ -2523,12 +2594,12 @@ namespace SemesterPlanner
                     }
 
                     //setting the new row position
-                    Grid.SetRow(cur_bor_titleblock, Convert.ToInt32(entryData_to_move.ListPosition));
+                    Grid.SetRow(cur_bor_titleblock, Convert.ToInt32(entryData_to_move.RowPosition));
 
                 }
 
                 //the selected one to be swapped with
-                if (cur_bor_titleblock.Tag.ToString() == glo_tag_entryID + entryID_to_be_moved.ToString())
+                if (cur_bor_titleblock.Tag.ToString() == glo_tag_entryID_prefix + entryID_to_be_moved.ToString())
                 {
                     //so checking if it's in the correct spot originally, just to find out if the order is corrupt
                     if (Grid.GetRow(cur_bor_titleblock) != position_new_EntryData)
@@ -2538,7 +2609,7 @@ namespace SemesterPlanner
                     }
 
                     //setting the new row position
-                    Grid.SetRow(cur_bor_titleblock, Convert.ToInt32(entryData_to_be_moved.ListPosition));
+                    Grid.SetRow(cur_bor_titleblock, Convert.ToInt32(entryData_to_be_moved.RowPosition));
 
                 }
 
@@ -2552,7 +2623,7 @@ namespace SemesterPlanner
                 //finding the to_move and to_be_moved borders
 
                 //the selected one to move
-                if (cur_bor_calendarblock.Tag.ToString() == glo_tag_entryID + entryID_to_move.ToString())
+                if (cur_bor_calendarblock.Tag.ToString() == glo_tag_entryID_prefix + entryID_to_move.ToString())
                 {
                     //so checking if it's in the correct spot originally, just to find out if the order is corrupt
                     if (Grid.GetRow(cur_bor_calendarblock) != position_original_EntryData)
@@ -2562,12 +2633,12 @@ namespace SemesterPlanner
                     }
 
                     //setting the new row position
-                    Grid.SetRow(cur_bor_calendarblock, Convert.ToInt32(entryData_to_move.ListPosition));
+                    Grid.SetRow(cur_bor_calendarblock, Convert.ToInt32(entryData_to_move.RowPosition));
 
                 }
 
                 //the selected one to be swapped with
-                if (cur_bor_calendarblock.Tag.ToString() == glo_tag_entryID + entryID_to_be_moved.ToString())
+                if (cur_bor_calendarblock.Tag.ToString() == glo_tag_entryID_prefix + entryID_to_be_moved.ToString())
                 {
                     //so checking if it's in the correct spot originally, just to find out if the order is corrupt
                     if (Grid.GetRow(cur_bor_calendarblock) != position_new_EntryData)
@@ -2577,7 +2648,7 @@ namespace SemesterPlanner
                     }
 
                     //setting the new row position
-                    Grid.SetRow(cur_bor_calendarblock, Convert.ToInt32(entryData_to_be_moved.ListPosition));
+                    Grid.SetRow(cur_bor_calendarblock, Convert.ToInt32(entryData_to_be_moved.RowPosition));
 
                 }
 
@@ -2620,7 +2691,7 @@ namespace SemesterPlanner
             }
 
             //these are the start and ending indices of the moving entryData
-            int move_from = entryData_to_move.ListPosition;
+            int move_from = entryData_to_move.RowPosition;
             int move_to = move_from + index_change;
 
             //the other entries will move by 1 in the opposite directions
@@ -2632,7 +2703,7 @@ namespace SemesterPlanner
             //will go through all the EntryData's
             foreach (EntryData cur_entryData in glo_ProjectData.EntryData_lst_param)
             {
-                int cur_check_index = cur_entryData.ListPosition;
+                int cur_check_index = cur_entryData.RowPosition;
                 string how_should_move = ShouldEntryBeMoved(cur_check_index, move_from, move_to);
 
                 int cur_move_to = -1;
@@ -2661,7 +2732,7 @@ namespace SemesterPlanner
                 {
                     Debug.WriteLine(cur_entryData.Title + " (" + cur_entryData.EntryID + "): " + cur_check_index + " to " + cur_move_to);
 
-                    cur_entryData.ListPosition = cur_move_to;
+                    cur_entryData.RowPosition = cur_move_to;
                 }
 
 
@@ -2687,7 +2758,7 @@ namespace SemesterPlanner
 
 
             //this will enable/disable the move up and down buttons if needed
-            EnableTitleBlockButtons(true, Convert.ToInt32(entryData_to_move.ListPosition));
+            EnableTitleBlockButtons(true, Convert.ToInt32(entryData_to_move.RowPosition));
 
 
             Debug.WriteLine("");
@@ -3003,7 +3074,7 @@ namespace SemesterPlanner
             //this is the new end of the list
             int new_list_pos = glo_ProjectData.entryDataListPos_lst_param.Max() + 1;
 
-            new_entryData.ListPosition = new_list_pos;
+            new_entryData.RowPosition = new_list_pos;
 
 
 
@@ -3565,6 +3636,8 @@ namespace SemesterPlanner
             glo_selected_EntryData.PrintEntryDataValues();
 
 
+            return;
+
             //will update whatever we need to
 
             if (need_to_update_titleblocks)
@@ -3782,7 +3855,7 @@ namespace SemesterPlanner
             return_EntryData.ColourHex = entryData_to_be_copied.ColourHex;
             return_EntryData.ActualColID = entryData_to_be_copied.ActualColID;
             return_EntryData.SetColID = entryData_to_be_copied.SetColID;
-            return_EntryData.ListPosition = entryData_to_be_copied.ListPosition;
+            return_EntryData.RowPosition = entryData_to_be_copied.RowPosition;
 
             return_EntryData.PrereqEntryIDs = CreateDeepCopyOfList_string(entryData_to_be_copied.PrereqEntryIDs);
             return_EntryData.CoreqEntryIDs = CreateDeepCopyOfList_string(entryData_to_be_copied.CoreqEntryIDs);
@@ -3803,7 +3876,7 @@ namespace SemesterPlanner
             public int? CoreqEntryID { get; set; }
             public int? EarliestColID { get; set; }
             public int? SetColID { get; set; }
-            public int? ListPosition { get; set; }
+            public int? RowPosition { get; set; }
 
             */
 
@@ -3811,7 +3884,7 @@ namespace SemesterPlanner
             return return_EntryData;
         }
 
-        public SolidColorBrush GetSolidColorBrushFromHex(string hex)
+        static public SolidColorBrush GetSolidColorBrushFromHex(string hex)
         {
             //from http://www.joeljoseph.net/converting-hex-to-color-in-universal-windows-platform-uwp/
 
@@ -3908,60 +3981,16 @@ namespace SemesterPlanner
             //rec_frame_background.Visibility = Visibility.Visible;
 
 
-            Border blah_border = new Border();
-            blah_border.Background = new SolidColorBrush(Colors.Cyan);
+            foreach (Border cur_border in grid_column_headers.Children)
+            {
+                Debug.WriteLine(cur_border.Tag.ToString());
+                Debug.WriteLine(cur_border.ActualHeight.ToString());
+                Debug.WriteLine(cur_border.ActualWidth.ToString());
+                Debug.WriteLine(Grid.GetColumn(cur_border));
 
-            StackPanel blah_stack = new StackPanel();
-
-            TextBlock blah_title = new TextBlock();
-
-            // Set the DataContext of the TextBox MyTextBox.
-            blah_title.DataContext = glo_entryDataTesting;
-
-            // Create the binding and associate it with the text box.
-            Binding binding_title = new Binding() { Path = new PropertyPath("Title"), Mode = BindingMode.OneWay };
-            blah_title.SetBinding(TextBlock.TextProperty, binding_title);
-
-
-            TextBlock blah_subtitle = new TextBlock();
-
-            // Set the DataContext of the TextBox MyTextBox.
-            blah_subtitle.DataContext = glo_entryDataTesting;
-
-            // Create the binding and associate it with the text box.
-            Binding binding_subtitle = new Binding() { Path = new PropertyPath("Subtitle"), Mode = BindingMode.OneTime };
-            blah_subtitle.SetBinding(TextBlock.TextProperty, binding_subtitle);
-
-
-            //glo_entryDataTesting = new EntryDataTest();
-            //Binding myBinding = new Binding()
-            //{
-
-            //    Source = EntryDataTest;
-
-            //};
-            //// Bind the new data source to the myText TextBlock control's Text dependency property.
-            //myText.SetBinding(TextBlock.TextProperty, myBinding);
-
-
-            //new Binding() { Source = twitterTextBox, Path = new PropertyPath("RemainingLength"), Mode = BindingMode.TwoWay });
-
-
-
-
-
-
-
-
-
-            blah_stack.Children.Add(blah_title);
-            blah_stack.Children.Add(blah_subtitle);
-            blah_border.Child = blah_stack;
-
-            grid_calendar.Children.Add(blah_border);
-
-
-
+                TextBlock txtblc = cur_border.Child as TextBlock;
+                Debug.WriteLine(txtblc.Text);
+            }
 
 
         }
@@ -3990,8 +4019,6 @@ namespace SemesterPlanner
             //string test_entryID = "geog_240";
 
             //Border test_border = glo_ProjectData.GetEntryDataFromEntryID(test_entryID).TitleBlock;
-
-            //test_border.Height = 200;
         }
 
         EntryDataTest glo_entryDataTesting = new EntryDataTest();

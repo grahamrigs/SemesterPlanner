@@ -1,20 +1,99 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
 namespace SemesterPlanner
 {
-    class ColumnData
+    class ColumnData : INotifyPropertyChanged
     {
-        public string Col_ProjectName { get; set; }
-        public string ColID { get; set; }
-        public string ColTitle { get; set; }
-        public string ColSubtitle { get; set; }
-        public int ColPosition { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // Create the OnPropertyChanged method to raise the event
+        // The calling member's name will be used as the parameter.
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+
+
+        private string col_projectname_ = "";
+        private string colID_ = "";
+        private string coltitle_ = "";
+        private string colsubtitle_ = "";
+        private int colposition_ = -1;
+
+
+
+        public string Col_ProjectName
+        {
+            get { return col_projectname_; }
+            set
+            {
+                if (value != col_projectname_)
+                {
+                    col_projectname_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string ColID
+        {
+            get { return colID_; }
+            set
+            {
+                if (value != colID_)
+                {
+                    colID_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string ColTitle
+        {
+            get { return coltitle_; }
+            set
+            {
+                if (value != coltitle_)
+                {
+                    coltitle_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string ColSubtitle
+        {
+            get { return colsubtitle_; }
+            set
+            {
+                if (value != colsubtitle_)
+                {
+                    colsubtitle_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public int ColPosition
+        {
+            get { return colposition_; }
+            set
+            {
+                if (value != colposition_)
+                {
+                    colposition_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+
 
         public List<string> Parameter_Names = new List<string> { "Col_ProjectName", "ColID", "ColTitle", "ColSubtitle", "ColPosition" };
         public List<string> Parameter_Save_Names = new List<string> { "", "col-id", "col-title", "col-subtitle", "col-pos" };

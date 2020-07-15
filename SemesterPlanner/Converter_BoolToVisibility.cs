@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Data;
 
 namespace SemesterPlanner
 {
-    class BoolToVisibilityConverter : IValueConverter
+    class Converter_BoolToVisibility : IValueConverter
     {
 
         public object Convert(object value, Type targetType, object parameter, string language)

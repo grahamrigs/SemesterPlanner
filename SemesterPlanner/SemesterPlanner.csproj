@@ -119,9 +119,13 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BoolToVisibilityConverter.cs" />
+    <Compile Include="Converter_BoolToVisibility.cs" />
     <Compile Include="CalculatedData.cs" />
     <Compile Include="ColumnData.cs" />
+    <Compile Include="Converter_ColIDToBorderTag.cs" />
+    <Compile Include="Converter_ColourHexToSolidColorBrush.cs" />
+    <Compile Include="Converter_StyleNameToStyle.cs" />
+    <Compile Include="Converter_EntryIDToBorderTag.cs" />
     <Compile Include="CreateNewProjectForm.xaml.cs">
       <DependentUpon>CreateNewProjectForm.xaml</DependentUpon>
     </Compile>
@@ -176,6 +180,7 @@
       <Version>4.7.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
