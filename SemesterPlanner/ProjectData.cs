@@ -638,15 +638,40 @@ namespace SemesterPlanner
         }
 
 
-        public bool IsTitleSubtitleDuplicate(string check_title, string check_subtitle)
+        public bool IsTitleSubtitleDuplicate(List<string> check_title_subtitle, List<string> exclude_title_subtitle)
         {
             //defaulting the return bool to true
             bool already_exist = true;
 
+
+
+            string check_title = check_title_subtitle[0];
+            string check_subtitle = check_title_subtitle[1];
+
+            string exclude_title = "";
+            string exclude_subtitle = "";
+            if (exclude_title_subtitle.Count > 0)
+            {
+                exclude_title = exclude_title_subtitle[0];
+                exclude_subtitle = exclude_title_subtitle[1];
+            }
+
+
+
             //in this method, all  null  will just be  ""
             if (check_title == null) { check_title = ""; }
             if (check_subtitle == null) { check_subtitle = ""; }
+            if (exclude_title == null) { exclude_title = ""; }
+            if (exclude_subtitle == null) { exclude_subtitle = ""; }
 
+            bool ignore_title = check_title == exclude_title;
+            bool ignore_subtitle = check_subtitle == exclude_subtitle;
+
+            //exit condition if we are to ignore the title, can't be a duplicate with itself
+            if (ignore_title)
+            {
+                return false;
+            }
 
             foreach (EntryData cur_entryData in EntryData_lst_param)
             {
@@ -662,6 +687,9 @@ namespace SemesterPlanner
                 if (cur_title == null) { cur_title = ""; }
                 if (cur_subtitle == null) { cur_subtitle = ""; }
 
+                //finding if we exclude these
+
+
                 //checks if there are matches
                 if (check_title == cur_title) { same_title = true; }
                 if (check_subtitle == cur_subtitle) { same_subtitle = true; }
@@ -676,7 +704,6 @@ namespace SemesterPlanner
                 if (duplicate_condition_title)
                 {
                     //then there is a duplicate already there
-                    Debug.WriteLine(string.Format("Duplicate     title='{0}'     subtitle='{1}'", check_title, check_subtitle));
                     return already_exist;
                 }
             }
@@ -686,6 +713,34 @@ namespace SemesterPlanner
             //if gets here, it found no duplicate
             already_exist = false;
             return already_exist;
+        }
+        public void IsNewTitleValid(List<string> check_title_subtitle, List<string> exclude_title_subtitle,
+            out bool valid_entry, out bool is_duplicate, out bool is_title_exist)
+        {
+
+            string check_title = check_title_subtitle[0];
+            string check_subtitle = check_title_subtitle[1];
+
+            //checks if the title is null, and if it's not also check that its length is greater than 0
+            is_title_exist = ((check_title != null) && (check_title.Length > 0));
+
+            if (!is_title_exist)
+            {
+                Debug.WriteLine("IsNewTitleValid");
+                Debug.WriteLine("  Title does not exist");
+            }
+
+            //checks to see if the title and subtitle will give a duplicate entry (based on a duplicate criterion in the method)
+            is_duplicate = IsTitleSubtitleDuplicate(check_title_subtitle, exclude_title_subtitle);
+
+            if (is_duplicate)
+            {
+                Debug.WriteLine("IsNewTitleValid");
+                Debug.WriteLine(string.Format("  Duplicate     title='{0}'     subtitle='{1}'", check_title, check_subtitle));
+            }
+
+            valid_entry = true;
+
         }
 
         public int GetMaxDesignationForEntryIDTitle(string given_trunc_title)

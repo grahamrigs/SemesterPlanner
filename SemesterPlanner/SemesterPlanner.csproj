@@ -119,13 +119,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converter_BoolToVisibility.cs" />
+    <Compile Include="ChangedProperties.cs" />
     <Compile Include="CalculatedData.cs" />
     <Compile Include="ColumnData.cs" />
-    <Compile Include="Converter_ColIDToBorderTag.cs" />
-    <Compile Include="Converter_ColourHexToSolidColorBrush.cs" />
-    <Compile Include="Converter_StyleNameToStyle.cs" />
-    <Compile Include="Converter_EntryIDToBorderTag.cs" />
+    <Compile Include="Converters.cs" />
     <Compile Include="CreateNewProjectForm.xaml.cs">
       <DependentUpon>CreateNewProjectForm.xaml</DependentUpon>
     </Compile>

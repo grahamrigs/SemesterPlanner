@@ -149,8 +149,9 @@
 
 
         </Flyout>
-        
+
         <local:Converter_BoolToVisibility x:Key="BoolToVisibilityConverter" />
+        <local:Converter_TextBoxChangedToStyle x:Key="TextBoxChangedToStyleConverter" />
 
 
         <DataTemplate x:Key="control_template_test" x:DataType="local:EntryData">
@@ -346,6 +347,7 @@
 
                 <ScrollViewer x:Name="scroll_properties" Style="{StaticResource scroll_BasicScrollViewer}" ViewChanged="SynchronizedScrollerOnViewChanged" Grid.Row="1" Grid.Column="2"  >
                     <Grid x:Name="grid_properties" Margin="8" VerticalAlignment="Top" HorizontalAlignment="Stretch" Tag="unchanged">
+                        
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="148"/>
@@ -358,16 +360,21 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="0" Grid.Column="0" Text="EntryID" Visibility="Visible"/>
-                        <TextBox Style="{StaticResource txtbox_Property}" Grid.Row="0" Grid.Column="1" TextChanged="PropertyTextbox_Changed" x:Name="txtbox_prop_entryID" PlaceholderText="EntryID" IsEnabled="False" Visibility="Visible"/>
+                        <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="0" Grid.Column="0" Text="EntryID"/>
+                        <TextBox x:Name="txtbox_prop_entryID" Style="{Binding EntryID_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="0" Grid.Column="1"
+                                 Text="{Binding EntryID_New, Mode=OneWay}" TextChanged="PropertyTextbox_Changed" PlaceholderText="EntryID"
+                                 IsEnabled="False"/>
 
                         <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="1" Grid.Column="0" Text="Title"/>
-                        <TextBox Style="{StaticResource txtbox_Property}" Grid.Row="1" Grid.Column="1" TextChanged="PropertyTextbox_Changed" x:Name="txtbox_prop_title" PlaceholderText="Title"/>
+                        <TextBox x:Name="txtbox_prop_title" Style="{Binding Title_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="1" Grid.Column="1"
+                                 Text="{Binding Title_New, Mode=TwoWay}" TextChanged="PropertyTextbox_Changed" PlaceholderText="Title"/>
 
                         <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="2" Grid.Column="0" Text="Subtitle"/>
-                        <TextBox Style="{StaticResource txtbox_Property}" Grid.Row="2" Grid.Column="1" TextChanged="PropertyTextbox_Changed" x:Name="txtbox_prop_subtitle" PlaceholderText="Subtitle"/>
+                        <TextBox x:Name="txtbox_prop_subtitle" Style="{Binding Subtitle_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="2" Grid.Column="1"
+                                 Text="{Binding Subtitle_New, Mode=TwoWay}" TextChanged="PropertyTextbox_Changed" PlaceholderText="Subtitle"/>
 
                         <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="3" Grid.Column="0" Text="Display Colour"/>
                         <StackPanel Grid.Row="3" Grid.Column="1" Margin="4" Orientation="Horizontal" Spacing="8">
@@ -376,6 +383,11 @@
                         </StackPanel>
 
                         <!--calendar entries-->
+
+
+
+                        <Button HorizontalAlignment="Center" Content="Apply" IsEnabled="{Binding AnyPropertiesChanged, Mode=TwoWay}" Grid.Row="4"/>
+
                     </Grid>
                 </ScrollViewer>
                 <Grid Grid.Column="1" Grid.Row="2">
@@ -384,7 +396,8 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button x:Name="btn_properties_apply" HorizontalAlignment="Center" Content="Apply" Margin="12" Tapped="ApplyPropertiesButton_Tapped" />
+                    <Button x:Name="btn_properties_apply" HorizontalAlignment="Center" Content="Apply" Margin="12" Tapped="ApplyPropertiesButton_Tapped"
+                            IsEnabled="{Binding AnyPropertiesChanged, Mode=OneWay}" Grid.Row="5"/>
                     <TextBlock x:Name="txtblc_properties_unsaved" HorizontalAlignment="Center" Text="unsaved = false" Tapped="ApplyPropertiesButton_Tapped" Grid.Column="2" VerticalAlignment="Center" />
                 </Grid>
 

@@ -59,6 +59,7 @@ namespace SemesterPlanner
         //these will store the values in the properties pane, before and after changes
         EntryData glo_EntryData_properties_original = new EntryData();
         EntryData glo_EntryData_properties_changed = new EntryData();
+        ChangedProperties glo_ChangedProperties = new ChangedProperties();
 
         //these are the controls in the properties pane
         static public List<TextBox> glo_txtbox_props_lst = new List<TextBox>();
@@ -1131,7 +1132,7 @@ namespace SemesterPlanner
             { 
                 Path = new PropertyPath("EntryID"), 
                 Mode = BindingMode.OneWay,
-                Converter = new Converter_EntryIDToBorderTag()
+                Converter = new Converters()
             };
             outer_border.SetBinding(TagProperty, binding_ID_tag);
 
@@ -1314,7 +1315,7 @@ namespace SemesterPlanner
             {
                 Path = new PropertyPath("EntryID"),
                 Mode = BindingMode.OneWay,
-                Converter = new Converter_EntryIDToBorderTag()
+                Converter = new Converters()
             };
             outer_border.SetBinding(TagProperty, binding_ID_tag);
 
@@ -2072,7 +2073,7 @@ namespace SemesterPlanner
 
             return return_list;
         }
-        List<string> CalculateAvailColID_InOrder(List<string> avail_col_IDs, List<string> ordered_col_IDs)
+        private List<string> CalculateAvailColID_InOrder(List<string> avail_col_IDs, List<string> ordered_col_IDs)
         {
             //this method will take the available col ID list, and order it according to the ordered col ID list
 
@@ -2875,23 +2876,18 @@ namespace SemesterPlanner
         {
             //will determine if the add new entry is valid
 
-            bool valid_entry = false;
 
             string addnew_title = glo_AddNew_EntryData.Title;
             string addnew_subtitle = glo_AddNew_EntryData.Subtitle;
 
+            List<string> check_title_subtitle = new List<string> { addnew_title, addnew_subtitle };
+            List<string> exclude_lst = new List<string>();
 
-            //checks to see if the title and subtitle will give a duplicate entry (based on a duplicate criterion in the method)
-            bool is_duplicate_title_subtitle = glo_ProjectData.IsTitleSubtitleDuplicate(addnew_title, addnew_subtitle);
+            bool valid_entry;
+            bool is_duplicate;
+            bool is_title_exist;
 
-            //checks if the title is null, and if it's not also check that its length is greater than 0
-            bool is_title_exist = ((addnew_title != null) && (addnew_title.Length > 0));
-
-
-            if (is_title_exist & !is_duplicate_title_subtitle) 
-            {
-                valid_entry = true;
-            }
+            glo_ProjectData.IsNewTitleValid(check_title_subtitle, exclude_lst, out valid_entry, out is_duplicate, out is_title_exist);
 
 
             //this will only display if it's going to say it's invalid
@@ -2900,7 +2896,7 @@ namespace SemesterPlanner
                 Debug.WriteLine("\nAddNewEntryValid");
                 Debug.WriteLine(string.Format("    {0,-15} = {1}", "Title", addnew_title));
                 Debug.WriteLine(string.Format("    {0,-15} = {1}", "Subtitle", addnew_subtitle));
-                Debug.WriteLine(string.Format("    {0,-15} = {1}", "is_duplicate", is_duplicate_title_subtitle));
+                Debug.WriteLine(string.Format("    {0,-15} = {1}", "is_duplicate", is_duplicate));
                 Debug.WriteLine(string.Format("    {0,-15} = {1}", "is_title_exist", is_title_exist));
                 Debug.WriteLine(string.Format("    {0,-15} = {1}", "valid_entry", valid_entry));
                 Debug.WriteLine("");
@@ -3258,11 +3254,19 @@ namespace SemesterPlanner
         }
         public void PreparePropertiesEntryData(string create_clear, string selected_entryID)
         {
+            glo_ChangedProperties = new ChangedProperties();
+            glo_ChangedProperties.LoadOriginalEntryData(glo_selected_EntryData);
+            grid_properties.DataContext = glo_ChangedProperties;
+
+            glo_ChangedProperties.glo_ProjectData_Reference = glo_ProjectData;
+            glo_ChangedProperties.glo_MainPage_Reference = this;
+
+            return;
             if (create_clear == "create")
             {
                 //this will set the two  glo_EntryData_properties_  to be a copy of the currently selected EntryData
-                glo_EntryData_properties_original = CreateDeepCopyOfEntryData(glo_ProjectData.GetEntryDataFromEntryID(selected_entryID));
-                glo_EntryData_properties_changed = CreateDeepCopyOfEntryData(glo_ProjectData.GetEntryDataFromEntryID(selected_entryID));
+                glo_EntryData_properties_original = glo_selected_EntryData;
+                glo_EntryData_properties_changed = CreateDeepCopyOfEntryData(glo_selected_EntryData);
             }
             else if (create_clear == "clear")
             {
@@ -3275,6 +3279,12 @@ namespace SemesterPlanner
         }
         private void FillClearPropertyFields(string fillclear, EntryData selected_entry)
         {
+            //grid_properties_pane.DataContext = glo_ChangedProperties;
+            //grid_properties.DataContext = glo_ChangedProperties;
+            //btn_properties_apply.DataContext = glo_ChangedProperties;
+
+            return;
+
             //if it was able to find an entry, then we populate the fields in the properties pane
             if (fillclear == "fill" && selected_entry.EntryID != "")
             {
@@ -3323,6 +3333,8 @@ namespace SemesterPlanner
         {
             //will update the changed property EntryData
 
+            return;
+
             //only happens if the properties pane is open
             if (!glo_property_pane_open) { return; }
 
@@ -3352,7 +3364,7 @@ namespace SemesterPlanner
 
             CheckIfPropertiesChanged(true);
         }
-        private void CheckIfPropertiesChanged(bool change_control_appearance)
+        public void CheckIfPropertiesChanged(bool change_control_appearance)
         {
             Debug.WriteLine("CheckIfPropertiesChanged");
 
@@ -3411,7 +3423,7 @@ namespace SemesterPlanner
 
 
             //EntryID
-            if (glo_changed_properties_names.Contains("EntryID"))
+            if (glo_ChangedProperties.EntryID_Changed)
             {
                 txtbox_prop_entryID.Style = Application.Current.Resources["txtbox_Property_Changed"] as Style;
             }
@@ -3421,7 +3433,7 @@ namespace SemesterPlanner
             }
 
             //Title
-            if (glo_changed_properties_names.Contains("Title"))
+            if (glo_ChangedProperties.Title_Changed)
             {
                 txtbox_prop_title.Style = Application.Current.Resources["txtbox_Property_Changed"] as Style;
             }
@@ -3431,7 +3443,7 @@ namespace SemesterPlanner
             }
 
             //Subtitle
-            if (glo_changed_properties_names.Contains("Subtitle"))
+            if (glo_ChangedProperties.Subtitle_Changed)
             {
                 txtbox_prop_subtitle.Style = Application.Current.Resources["txtbox_Property_Changed"] as Style;
             }
@@ -3441,20 +3453,25 @@ namespace SemesterPlanner
             }
 
             //ColourHex
-            if (glo_changed_properties_names.Contains("ColourHex"))
+            if (glo_ChangedProperties.ColourHex_Changed)
             {
                 //TODO
             }
             else
             {
-                //TODO
+
             }
 
 
+            EnableApplyPropertiesButton();
 
         }
         private void EnableApplyPropertiesButton()
         {
+            btn_properties_apply.IsEnabled = glo_ChangedProperties.ApplyButton_Enabled;
+
+            return;
+
             bool changed_properties_exist = glo_changed_properties_names.Count > 0;
 
             txtblc_properties_unsaved.Text = "changed = " + changed_properties_exist.ToString();
@@ -3470,40 +3487,7 @@ namespace SemesterPlanner
         }
         public void PrintPropertiesEntryDatas()
         {
-            Debug.WriteLine("                     |       Selected       |       Original       |         Changed");
-            Debug.WriteLine("---------------------|----------------------|----------------------|----------------------");
-
-            List<string> property_names = new List<string> {
-                "EntryID",
-                "Title",
-                "Subtitle",
-                "ColourHex" };
-
-            List<string> selected_vals = new List<string> {
-                glo_selected_EntryData.EntryID.ToString(),
-                glo_selected_EntryData.Title.ToString(),
-                glo_selected_EntryData.Subtitle.ToString(),
-                glo_selected_EntryData.ColourHex.ToString() };
-
-            List<string> property_vals_original = new List<string> {
-                glo_EntryData_properties_original.EntryID.ToString(),
-                glo_EntryData_properties_original.Title.ToString(),
-                glo_EntryData_properties_original.Subtitle.ToString(),
-                glo_EntryData_properties_original.ColourHex.ToString() };
-
-            List<string> property_vals_changed = new List<string> {
-                glo_EntryData_properties_changed.EntryID.ToString(),
-                glo_EntryData_properties_changed.Title.ToString(),
-                glo_EntryData_properties_changed.Subtitle.ToString(),
-                glo_EntryData_properties_changed.ColourHex.ToString() };
-
-            for (int i = 0; i < property_names.Count(); i++)
-            {
-                Debug.WriteLine(string.Format("{0, 20} | {1, 20} | {2, 20} | {3, 20}", property_names[i], selected_vals[i], property_vals_original[i], property_vals_changed[i]));
-            }
-
-
-
+            glo_ChangedProperties.PrintProperties(glo_selected_EntryData);
         }
 
         private void ApplyPropertiesButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -3568,11 +3552,31 @@ namespace SemesterPlanner
 
 
             //the entryID of the EntryData we are changing
-            string applying_entryID = glo_EntryData_properties_original.EntryID;
+            string applying_entryID = glo_ChangedProperties.EntryID_Old;
             Debug.WriteLine("applying_entryID = '" + applying_entryID + "'");
 
             //the master EntryData that we are changing
-            EntryData master_EntryData = glo_ProjectData.GetEntryDataFromEntryID(applying_entryID);
+            EntryData master_entryData = glo_ProjectData.GetEntryDataFromEntryID(applying_entryID);
+
+
+            EquateEntryData(master_entryData, glo_ChangedProperties.GetChangedEntryData());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return;
+
 
 
             //these flags will determine what needs to be updated in the main window after applying
@@ -3595,7 +3599,7 @@ namespace SemesterPlanner
                     case "Title":
                         new_value_string = glo_EntryData_properties_changed.Title;
                         Debug.WriteLine(string.Format("Changing Title to '{0}'", new_value_string));
-                        master_EntryData.Title = new_value_string;
+                        master_entryData.Title = new_value_string;
                         need_to_update_titleblocks = true;
                         need_to_update_calendar = true;
                         break;
@@ -3603,14 +3607,14 @@ namespace SemesterPlanner
                     case "Subtitle":
                         new_value_string = glo_EntryData_properties_changed.Subtitle;
                         Debug.WriteLine(string.Format("Changing Subtitle to '{0}'", new_value_string));
-                        master_EntryData.Subtitle = new_value_string;
+                        master_entryData.Subtitle = new_value_string;
                         need_to_update_titleblocks = true;
                         break;
 
                     case "ColourHex":
                         new_value_string = glo_EntryData_properties_changed.ColourHex;
                         Debug.WriteLine(string.Format("Changing ColourHex to '{0}'", new_value_string));
-                        master_EntryData.ColourHex = new_value_string;
+                        master_entryData.ColourHex = new_value_string;
                         need_to_update_titleblocks = true;
                         need_to_update_calendar = true;
                         break;
@@ -3620,7 +3624,7 @@ namespace SemesterPlanner
             }
 
             Debug.WriteLine("master_EntryData:");
-            master_EntryData.PrintEntryDataValues();
+            master_entryData.PrintEntryDataValues();
 
 
             //this will happen if we click the apply button or close the properties pane
@@ -3628,7 +3632,7 @@ namespace SemesterPlanner
             if (!changing_selection)
             {
                 //set the selected EntryData to the master one
-                glo_selected_EntryData = master_EntryData;
+                glo_selected_EntryData = master_entryData;
             }
 
 
@@ -3846,42 +3850,65 @@ namespace SemesterPlanner
         }
         private EntryData CreateDeepCopyOfEntryData(EntryData entryData_to_be_copied)
         {
-            EntryData return_EntryData = new EntryData();
+            EntryData return_entryData = new EntryData();
 
-            return_EntryData.Entry_ProjectName = entryData_to_be_copied.Entry_ProjectName;
-            return_EntryData.EntryID = entryData_to_be_copied.EntryID;
-            return_EntryData.Title = entryData_to_be_copied.Title;
-            return_EntryData.Subtitle = entryData_to_be_copied.Subtitle;
-            return_EntryData.ColourHex = entryData_to_be_copied.ColourHex;
-            return_EntryData.ActualColID = entryData_to_be_copied.ActualColID;
-            return_EntryData.SetColID = entryData_to_be_copied.SetColID;
-            return_EntryData.RowPosition = entryData_to_be_copied.RowPosition;
+            EquateEntryData(return_entryData, entryData_to_be_copied);
 
-            return_EntryData.PrereqEntryIDs = CreateDeepCopyOfList_string(entryData_to_be_copied.PrereqEntryIDs);
-            return_EntryData.CoreqEntryIDs = CreateDeepCopyOfList_string(entryData_to_be_copied.CoreqEntryIDs);
-            return_EntryData.AvailColIDs = CreateDeepCopyOfList_string(entryData_to_be_copied.AvailColIDs);
+            return return_entryData;
+        }
+        private void EquateEntryData(EntryData primary_entryData, EntryData secondary_entryData)
+        {
+            //due to pointers, this will change the primary entryData to equate the secondary without needing to return it
 
-            return_EntryData.TitleBlock = entryData_to_be_copied.TitleBlock;
-            return_EntryData.CalendarBlock = entryData_to_be_copied.CalendarBlock;
+            primary_entryData.Entry_ProjectName     = secondary_entryData.Entry_ProjectName;
+            primary_entryData.EntryID               = secondary_entryData.EntryID;
+            primary_entryData.Title                 = secondary_entryData.Title;
+            primary_entryData.Subtitle              = secondary_entryData.Subtitle;
+            primary_entryData.ColourHex             = secondary_entryData.ColourHex;
+            primary_entryData.ActualColID           = secondary_entryData.ActualColID;
+            primary_entryData.SetColID              = secondary_entryData.SetColID;
+
+            primary_entryData.RowPosition           = secondary_entryData.RowPosition;
+            primary_entryData.ColPosition           = secondary_entryData.ColPosition;
+
+            primary_entryData.PrereqEntryIDs        = CreateDeepCopyOfList_string(secondary_entryData.PrereqEntryIDs);
+            primary_entryData.CoreqEntryIDs         = CreateDeepCopyOfList_string(secondary_entryData.CoreqEntryIDs);
+            primary_entryData.AvailColIDs           = CreateDeepCopyOfList_string(secondary_entryData.AvailColIDs);
+
+            primary_entryData.TitleBlock            = secondary_entryData.TitleBlock;
+            primary_entryData.CalendarBlock         = secondary_entryData.CalendarBlock;
+
+            primary_entryData.Is_Selected           = secondary_entryData.Is_Selected;
 
 
-            /*
+            /*            
+
+            string Entry_ProjectName
+            string EntryID
+            string Title
+            string Subtitle
+            string ColourHex
+            string ActualColID
+            string SetColID
+
+            int RowPosition
+            int ColPosition
             
-            public string Entry_ProjectName { get; set; }
-            public int? EntryID { get; set; } //the ? makes it null when not set; otherwise int defaults to 0
-            public string Title { get; set; }
-            public string Subtitle { get; set; }
-            public string ColourHex { get; set; }
-            public int? PrereqEntryID { get; set; }
-            public int? CoreqEntryID { get; set; }
-            public int? EarliestColID { get; set; }
-            public int? SetColID { get; set; }
-            public int? RowPosition { get; set; }
+            List<string> PrereqEntryIDs
+            List<string> CoreqEntryIDs
+            List<string> AvailColIDs
+            
+            Border TitleBlock
+            Border CalendarBlock
+
+            bool Is_Selected
+
+            string StyleName_Title
+            string StyleName_Calendar
+            string StyleName_Preview
 
             */
 
-
-            return return_EntryData;
         }
 
         static public SolidColorBrush GetSolidColorBrushFromHex(string hex)
@@ -3980,18 +4007,7 @@ namespace SemesterPlanner
             //relpan_custom_window.Translation += new Vector3(0, 0, 32);
             //rec_frame_background.Visibility = Visibility.Visible;
 
-
-            foreach (Border cur_border in grid_column_headers.Children)
-            {
-                Debug.WriteLine(cur_border.Tag.ToString());
-                Debug.WriteLine(cur_border.ActualHeight.ToString());
-                Debug.WriteLine(cur_border.ActualWidth.ToString());
-                Debug.WriteLine(Grid.GetColumn(cur_border));
-
-                TextBlock txtblc = cur_border.Child as TextBlock;
-                Debug.WriteLine(txtblc.Text);
-            }
-
+            PrintPropertiesEntryDatas();
 
         }
         private void ContactButton(object sender, RoutedEventArgs e)
