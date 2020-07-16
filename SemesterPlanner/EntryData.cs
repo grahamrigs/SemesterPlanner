@@ -600,23 +600,6 @@ namespace SemesterPlanner
 
 
 
-        public void DefaultAllParameters()
-        {
-            //this method will go through all the parameters of a newly created EntryData and default its parameters
-
-            Entry_ProjectName = "";
-            EntryID = "";
-            Title = "";
-            Subtitle = "";
-            ColourHex = "#FFC3C3C3";
-            PrereqEntryIDs = new List<string>();
-            CoreqEntryIDs = new List<string>();
-            AvailColIDs = new List<string>();
-            SetColID = "";
-            RowPosition = -1;
-            ActualColID = "";
-
-        }
 
 
 

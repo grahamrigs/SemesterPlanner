@@ -48,7 +48,25 @@ namespace SemesterPlanner
         List<string> glo_changed_properties_names = new List<string>();
 
         //this keeps track of if the properties pane is open
-        bool glo_property_pane_open = false;
+        private bool glo_property_pane_open_ = false;
+        public bool glo_PropertyPaneOpen
+        {
+            get { return glo_property_pane_open_; }
+            set
+            {
+                glo_property_pane_open_ = value;
+
+                if (glo_property_pane_open_)
+                {
+                    OpenPropertiesMethod();
+                }
+                else
+                {
+                    ClosePropertiesMethod();
+                }
+
+            }
+        }
 
         //this keeps track of if the add new entry window is open
         bool glo_add_new_window_open = false;
@@ -57,8 +75,6 @@ namespace SemesterPlanner
         static EntryData glo_AddNew_EntryData = new EntryData();
 
         //these will store the values in the properties pane, before and after changes
-        EntryData glo_EntryData_properties_original = new EntryData();
-        EntryData glo_EntryData_properties_changed = new EntryData();
         ChangedProperties glo_ChangedProperties = new ChangedProperties();
 
         //these are the controls in the properties pane
@@ -1132,7 +1148,7 @@ namespace SemesterPlanner
             { 
                 Path = new PropertyPath("EntryID"), 
                 Mode = BindingMode.OneWay,
-                Converter = new Converters()
+                Converter = new Converter_EntryIDToBorderTag()
             };
             outer_border.SetBinding(TagProperty, binding_ID_tag);
 
@@ -1315,7 +1331,7 @@ namespace SemesterPlanner
             {
                 Path = new PropertyPath("EntryID"),
                 Mode = BindingMode.OneWay,
-                Converter = new Converters()
+                Converter = new Converter_EntryIDToBorderTag()
             };
             outer_border.SetBinding(TagProperty, binding_ID_tag);
 
@@ -2156,15 +2172,8 @@ namespace SemesterPlanner
             Debug.WriteLine("TitleBlockDoubleTapped");
             //await OpenPropertiesWindow();
 
+            glo_PropertyPaneOpen = true;
 
-            if (grid_properties_pane.Visibility == Visibility.Collapsed)
-            {
-                OpenPropertiesMethod();
-            }
-            else
-            {
-                ClosePropertiesMethod();
-            }
         }
         private void TitleBlockScrollViewerTapped(object sender, TappedRoutedEventArgs e)
         {
@@ -2243,7 +2252,7 @@ namespace SemesterPlanner
 
 
             //if the properties pane isn't open we don't need verification
-            if (!glo_property_pane_open) { return true; }
+            if (!glo_PropertyPaneOpen) { return true; }
 
 
             //TODO if properties aren't changed
@@ -2418,16 +2427,7 @@ namespace SemesterPlanner
             Debug.WriteLine("PropertiesButtonTapped");
             //await OpenPropertiesWindow();
 
-
-            if (grid_properties_pane.Visibility == Visibility.Collapsed)
-            {
-                OpenPropertiesMethod();
-            }
-            else
-            {
-                ClosePropertiesMethod();
-            }
-
+            glo_PropertyPaneOpen = true;
 
         }
         private void DeleteButtonTapped(object sender, TappedRoutedEventArgs e)
@@ -2804,7 +2804,6 @@ namespace SemesterPlanner
             contentdialog_add_new_entry.Visibility = Visibility.Visible;
             glo_add_new_window_open = true;
             glo_AddNew_EntryData = new EntryData();
-            glo_AddNew_EntryData.DefaultAllParameters();
 
             ContentDialogResult result = await contentdialog_add_new_entry.ShowAsync();
 
@@ -3234,256 +3233,38 @@ namespace SemesterPlanner
 
 
 
-        //these methods deal with the opening and closing of the properties pane
+        //these methods deal with the property pane. much of its functionality is data binding with ChangedProperties.cs
 
         public void OpenPropertiesMethod()
         {
-            glo_property_pane_open = true;
+            //glo_property_pane_open = true;
 
-            //this prepares the two properties EntryData's, one for original data, one that will have all changes
-            PreparePropertiesEntryData("create", glo_selected_entryID);
-
-            //will use the "original" property EntryData to autofill in the controls in the properties pane
-            FillClearPropertyFields("fill", glo_EntryData_properties_original);
+            //this prepares the ChangedProperties class which will keep track of all property editing
+            PrepareChangedProperties();
 
             //will make the properties pane visible
             grid_properties_pane.Visibility = Visibility.Visible;
-
-            //will figure out any changes betwee the two EntryData's (there shouldn't be when first loaded)
-            CheckIfPropertiesChanged(true);
         }
-        public void PreparePropertiesEntryData(string create_clear, string selected_entryID)
+        public void PrepareChangedProperties()
         {
             glo_ChangedProperties = new ChangedProperties();
             glo_ChangedProperties.LoadOriginalEntryData(glo_selected_EntryData);
-            grid_properties.DataContext = glo_ChangedProperties;
+            grid_properties_pane.DataContext = glo_ChangedProperties;
 
             glo_ChangedProperties.glo_ProjectData_Reference = glo_ProjectData;
-            glo_ChangedProperties.glo_MainPage_Reference = this;
 
-            return;
-            if (create_clear == "create")
-            {
-                //this will set the two  glo_EntryData_properties_  to be a copy of the currently selected EntryData
-                glo_EntryData_properties_original = glo_selected_EntryData;
-                glo_EntryData_properties_changed = CreateDeepCopyOfEntryData(glo_selected_EntryData);
-            }
-            else if (create_clear == "clear")
-            {
-                //this will clear two  glo_EntryData_properties_
-                glo_EntryData_properties_original = new EntryData();
-                glo_EntryData_properties_changed = new EntryData();
-            }
-
-
-        }
-        private void FillClearPropertyFields(string fillclear, EntryData selected_entry)
-        {
-            //grid_properties_pane.DataContext = glo_ChangedProperties;
-            //grid_properties.DataContext = glo_ChangedProperties;
-            //btn_properties_apply.DataContext = glo_ChangedProperties;
-
-            return;
-
-            //if it was able to find an entry, then we populate the fields in the properties pane
-            if (fillclear == "fill" && selected_entry.EntryID != "")
-            {
-                txtbox_prop_entryID.Text = selected_entry.EntryID.ToString();
-                txtbox_prop_title.Text = selected_entry.Title;
-                txtbox_prop_subtitle.Text = selected_entry.Subtitle;
-
-                grid_prop_current_colour.Background = GetSolidColorBrushFromHex(selected_entry.ColourHex);
-            }
-
-            else if (fillclear == "clear")
-            {
-                txtbox_prop_entryID.Text = "";
-                txtbox_prop_title.Text = "";
-                txtbox_prop_subtitle.Text = "";
-
-                grid_prop_current_colour.Background = new SolidColorBrush(Colors.LightGray);
-            }
         }
         private void ClosePropertiesPane_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            ClosePropertiesMethod();
+            glo_PropertyPaneOpen = false;
         }
         private void ClosePropertiesMethod()
         {
             //sets a flag saying properties are closed. must happen before the data is cleared or else there's bad errors that happen when the textboxes "change"
-            glo_property_pane_open = false;
-
-            //this clears the two properties EntryData's
-            PreparePropertiesEntryData("clear", "");
-
-            //clears the property fields
-            FillClearPropertyFields("clear", null);
+            //glo_property_pane_open = false;
 
             //closes the pane
             grid_properties_pane.Visibility = Visibility.Collapsed;
-        }
-
-
-
-
-
-        //these methods deal with the changing of fields in the properties pane, and applying the properties
-
-        private void PropertyTextbox_Changed(object sender, TextChangedEventArgs e)
-        {
-            //will update the changed property EntryData
-
-            return;
-
-            //only happens if the properties pane is open
-            if (!glo_property_pane_open) { return; }
-
-            TextBox sending_txtbox = sender as TextBox;
-            string txtbox_name = sending_txtbox.Name;
-            string txtbox_text = sending_txtbox.Text;
-
-            Debug.WriteLine(string.Format("PropertyTextbox_Changed: {0} - {1}", txtbox_name, txtbox_text));
-
-            switch (txtbox_name)
-            {
-                case "txtbox_prop_entryID":
-                    glo_EntryData_properties_changed.EntryID = txtbox_text;
-                    break;
-
-                case "txtbox_prop_title":
-                    glo_EntryData_properties_changed.Title = txtbox_text;
-                    break;
-
-                case "txtbox_prop_subtitle":
-                    glo_EntryData_properties_changed.Subtitle = txtbox_text;
-                    break;
-
-
-
-            }
-
-            CheckIfPropertiesChanged(true);
-        }
-        public void CheckIfPropertiesChanged(bool change_control_appearance)
-        {
-            Debug.WriteLine("CheckIfPropertiesChanged");
-
-            PrintPropertiesEntryDatas();
-
-            //will check if any properties have changed between the two EntryData's
-
-            //starts by resetting the changed properties list
-            glo_changed_properties_names = new List<string>();
-
-
-
-            //EntryID
-            if (glo_EntryData_properties_changed.EntryID != glo_EntryData_properties_original.EntryID)
-            {
-                glo_changed_properties_names.Add("EntryID");
-            }
-
-            //Title
-            if (glo_EntryData_properties_changed.Title != glo_EntryData_properties_original.Title)
-            {
-                glo_changed_properties_names.Add("Title");
-            }
-
-            //Subtitle
-            if (glo_EntryData_properties_changed.Subtitle != glo_EntryData_properties_original.Subtitle)
-            {
-                glo_changed_properties_names.Add("Subtitle");
-            }
-
-            //ColourHex
-            if (glo_EntryData_properties_changed.ColourHex != glo_EntryData_properties_original.ColourHex)
-            {
-                glo_changed_properties_names.Add("ColourHex");
-            }
-
-
-            PrintList("glo_changed_properties_names", glo_changed_properties_names);
-
-
-            //if we want to visually update the controls to indicate that there was a change...
-            if (change_control_appearance)
-            {
-                UpdatePropertyControlsForChanged();
-            }
-
-            //will determine if the apply properties button should be enabled
-            EnableApplyPropertiesButton();
-
-        }
-        private void UpdatePropertyControlsForChanged()
-        {
-            Debug.WriteLine("UpdatePropertyControlsForChanged");
-
-            //will go through  glo_changed_properties_names  and will update the appearance of any changed properties
-
-
-            //EntryID
-            if (glo_ChangedProperties.EntryID_Changed)
-            {
-                txtbox_prop_entryID.Style = Application.Current.Resources["txtbox_Property_Changed"] as Style;
-            }
-            else
-            {
-                txtbox_prop_entryID.Style = Application.Current.Resources["txtbox_Property"] as Style;
-            }
-
-            //Title
-            if (glo_ChangedProperties.Title_Changed)
-            {
-                txtbox_prop_title.Style = Application.Current.Resources["txtbox_Property_Changed"] as Style;
-            }
-            else
-            {
-                txtbox_prop_title.Style = Application.Current.Resources["txtbox_Property"] as Style;
-            }
-
-            //Subtitle
-            if (glo_ChangedProperties.Subtitle_Changed)
-            {
-                txtbox_prop_subtitle.Style = Application.Current.Resources["txtbox_Property_Changed"] as Style;
-            }
-            else
-            {
-                txtbox_prop_subtitle.Style = Application.Current.Resources["txtbox_Property"] as Style;
-            }
-
-            //ColourHex
-            if (glo_ChangedProperties.ColourHex_Changed)
-            {
-                //TODO
-            }
-            else
-            {
-
-            }
-
-
-            EnableApplyPropertiesButton();
-
-        }
-        private void EnableApplyPropertiesButton()
-        {
-            btn_properties_apply.IsEnabled = glo_ChangedProperties.ApplyButton_Enabled;
-
-            return;
-
-            bool changed_properties_exist = glo_changed_properties_names.Count > 0;
-
-            txtblc_properties_unsaved.Text = "changed = " + changed_properties_exist.ToString();
-
-            if (changed_properties_exist)
-            {
-                btn_properties_apply.IsEnabled = true;
-            }
-            else
-            {
-                btn_properties_apply.IsEnabled = false;
-            }
         }
         public void PrintPropertiesEntryDatas()
         {
@@ -3498,16 +3279,10 @@ namespace SemesterPlanner
         {
             Debug.WriteLine("\nApplyPropertiesMethod");
 
-            CheckIfPropertiesChanged(true);
-
-            //if there's no changed properties...
-            if (glo_changed_properties_names.Count < 1) { return; }
-
-
-
 
             //apply the new properties
             bool proceed_with_apply = false;
+
 
             //if the setting for requiring verification is enabled...
             if (glo_properties_apply_need_verification)
@@ -3559,107 +3334,65 @@ namespace SemesterPlanner
             EntryData master_entryData = glo_ProjectData.GetEntryDataFromEntryID(applying_entryID);
 
 
-            EquateEntryData(master_entryData, glo_ChangedProperties.GetChangedEntryData());
+            ApplyNewPropertiesToEntryData(master_entryData);
+
+        }
+        private void ApplyNewPropertiesToEntryData(EntryData master_entryData)
+        {
+            //thanks to pointers, this will update the data in the actual master_entryData
 
 
+            //gets the new changed values from the changed properties
+            glo_ChangedProperties.GetFieldData(
+                out string entryID,
+                out string title,
+                out string subtitle,
+                out string colourhex,
+                out string setcolID,
+                out List<string> prereq_entryIDs,
+                out List<string> coreq_entryIDs,
+                out List<string> avail_colIDs);
 
 
-
-
-
-
-
-
-
-
-
-
-
-            return;
-
-
-
-            //these flags will determine what needs to be updated in the main window after applying
-
-            bool need_to_update_titleblocks = false;
-            bool need_to_update_calendar = false;
-            bool need_to_update_order_logic = false;
-
-            string new_value_string = "";
-
-            //will go through the list of changes, and will apply them
-            foreach (string changed_property in glo_changed_properties_names)
+            if (entryID != null && entryID != "")
             {
-                switch (changed_property)
-                {
-                    case "EntryID":
-                        Debug.WriteLine("ERROR: trying to change the entryID... exiting");
-                        return;
-
-                    case "Title":
-                        new_value_string = glo_EntryData_properties_changed.Title;
-                        Debug.WriteLine(string.Format("Changing Title to '{0}'", new_value_string));
-                        master_entryData.Title = new_value_string;
-                        need_to_update_titleblocks = true;
-                        need_to_update_calendar = true;
-                        break;
-
-                    case "Subtitle":
-                        new_value_string = glo_EntryData_properties_changed.Subtitle;
-                        Debug.WriteLine(string.Format("Changing Subtitle to '{0}'", new_value_string));
-                        master_entryData.Subtitle = new_value_string;
-                        need_to_update_titleblocks = true;
-                        break;
-
-                    case "ColourHex":
-                        new_value_string = glo_EntryData_properties_changed.ColourHex;
-                        Debug.WriteLine(string.Format("Changing ColourHex to '{0}'", new_value_string));
-                        master_entryData.ColourHex = new_value_string;
-                        need_to_update_titleblocks = true;
-                        need_to_update_calendar = true;
-                        break;
-
-
-                }
+                master_entryData.EntryID = entryID;
             }
 
-            Debug.WriteLine("master_EntryData:");
-            master_entryData.PrintEntryDataValues();
-
-
-            //this will happen if we click the apply button or close the properties pane
-            //will not happen if we change the selection with the pane open as this will be handled elsewhere
-            if (!changing_selection)
+            if (title != null && title != "")
             {
-                //set the selected EntryData to the master one
-                glo_selected_EntryData = master_entryData;
+                master_entryData.Title = title;
             }
 
-
-            Debug.WriteLine("glo_selected_EntryData:");
-            glo_selected_EntryData.PrintEntryDataValues();
-
-
-            return;
-
-            //will update whatever we need to
-
-            if (need_to_update_titleblocks)
+            if (subtitle != null && subtitle != "")
             {
-                FixSingleTitleCalendarBlock(applying_entryID, "title");
-                //FixBlockInfo(true, true, true, true, true, false, new List<string>());
-            }
-            if (need_to_update_calendar)
-            {
-                FixSingleTitleCalendarBlock(applying_entryID, "calendar");
-            }
-            if (need_to_update_order_logic)
-            {
-                //TODO
+                master_entryData.Subtitle = subtitle;
             }
 
-            OpenPropertiesMethod();
+            if (colourhex != null && colourhex != "")
+            {
+                master_entryData.ColourHex = colourhex;
+            }
 
+            if (setcolID != null && setcolID != "")
+            {
+                master_entryData.SetColID = setcolID;
+            }
+
+            if (prereq_entryIDs != null && prereq_entryIDs.Count != 0 )
+            {
+                master_entryData.PrereqEntryIDs = prereq_entryIDs;
+            }
+
+            if (coreq_entryIDs != null && coreq_entryIDs.Count != 0)
+            {
+                master_entryData.CoreqEntryIDs = coreq_entryIDs;
+            }
+
+            if (avail_colIDs != null && avail_colIDs.Count != 0)
+            {
+                master_entryData.AvailColIDs = avail_colIDs;
+            }
         }
 
 
@@ -3721,13 +3454,11 @@ namespace SemesterPlanner
         }
         private void confirmColor_Click(object sender, RoutedEventArgs e)
         {
-            // Assign the selected color to a variable to use outside the popup.
-            SolidColorBrush current_colour_brush = (SolidColorBrush)grid_prop_current_colour.Background;
-            current_colour_brush.Color = myColorPicker.Color;
 
-            string chosen_colour_hex = GetHexFromSolidColorBrush(current_colour_brush);
+            Windows.UI.Color picker_colour = myColorPicker.Color;
+            string chosen_colour_hex = GetHexFromColorPicker(picker_colour);
 
-            glo_CalculatedData.ColourPickerChosenHex = chosen_colour_hex;
+            //glo_CalculatedData.ColourPickerChosenHex = chosen_colour_hex;
 
 
 
@@ -3743,7 +3474,7 @@ namespace SemesterPlanner
                 // Close the Flyout.
                 btn_add_new_entry_colour.Flyout.Hide();
             }
-            else if (glo_property_pane_open)
+            else if (glo_PropertyPaneOpen)
             {
                 //this will happen if the properties pane is open and the add new entry window isn't
 
@@ -3756,6 +3487,8 @@ namespace SemesterPlanner
 
 
         }
+
+
         private void cancelColor_Click(object sender, RoutedEventArgs e)
         {
             glo_CalculatedData.ColourPickerChosenHex = glo_CalculatedData.DefaultColourChosenHex;
@@ -3770,7 +3503,7 @@ namespace SemesterPlanner
                 // Close the Flyout.
                 btn_add_new_entry_colour.Flyout.Hide();
             }
-            else if (glo_property_pane_open)
+            else if (glo_PropertyPaneOpen)
             {
                 //this will happen if the properties pane is open and the add new entry window isn't
 
@@ -3792,7 +3525,8 @@ namespace SemesterPlanner
         }
         public void ChangeColour_Properties(string new_colour_hex)
         {
-            btn_properties_change_colour.Tag = new_colour_hex;
+            glo_ChangedProperties.ColourHex_New = new_colour_hex;
+            //btn_properties_change_colour.Tag = new_colour_hex;
         }
 
         private void CreateUsedColourList()
@@ -3859,6 +3593,8 @@ namespace SemesterPlanner
         private void EquateEntryData(EntryData primary_entryData, EntryData secondary_entryData)
         {
             //due to pointers, this will change the primary entryData to equate the secondary without needing to return it
+
+            Debug.WriteLine("EquateEntryData");
 
             primary_entryData.Entry_ProjectName     = secondary_entryData.Entry_ProjectName;
             primary_entryData.EntryID               = secondary_entryData.EntryID;
@@ -3933,6 +3669,20 @@ namespace SemesterPlanner
             Color old_colour = given_SCB.Color;
 
             string hex_value = string.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", old_colour.A, old_colour.R, old_colour.G, old_colour.B);
+
+            //System.Drawing.Color converted_colour = System.Drawing.Color.FromArgb(old_colour.A, old_colour.R, old_colour.G, old_colour.B);
+
+
+
+            //string hexValue = System.Drawing.ColorTranslator.ToHtml(converted_colour);
+
+            return hex_value;
+        }
+        public string GetHexFromColorPicker(Windows.UI.Color given_colour)
+        {
+            //colours are fucked in C#, so to get the hex of a solidcolorbrush, there's steps involved
+
+            string hex_value = string.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", given_colour.A, given_colour.R, given_colour.G, given_colour.B);
 
             //System.Drawing.Color converted_colour = System.Drawing.Color.FromArgb(old_colour.A, old_colour.R, old_colour.G, old_colour.B);
 
@@ -4023,7 +3773,7 @@ namespace SemesterPlanner
             //}
 
 
-            glo_entryDataTesting.Title = "changed";
+            Debug.WriteLine(txtbox_prop_title.Style.ToString());
 
 
         }

@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Media;
 
 namespace SemesterPlanner
 {
-    class Converters : IValueConverter
+    class Converter_EntryIDToBorderTag : IValueConverter
     {
         //should be  "entryID|"
         string entryID_prefix = MainPage.glo_tag_entryID_prefix;

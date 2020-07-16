@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.Advertisement;
 
 namespace SemesterPlanner
 {
@@ -17,6 +18,7 @@ namespace SemesterPlanner
         // The calling member's name will be used as the parameter.
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
+            Debug.WriteLine("OnPropertyChanged     " + name);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
@@ -48,14 +50,14 @@ namespace SemesterPlanner
 
 
 
-        public string EntryID_Old { get; private set; } = "";
-        public string Title_Old { get; private set; } = "";
-        public string Subtitle_Old { get; private set; } = "";
-        public string ColourHex_Old { get; private set; } = "";
-        public string SetColID_Old { get; private set; } = "";
-        public List<string> PrereqEntryIDs_Old { get; private set; } = new List<string>();
-        public List<string> CoreqEntryIDs_Old { get; private set; } = new List<string>();
-        public List<string> AvailColIDs_Old { get; private set; } = new List<string>();
+        public string EntryID_Old { get; private set; }
+        public string Title_Old { get; private set; }
+        public string Subtitle_Old { get; private set; }
+        public string ColourHex_Old { get; private set; }
+        public string SetColID_Old { get; private set; }
+        public List<string> PrereqEntryIDs_Old { get; private set; }
+        public List<string> CoreqEntryIDs_Old { get; private set; }
+        public List<string> AvailColIDs_Old { get; private set; }
 
 
 
@@ -81,10 +83,10 @@ namespace SemesterPlanner
                 {
                     title_new_ = value;
 
-                    IsValidChangeTitleSubtitle();
+                    //IsValidChangeTitleSubtitle();
                     UpdateChangedBool("title");
 
-                    glo_MainPage_Reference.CheckIfPropertiesChanged(true);
+                    //glo_MainPage_Reference.CheckIfPropertiesChanged(true);
 
                     OnPropertyChanged();
                 }
@@ -99,10 +101,10 @@ namespace SemesterPlanner
                 {
                     subtitle_new_ = value;
 
-                    IsValidChangeTitleSubtitle();
+                    //IsValidChangeTitleSubtitle();
                     UpdateChangedBool("subtitle");
 
-                    glo_MainPage_Reference.CheckIfPropertiesChanged(true);
+                    //glo_MainPage_Reference.CheckIfPropertiesChanged(true);
 
                     OnPropertyChanged();
                 }
@@ -310,7 +312,6 @@ namespace SemesterPlanner
 
 
         public ProjectData glo_ProjectData_Reference { get; set; }
-        public MainPage glo_MainPage_Reference { get; set; }
 
 
 
@@ -326,17 +327,14 @@ namespace SemesterPlanner
             AvailColIDs_Old         = ori_entryData.AvailColIDs;
 
 
-            entryID_new_            = EntryID_Old;
-            title_new_              = Title_Old;
-            subtitle_new_           = Subtitle_Old;
-            colourhex_new_          = ColourHex_Old;
-            setcolid_new_           = SetColID_Old;
-            prereq_entryIDs_new_    = PrereqEntryIDs_Old;
-            coreq_entryIDs_new_     = CoreqEntryIDs_Old;
-            avail_colIDs_new_       = AvailColIDs_Old;
-
-
-
+            EntryID_New             = EntryID_Old;
+            Title_New               = Title_Old;
+            Subtitle_New            = Subtitle_Old;
+            ColourHex_New           = ColourHex_Old;
+            SetColID_New            = SetColID_Old;
+            PrereqEntryIDs_New      = PrereqEntryIDs_Old;
+            CoreqEntryIDs_New       = CoreqEntryIDs_Old;
+            AvailColIDs_New         = AvailColIDs_Old;
         }
         public EntryData GetChangedEntryData()
         {
@@ -354,6 +352,26 @@ namespace SemesterPlanner
 
 
             return return_entryData;
+        }
+        public void GetFieldData(out string entryID, out string title, out string subtitle, out string colourhex, out string setcolID, 
+            out List<string> prereq_entryIDs, out List<string> coreq_entryIDs, out List<string> avail_colIDs )
+        {
+            entryID = EntryID_New;
+            title = Title_New;
+            subtitle = Subtitle_New;
+            colourhex = ColourHex_New;
+            setcolID = SetColID_New;
+            prereq_entryIDs = PrereqEntryIDs_New;
+            coreq_entryIDs = CoreqEntryIDs_New;
+            avail_colIDs = AvailColIDs_New;
+        }
+
+
+        public List<string> GetListOfChangedProperties()
+        {
+            List<string> return_list = new List<string>();
+
+            return return_list;
         }
 
 

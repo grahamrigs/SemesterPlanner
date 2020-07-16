@@ -150,8 +150,9 @@
 
         </Flyout>
 
-        <local:Converter_BoolToVisibility x:Key="BoolToVisibilityConverter" />
-        <local:Converter_TextBoxChangedToStyle x:Key="TextBoxChangedToStyleConverter" />
+        <local:Converter_BoolToVisibility x:Key="BoolToVisibilityConverter"/>
+        <local:Converter_TextBoxChangedToStyle x:Key="TextBoxChangedToStyleConverter"/>
+        <local:Converter_ColourHexToSolidColorBrush x:Key="ColourHexToSolidColorBrushConverter"/>
 
 
         <DataTemplate x:Key="control_template_test" x:DataType="local:EntryData">
@@ -324,26 +325,19 @@
 
 
 
-            <Grid x:Name="grid_properties_pane" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Background="#FFEEEEEE" Visibility="Collapsed">
+            <Grid x:Name="grid_properties_pane" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Background="#FFEEEEEE" Visibility="Visible">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
 
                 <Rectangle x:Name="rect_properties_edge" Grid.Row="0" Grid.RowSpan="3" Fill="#FFCFCFCF" HorizontalAlignment="Left" Width="1"/>
 
                 <TextBlock Text="Properties" Style="{StaticResource txtblc_Default_medium}" Margin="12" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1"/>
-                <Button x:Name="btn_close_properties_pane" Style="{StaticResource btn_Default_symbol_small}" Content="&#xE89F;" Margin="12" HorizontalAlignment="Right" Background="#00000000" Tapped="ClosePropertiesPane_Tapped" Grid.Column="1">
-                    <ToolTipService.ToolTip>
-                        <TextBlock Text="Collapse the properties pane" Style="{StaticResource txtblc_Default_small}"/>
-                    </ToolTipService.ToolTip>
-                </Button>
+                <Button x:Name="btn_close_properties_pane" Style="{StaticResource btn_Default_symbol_small}" Content="&#xE89F;" 
+                        Margin="12" HorizontalAlignment="Right" Background="#00000000" Tapped="ClosePropertiesPane_Tapped" 
+                        ToolTipService.ToolTip="Collapse the properties pane"/>
 
                 <ScrollViewer x:Name="scroll_properties" Style="{StaticResource scroll_BasicScrollViewer}" ViewChanged="SynchronizedScrollerOnViewChanged" Grid.Row="1" Grid.Column="2"  >
                     <Grid x:Name="grid_properties" Margin="8" VerticalAlignment="Top" HorizontalAlignment="Stretch" Tag="unchanged">
@@ -365,28 +359,27 @@
 
                         <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="0" Grid.Column="0" Text="EntryID"/>
                         <TextBox x:Name="txtbox_prop_entryID" Style="{Binding EntryID_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="0" Grid.Column="1"
-                                 Text="{Binding EntryID_New, Mode=OneWay}" TextChanged="PropertyTextbox_Changed" PlaceholderText="EntryID"
+                                 Text="{Binding EntryID_New, Mode=OneWay}" PlaceholderText="EntryID"
                                  IsEnabled="False"/>
 
                         <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="1" Grid.Column="0" Text="Title"/>
                         <TextBox x:Name="txtbox_prop_title" Style="{Binding Title_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="1" Grid.Column="1"
-                                 Text="{Binding Title_New, Mode=TwoWay}" TextChanged="PropertyTextbox_Changed" PlaceholderText="Title"/>
+                                 Text="{Binding Title_New, Mode=TwoWay}" PlaceholderText="Title"/>
 
                         <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="2" Grid.Column="0" Text="Subtitle"/>
                         <TextBox x:Name="txtbox_prop_subtitle" Style="{Binding Subtitle_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="2" Grid.Column="1"
-                                 Text="{Binding Subtitle_New, Mode=TwoWay}" TextChanged="PropertyTextbox_Changed" PlaceholderText="Subtitle"/>
+                                 Text="{Binding Subtitle_New, Mode=TwoWay}" PlaceholderText="Subtitle"/>
 
                         <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="3" Grid.Column="0" Text="Display Colour"/>
                         <StackPanel Grid.Row="3" Grid.Column="1" Margin="4" Orientation="Horizontal" Spacing="8">
-                            <Grid x:Name="grid_prop_current_colour" Width="32" Background="#FFFF5555" CornerRadius="2"/>
+                            <Grid x:Name="grid_prop_current_colour" Width="32" CornerRadius="2" 
+                                  Background="{Binding ColourHex_New, Mode=OneWay, Converter={StaticResource ColourHexToSolidColorBrushConverter}}"/>
                             <Button x:Name="btn_properties_change_colour" Content="Modify" Flyout="{StaticResource flyout_colour_picker}" HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <!--calendar entries-->
 
 
-
-                        <Button HorizontalAlignment="Center" Content="Apply" IsEnabled="{Binding AnyPropertiesChanged, Mode=TwoWay}" Grid.Row="4"/>
 
                     </Grid>
                 </ScrollViewer>
@@ -397,7 +390,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button x:Name="btn_properties_apply" HorizontalAlignment="Center" Content="Apply" Margin="12" Tapped="ApplyPropertiesButton_Tapped"
-                            IsEnabled="{Binding AnyPropertiesChanged, Mode=OneWay}" Grid.Row="5"/>
+                             Grid.Row="5" IsEnabled="{Binding ApplyButton_Enabled, Mode=OneWay}"/>
+                    <!---->
                     <TextBlock x:Name="txtblc_properties_unsaved" HorizontalAlignment="Center" Text="unsaved = false" Tapped="ApplyPropertiesButton_Tapped" Grid.Column="2" VerticalAlignment="Center" />
                 </Grid>
 
