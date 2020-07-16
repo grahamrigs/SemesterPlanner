@@ -717,9 +717,13 @@ namespace SemesterPlanner
         public void IsNewTitleValid(List<string> check_title_subtitle, List<string> exclude_title_subtitle,
             out bool valid_entry, out bool is_duplicate, out bool is_title_exist)
         {
+            valid_entry = false;
 
             string check_title = check_title_subtitle[0];
             string check_subtitle = check_title_subtitle[1];
+
+            Debug.WriteLine("IsNewTitleValid     check_title = '" + check_title + "'     check_subtitle = '" + check_subtitle + "'");
+
 
             //checks if the title is null, and if it's not also check that its length is greater than 0
             is_title_exist = ((check_title != null) && (check_title.Length > 0));
@@ -739,7 +743,11 @@ namespace SemesterPlanner
                 Debug.WriteLine(string.Format("  Duplicate     title='{0}'     subtitle='{1}'", check_title, check_subtitle));
             }
 
-            valid_entry = true;
+            if (is_title_exist && !is_duplicate)
+            {
+                valid_entry = true;
+                Debug.WriteLine("  valid_entry = " + valid_entry.ToString());
+            }
 
         }
 

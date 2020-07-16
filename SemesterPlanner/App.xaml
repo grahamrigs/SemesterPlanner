@@ -62,7 +62,8 @@
 
 
             <Style x:Key="bor_AddNewEntryPreviewTitleBlock" TargetType="Border" BasedOn="{StaticResource bor_EntryTitleBlock}">
-                <Setter Property="Width" Value="240"/>
+                <Setter Property="Width" Value="260"/>
+                <Setter Property="Margin" Value="0"/>
             </Style>
             <Style x:Key="bor_AddNewEntryPreviewTitleBlock_Selected" TargetType="Border" BasedOn="{StaticResource bor_AddNewEntryPreviewTitleBlock}">
                 <Setter Property="BorderThickness" Value="2"/>

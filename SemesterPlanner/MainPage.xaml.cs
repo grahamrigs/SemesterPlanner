@@ -73,6 +73,7 @@ namespace SemesterPlanner
 
         //and the currently selected entry, for easy access
         static EntryData glo_AddNew_EntryData = new EntryData();
+        AddNewEntry glo_AddNewEntry = new AddNewEntry();
 
         //these will store the values in the properties pane, before and after changes
         ChangedProperties glo_ChangedProperties = new ChangedProperties();
@@ -1142,15 +1143,31 @@ namespace SemesterPlanner
 
 
 
+            if (!for_preview)
+            {
+                // Create the entryID tag binding
+                Binding binding_ID_tag = new Binding()
+                {
+                    Path = new PropertyPath("EntryID"),
+                    Mode = BindingMode.OneWay,
+                    Converter = new Converter_EntryIDToBorderTag()
+                };
+                outer_border.SetBinding(TagProperty, binding_ID_tag);
 
-            // Create the entryID tag binding
-            Binding binding_ID_tag = new Binding() 
-            { 
-                Path = new PropertyPath("EntryID"), 
-                Mode = BindingMode.OneWay,
-                Converter = new Converter_EntryIDToBorderTag()
-            };
-            outer_border.SetBinding(TagProperty, binding_ID_tag);
+
+                // Create the row binding
+                Binding binding_row = new Binding()
+                {
+                    Path = new PropertyPath("RowPosition"),
+                    Mode = BindingMode.OneWay
+                };
+                outer_border.SetBinding(Grid.RowProperty, binding_row);
+            }
+            else
+            {
+                outer_border.Tag = "preview";
+            }
+
 
 
             // Create the style binding
@@ -1195,13 +1212,6 @@ namespace SemesterPlanner
             txtblc_subtitle.SetBinding(TextBlock.TextProperty, binding_subtitle);
 
 
-            // Create the row binding
-            Binding binding_row = new Binding()
-            {
-                Path = new PropertyPath("RowPosition"),
-                Mode = BindingMode.OneWay
-            };
-            outer_border.SetBinding(Grid.RowProperty, binding_row);
 
 
 
@@ -2803,7 +2813,13 @@ namespace SemesterPlanner
         {
             contentdialog_add_new_entry.Visibility = Visibility.Visible;
             glo_add_new_window_open = true;
-            glo_AddNew_EntryData = new EntryData();
+
+            glo_AddNewEntry = new AddNewEntry();
+
+            glo_AddNewEntry.glo_ProjectData_Reference = glo_ProjectData;
+            glo_AddNewEntry.glo_MainPage_Reference = this;
+
+            contentdialog_add_new_entry.DataContext = glo_AddNewEntry;
 
             ContentDialogResult result = await contentdialog_add_new_entry.ShowAsync();
 
@@ -2828,9 +2844,11 @@ namespace SemesterPlanner
             }
 
             //now we reset the form on the content dialog to blanks
-            txtbox_add_new_entry_title.Text = "";
-            txtbox_add_new_entry_subtitle.Text = "";
-            btn_add_new_entry_colour.Tag = "";
+            //txtbox_add_new_entry_title.Text = "";
+            //txtbox_add_new_entry_subtitle.Text = "";
+            //btn_add_new_entry_colour.Tag = "";
+
+            glo_add_new_window_open = false;
 
         }
 
@@ -2840,7 +2858,7 @@ namespace SemesterPlanner
 
             Debug.WriteLine("AddNewEntryUpdatePreview");
 
-            Border preview_border = CreateEntryTitleBlock(glo_AddNew_EntryData, true);
+            Border preview_border = CreateEntryTitleBlock(glo_AddNewEntry.GetEntryDataForPreview(), true);
 
             //removes the border that's already there
             if (stack_add_new_entry_preview.Children.Count() > 1)
@@ -2871,39 +2889,6 @@ namespace SemesterPlanner
 
 
         }
-        public bool AddNewEntryValid()
-        {
-            //will determine if the add new entry is valid
-
-
-            string addnew_title = glo_AddNew_EntryData.Title;
-            string addnew_subtitle = glo_AddNew_EntryData.Subtitle;
-
-            List<string> check_title_subtitle = new List<string> { addnew_title, addnew_subtitle };
-            List<string> exclude_lst = new List<string>();
-
-            bool valid_entry;
-            bool is_duplicate;
-            bool is_title_exist;
-
-            glo_ProjectData.IsNewTitleValid(check_title_subtitle, exclude_lst, out valid_entry, out is_duplicate, out is_title_exist);
-
-
-            //this will only display if it's going to say it's invalid
-            if (!valid_entry)
-            {
-                Debug.WriteLine("\nAddNewEntryValid");
-                Debug.WriteLine(string.Format("    {0,-15} = {1}", "Title", addnew_title));
-                Debug.WriteLine(string.Format("    {0,-15} = {1}", "Subtitle", addnew_subtitle));
-                Debug.WriteLine(string.Format("    {0,-15} = {1}", "is_duplicate", is_duplicate));
-                Debug.WriteLine(string.Format("    {0,-15} = {1}", "is_title_exist", is_title_exist));
-                Debug.WriteLine(string.Format("    {0,-15} = {1}", "valid_entry", valid_entry));
-                Debug.WriteLine("");
-            }
-
-
-            return valid_entry;
-        }
         private void AddNewEntryValidConfirmButton(bool confirm_button_enabled)
         {
 
@@ -2919,118 +2904,45 @@ namespace SemesterPlanner
         }
         private void AddNewEntryTextboxChanged(object sender, TextChangedEventArgs e)
         {
-            if (!AddNewEntryTextboxValidInput()) { Debug.WriteLine("ERROR: the inputted text is invalid"); return; }
+            //if (!AddNewEntryTextboxValidInput()) { Debug.WriteLine("ERROR: the inputted text is invalid"); return; }
 
-            TextBox sending_txtbox = (TextBox)sender;
+            //TextBox sending_txtbox = (TextBox)sender;
 
-            string new_value;
-            switch (sending_txtbox.Name)
-            {
-                case "txtbox_add_new_entry_title":
-                    new_value = txtbox_add_new_entry_title.Text.ToString();
-                    Debug.WriteLine(string.Format("Updating    glo_AddNew_EntryData.{0} = {1}", "Title", new_value));
-                    glo_AddNew_EntryData.Title = new_value;
-                    break;
+            //string new_value;
+            //switch (sending_txtbox.Name)
+            //{
+            //    case "txtbox_add_new_entry_title":
+            //        new_value = txtbox_add_new_entry_title.Text.ToString();
+            //        Debug.WriteLine(string.Format("Updating    glo_AddNew_EntryData.{0} = {1}", "Title", new_value));
+            //        glo_AddNew_EntryData.Title = new_value;
+            //        break;
 
-                case "txtbox_add_new_entry_subtitle":
-                    new_value = txtbox_add_new_entry_subtitle.Text.ToString();
-                    Debug.WriteLine(string.Format("Updating    glo_AddNew_EntryData.{0} = {1}", "Subtitle", new_value));
-                    glo_AddNew_EntryData.Subtitle = new_value;
-                    break;
-            }
+            //    case "txtbox_add_new_entry_subtitle":
+            //        new_value = txtbox_add_new_entry_subtitle.Text.ToString();
+            //        Debug.WriteLine(string.Format("Updating    glo_AddNew_EntryData.{0} = {1}", "Subtitle", new_value));
+            //        glo_AddNew_EntryData.Subtitle = new_value;
+            //        break;
+            //}
 
-            AddNewEntryUpdatePreview();
+            //AddNewEntryUpdatePreview();
 
-            string new_entryID = "";
-            if (AddNewEntryValid())
-            {
-                AddNewEntryValidConfirmButton(true);
-                new_entryID = CreateNewEntryID(glo_AddNew_EntryData.Title);
-            }
-            else
-            {
-                AddNewEntryValidConfirmButton(false);
-            }
+            //string new_entryID = "";
+            //if (AddNewEntryValid())
+            //{
+            //    AddNewEntryValidConfirmButton(true);
+            //    new_entryID = CreateNewEntryID(glo_AddNew_EntryData.Title);
+            //}
+            //else
+            //{
+            //    AddNewEntryValidConfirmButton(false);
+            //}
 
-            Debug.WriteLine("new_entryID = " + new_entryID);
+            //Debug.WriteLine("new_entryID = " + new_entryID);
 
-            if (new_entryID == "invalid") { new_entryID = ""; Debug.WriteLine("ERROR: new_entryID = '" + new_entryID + "'"); }
+            //if (new_entryID == "invalid") { new_entryID = ""; Debug.WriteLine("ERROR: new_entryID = '" + new_entryID + "'"); }
 
-            glo_AddNew_EntryData.EntryID = new_entryID;
-            //Debug.WriteLine("glo_AddNew_EntryData.EntryID = " + glo_AddNew_EntryData.EntryID);
-        }
-        public string CreateNewEntryID(string given_title)
-        {
-            //will create a new entryID given an entry title
-
-            Debug.WriteLine("CreateNewEntryID     title='" + given_title + "'");
-
-            //just to ensure that the given title is valid
-            if (string.IsNullOrEmpty(given_title)) { Debug.WriteLine("ERROR: given_title not valid"); return "invalid"; }
-
-            string new_entryID = "";
-
-            //we want to turn something like  title="Mech 2202"  into  entry_ID="mech†2202‡‡‡‡‡‡‡‖0001"
-            //the title will be made lowercase, spaces converted to †, and truncated with ‡ trailing spaces
-            //the second part will be a string number, in case the first section is a duplicate
-
-            int truncated_title_length = 16;
-            int designation_length = 4;
-            int designation_start = 1;
-            char space_replacement = '†';   //this is the "dagger" symbol
-            char trailing_space = '‡';      //this is the "double dagger" symbol
-            char title_des_sep = '‖';       //this is the "double vertical line" symbol
-
-
-            string title_lower = given_title.ToLower();
-            string conv_spaces = title_lower.Replace(' ', space_replacement);
-
-            int original_length = conv_spaces.Length;
-
-            string trunc_title;
-            if (original_length > truncated_title_length)
-            {
-                trunc_title = conv_spaces.Substring(0, truncated_title_length);
-
-                //will convert      "Mech 2202 New Class Blah"   to   "mech†2202†new†cl"
-            }
-            else //original_length <= truncated_title_length
-            {
-                trunc_title = conv_spaces.PadRight(truncated_title_length, trailing_space);
-
-                //will convert      "Mech 2202"   to   "mech†2202‡‡‡‡‡‡‡"
-            }
-
-            //this will be the number portion
-            int designation_number;
-
-            //now will check if this truncated title portion already exists
-            bool trunc_title_exists = glo_ProjectData.entryIDs_text_lst_param.Contains(trunc_title);
-
-
-            //if it doesn't exist, then it's simple
-            if (!trunc_title_exists)
-            {
-                designation_number = designation_start;
-            }
-            //otherwise we need to increase the counter
-            else
-            {
-                designation_number = glo_ProjectData.GetMaxDesignationForEntryIDTitle(trunc_title) + 1;
-            }
-
-            //this was the error number for designation
-            if (designation_number == -1) { Debug.WriteLine("ERROR: designation_number = " + designation_number); return "invalid"; }
-
-
-            //will have made  34  into  "0034"
-            string designation_final = designation_number.ToString().PadLeft(designation_length, '0');
-
-
-            //should be the final format of  entry_ID="mech†2202‡‡‡‡‡‡‡‖0001"
-            new_entryID = trunc_title + title_des_sep + designation_final;
-
-            return new_entryID;
+            //glo_AddNew_EntryData.EntryID = new_entryID;
+            ////Debug.WriteLine("glo_AddNew_EntryData.EntryID = " + glo_AddNew_EntryData.EntryID);
         }
 
         private void AddEntryMethod()
@@ -3040,23 +2952,23 @@ namespace SemesterPlanner
             Debug.WriteLine("AddEntryMethod");
 
 
-            //just final checks to ensure that all required data is there and it's not a duplicate
-            if (!AddNewEntryValid())
-            {
-                Debug.WriteLine("ERROR: Add new entry NOT valid");
-                return;
-            }
-            if (string.IsNullOrEmpty(glo_AddNew_EntryData.EntryID))
-            {
-                Debug.WriteLine("ERROR: Add new entry has null or empty EntryID");
-                return;
-            }
+            ////just final checks to ensure that all required data is there and it's not a duplicate
+            //if (!AddNewEntryValid())
+            //{
+            //    Debug.WriteLine("ERROR: Add new entry NOT valid");
+            //    return;
+            //}
+            //if (string.IsNullOrEmpty(glo_AddNew_EntryData.EntryID))
+            //{
+            //    Debug.WriteLine("ERROR: Add new entry has null or empty EntryID");
+            //    return;
+            //}
 
 
 
-            //first to create the new EntryData based off the addnew entryData
-            //we need a copy as this new one is going to be put into the master lists in a shallow copy
-            EntryData new_entryData = CreateDeepCopyOfEntryData(glo_AddNew_EntryData);
+            //first to create the new EntryData based off the addnew class
+            EntryData new_entryData = new EntryData();
+            ApplyAddNewEntryDetailsToEntryData(ref new_entryData);
 
 
             //final data that needs to be figured out is the list position
@@ -3084,6 +2996,91 @@ namespace SemesterPlanner
             //this will put the new entrydata into the lists and calendar display
             InsertNewEntryData(new_entryData);
 
+        }
+        private void ApplyAddNewEntryDetailsToEntryData(ref EntryData new_entryData)
+        {
+            //this will use the ref and pointers to edit the new_entryData that's being created in the previous method
+
+
+            //gets the new changed values from the changed properties
+            glo_AddNewEntry.GetFieldData(
+                out string entryID,
+                out string title,
+                out string subtitle,
+                out string colourhex,
+                out List<string> prereq_entryIDs,
+                out List<string> coreq_entryIDs,
+                out List<string> avail_colIDs);
+
+
+            if (entryID != null && entryID != "")
+            {
+                new_entryData.EntryID = entryID;
+            }
+            else
+            {
+                new_entryData.EntryID = "invalid_entryID";
+            }
+
+
+            if (title != null && title != "")
+            {
+                new_entryData.Title = title;
+            }
+            else
+            {
+                new_entryData.Title = "invalid_title";
+            }
+
+
+            if (subtitle != null)
+            {
+                new_entryData.Subtitle = subtitle;
+            }
+            else
+            {
+                new_entryData.Subtitle = "invalid_subtitle";
+            }
+
+
+            if (colourhex != null && colourhex != "")
+            {
+                new_entryData.ColourHex = colourhex;
+            }
+            else
+            {
+                new_entryData.ColourHex = glo_default_titleblock_colour_hex;
+            }
+
+
+            if (prereq_entryIDs != null)
+            {
+                new_entryData.PrereqEntryIDs = prereq_entryIDs;
+            }
+            else
+            {
+                new_entryData.PrereqEntryIDs = new List<string>();
+            }
+
+
+            if (coreq_entryIDs != null)
+            {
+                new_entryData.CoreqEntryIDs = coreq_entryIDs;
+            }
+            else
+            {
+                new_entryData.CoreqEntryIDs = new List<string>();
+            }
+
+
+            if (avail_colIDs != null)
+            {
+                new_entryData.AvailColIDs = avail_colIDs;
+            }
+            else
+            {
+                new_entryData.AvailColIDs = new List<string>();
+            }
         }
         private void InsertNewEntryData(EntryData inserted_entryData)
         {
@@ -3393,6 +3390,10 @@ namespace SemesterPlanner
             {
                 master_entryData.AvailColIDs = avail_colIDs;
             }
+
+
+            //will update the used colour list
+            CreateUsedColourList();
         }
 
 
@@ -3403,8 +3404,23 @@ namespace SemesterPlanner
 
         private void ColourPickerFlyout_Opened(object sender, object e)
         {
+            //for some reason
+            if (!glo_add_new_window_open && !glo_property_pane_open_)
+            {
+                return;
+            }
+
             //puts the correct colour into the colour picker
-            myColorPicker.Color = ((SolidColorBrush)grid_prop_current_colour.Background).Color;
+
+            if (glo_add_new_window_open)
+            {
+                myColorPicker.Color = GetSolidColorBrushFromHex(glo_AddNewEntry.ColourHex_Add).Color;
+            }
+            else //if (glo_property_pane_open_)
+            {
+                myColorPicker.Color = GetSolidColorBrushFromHex(glo_ChangedProperties.ColourHex_New).Color;
+            }
+
 
             //clears the used colours variable grid
             vargrid_used_colours.Children.Clear();
@@ -3455,8 +3471,7 @@ namespace SemesterPlanner
         private void confirmColor_Click(object sender, RoutedEventArgs e)
         {
 
-            Windows.UI.Color picker_colour = myColorPicker.Color;
-            string chosen_colour_hex = GetHexFromColorPicker(picker_colour);
+            string chosen_colour_hex = GetHexFromColorPicker(myColorPicker.Color);
 
             //glo_CalculatedData.ColourPickerChosenHex = chosen_colour_hex;
 
@@ -3469,7 +3484,9 @@ namespace SemesterPlanner
             {
                 //this will happen if the add new entry window is open
 
-                ChangeColour_AddNewEntry(chosen_colour_hex);
+                glo_AddNewEntry.ColourHex_Add = chosen_colour_hex;
+
+                //ChangeColour_AddNewEntry(chosen_colour_hex);
 
                 // Close the Flyout.
                 btn_add_new_entry_colour.Flyout.Hide();
@@ -3478,7 +3495,9 @@ namespace SemesterPlanner
             {
                 //this will happen if the properties pane is open and the add new entry window isn't
 
-                ChangeColour_Properties(chosen_colour_hex);
+                glo_ChangedProperties.ColourHex_New = chosen_colour_hex;
+
+                //ChangeColour_Properties(chosen_colour_hex);
 
                 // Close the Flyout.
                 btn_properties_change_colour.Flyout.Hide();
@@ -3788,5 +3807,10 @@ namespace SemesterPlanner
         }
 
         EntryDataTest glo_entryDataTesting = new EntryDataTest();
+
+        private void PrintAddNewEntryClass(object sender, TappedRoutedEventArgs e)
+        {
+            glo_AddNewEntry.PrintProperties();
+        }
     }
 }

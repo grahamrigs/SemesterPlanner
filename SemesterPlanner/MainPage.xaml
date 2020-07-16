@@ -10,7 +10,8 @@
 
     <Page.Resources>
         <Flyout x:Key="flyout_colour_picker" Opened="ColourPickerFlyout_Opened" >
-            <Grid x:Name="grid_colour_picker_simple" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid x:Name="grid_colour_picker_simple" Grid.Row="1" Grid.Column="1" 
+                  HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -45,8 +46,75 @@
                 </Grid.RowDefinitions>
 
                 <ScrollViewer Margin="0,0,0,8" Background="#66FFFFFF">
-                    <StackPanel Spacing="4" Padding="4,0">
-                        <Border Grid.Row="1" Style="{StaticResource bor_EntryTitleBlock}" Margin="16,0">
+                    <ListView>
+                        <ToggleButton>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
+                            </StackPanel>
+                        </ToggleButton>
+
+
+
+
+                        <!--<Border Grid.Row="1" Style="{StaticResource bor_EntryTitleBlock}" Margin="16,0">
                             <Grid Style="{StaticResource grid_EntryTitleBlockInnerGrid}" Padding="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -131,9 +199,9 @@
                             </Grid>
                         </Border>
 
-                        <Button Content="&#xE109;" FontFamily="Segoe MDL2 Assets" Margin="0,4,0,8" HorizontalAlignment="Center" Width="32" Height="32"/>
+                        <Button Content="&#xE109;" FontFamily="Segoe MDL2 Assets" Margin="0,4,0,8" HorizontalAlignment="Center" Width="32" Height="32"/>-->
 
-                    </StackPanel>
+                    </ListView>
                     
                 </ScrollViewer>
 
@@ -325,7 +393,7 @@
 
 
 
-            <Grid x:Name="grid_properties_pane" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Background="#FFEEEEEE" Visibility="Visible">
+            <Grid x:Name="grid_properties_pane" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Background="#FFEEEEEE" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -414,56 +482,62 @@
 
 
         <ContentDialog x:Name="contentdialog_add_new_entry"
-                       Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed"
+                       Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Visible"
                        Title="Add New Entry"
                        PrimaryButtonText="Confirm"
-                       IsPrimaryButtonEnabled="False"
+                       IsPrimaryButtonEnabled="{Binding CreateButton_Enabled}"
                        SecondaryButtonText="Cancel"
                        Background="#FFF6F6F6">
             
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
                         <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="140"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="12"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Title" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,8,16,8"
+                    <TextBlock Text="Title" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4,8,4,4"
                                ToolTipService.ToolTip="Must be unique"/>
-                    <TextBox x:Name="txtbox_add_new_entry_title" Width="180" Text="" HorizontalAlignment="Left" TextChanged="AddNewEntryTextboxChanged" Grid.Column="1" Margin="0,4"/>
+                    <TextBox x:Name="txtbox_add_new_entry_title"  HorizontalAlignment="Stretch" PlaceholderText="Title"
+                             Text="{Binding Title_Add, Mode=TwoWay}" Grid.Row="1"/>
 
-                    <TextBlock Grid.Row="1" Text="Subtitle" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,8,16,8"/>
-                    <TextBox x:Name="txtbox_add_new_entry_subtitle" Width="180" Text="" HorizontalAlignment="Left" TextChanged="AddNewEntryTextboxChanged" Grid.Row="1" Grid.Column="1" Margin="0,4"/>
+                    <TextBlock Grid.Row="2" Text="Subtitle" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4,8,4,4"/>
+                    <TextBox x:Name="txtbox_add_new_entry_subtitle" HorizontalAlignment="Stretch" PlaceholderText="Subtitle"
+                             Text="{Binding Subtitle_Add, Mode=TwoWay}" Grid.Row="3"/>
 
-                    <TextBlock Text="Background" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,8,16,8"/>
-                    <Button x:Name="btn_add_new_entry_colour" Content="Set Colour" Tag="#FFA0A0A0" Flyout="{StaticResource flyout_colour_picker}" Grid.Column="4" Margin="0,4" Width="100"/>
+                    <TextBlock Text="Background" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4,8,4,4"/>
+                    <Button x:Name="btn_add_new_entry_colour" Content="Set Colour" Tag="#FFA0A0A0" 
+                            Flyout="{StaticResource flyout_colour_picker}" Grid.Column="2" Width="100" Grid.Row="1"/>
 
-                    <TextBlock Text="Text Colour" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,8,16,8" Grid.Row="1"/>
-                    <ComboBox x:Name="combo_add_new_entry_text_colour" Grid.Row="1" Grid.Column="4" Margin="0,4" Width="100" SelectedIndex="0">
+                    <TextBlock Text="Text Colour" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4,8,4,4" Grid.Row="2"/>
+                    <ComboBox x:Name="combo_add_new_entry_text_colour" Grid.Row="3" Grid.Column="2" SelectedIndex="0" HorizontalAlignment="Stretch">
                         <ComboBoxItem Content="Black"/>
                         <ComboBoxItem Content="White"/>
                     </ComboBox>
 
 
-                    <StackPanel x:Name="stack_add_new_entry_preview" Spacing="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.ColumnSpan="5" Grid.Row="3">
-                        <TextBlock Text="Preview:" HorizontalAlignment="Center" Visibility="Collapsed"/>
+                    <StackPanel x:Name="stack_add_new_entry_preview" Spacing="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="5" Grid.Row="4" Margin="0,12,0,0">
+                        <TextBlock Text="Preview:" HorizontalAlignment="Left" Visibility="Visible" VerticalAlignment="Bottom" Margin="4"/>
                         <Border x:Name="bor_add_new_entry_preview_empty" Style="{StaticResource bor_AddNewEntryPreviewTitleBlock_Default}"/>
                     </StackPanel>
 
+                    <Button Content="Print" FontSize="8" HorizontalAlignment="Right" VerticalAlignment="Top" Tapped="PrintAddNewEntryClass" />
 
-                    <ToggleButton x:Name="togbtn_add_new_entry" Content="More" VerticalAlignment="Center" HorizontalAlignment="Right" 
-                                  Grid.Row="3" Grid.Column="4" IsChecked="False"/>
+                    <ToggleButton x:Name="togbtn_add_new_entry" Content="More" VerticalAlignment="Bottom" HorizontalAlignment="Right" 
+                                  Grid.Row="4" Grid.Column="4" IsChecked="False"/>
 
                     <Grid x:Name="grid_add_new_entry_more_options" Grid.ColumnSpan="5" Grid.Row="5" Height="200"  
                           Background="#66FFFFFF" BorderBrush="Gray" BorderThickness="1" CornerRadius="2" Margin="0,20,0,0"
@@ -471,27 +545,50 @@
 
                         <!-- Binding information -->
                         <!-- https://stackoverflow.com/questions/18924164/binding-the-checked-state-of-a-togglebutton-to-the-visibility-of-a-usercontrol -->
-                        
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
 
-                        <TextBlock Text="Available Columns" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
-                        <TextBlock Text="Locked Column" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
-                        <Button Content="Prerequisites" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"
-                                Flyout="{StaticResource flyout_requisites}"/>
-                        <TextBlock Text="Corequisites" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="6"/>
+                        <ScrollViewer>
+                            <Grid Margin="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
+
+                                <Button Content="Prerequisites" Grid.Row="0" Margin="4" HorizontalAlignment="Stretch"
+                                        Flyout="{StaticResource flyout_requisites}"/>
+                                
+                                <GridView Grid.Row="0" Grid.Column="1" Margin="4" VerticalAlignment="Center"/>
+
+
+                                <Button Content="Corequisites" Grid.Row="2" Margin="4" HorizontalAlignment="Stretch"/>
+                                
+                                <GridView Grid.Row="2" Grid.Column="1" Margin="4" VerticalAlignment="Center"/>
+
+                                
+                                <Button Content="Possible Terms" Grid.Row="4" Margin="4" HorizontalAlignment="Stretch"/>
+                                
+                                <GridView Grid.Row="4" Grid.Column="1" Margin="4" VerticalAlignment="Center"/>
+
+                                
+
+                                <Rectangle Grid.Row="1" Height="1" Fill="LightGray" Margin="0,4,0,4" Grid.ColumnSpan="2"/>
+                                <Rectangle Grid.Row="3" Height="1" Fill="LightGray" Margin="0,4,0,4" Grid.ColumnSpan="2"/>
+
+                                <!--<TextBlock Text="Available Columns" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                                <TextBlock Text="Locked Column" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"/>
+                                <Button Content="Prerequisites" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"
+                                        Flyout="{StaticResource flyout_requisites}"/>
+                                <TextBlock Text="Corequisites" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="6"/>-->
+                            </Grid>
+                        </ScrollViewer>
                     </Grid>
-
-
                 </Grid>
             </ScrollViewer>
         </ContentDialog>
