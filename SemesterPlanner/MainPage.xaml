@@ -221,6 +221,16 @@
         <local:Converter_BoolToVisibility x:Key="BoolToVisibilityConverter"/>
         <local:Converter_TextBoxChangedToStyle x:Key="TextBoxChangedToStyleConverter"/>
         <local:Converter_ColourHexToSolidColorBrush x:Key="ColourHexToSolidColorBrushConverter"/>
+        <local:Converter_StyleNameToStyle x:Key="StyleNameToStyleConverter"/>
+
+
+        <muxc:TeachingTip x:Name="teach_addnewentry_title_invalid"
+                          Target="{x:Bind txtbox_add_new_entry_title}"
+                          Title="Invalid Title"
+                          Subtitle="Cannot be blank or duplicate" 
+                          PreferredPlacement="Left"
+                          IsLightDismissEnabled="True">
+        </muxc:TeachingTip>
 
 
         <DataTemplate x:Key="control_template_test" x:DataType="local:EntryData">
@@ -482,7 +492,7 @@
 
 
         <ContentDialog x:Name="contentdialog_add_new_entry"
-                       Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Visible"
+                       Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed"
                        Title="Add New Entry"
                        PrimaryButtonText="Confirm"
                        IsPrimaryButtonEnabled="{Binding CreateButton_Enabled}"
@@ -512,7 +522,8 @@
                     <TextBlock Text="Title" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4,8,4,4"
                                ToolTipService.ToolTip="Must be unique"/>
                     <TextBox x:Name="txtbox_add_new_entry_title"  HorizontalAlignment="Stretch" PlaceholderText="Title"
-                             Text="{Binding Title_Add, Mode=TwoWay}" Grid.Row="1"/>
+                             Text="{Binding Title_Add, Mode=TwoWay}" Grid.Row="1" Margin="0"
+                             Style="{Binding Title_Txtbox_Style, Mode=OneWay, Converter={StaticResource StyleNameToStyleConverter}}"/>
 
                     <TextBlock Grid.Row="2" Text="Subtitle" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4,8,4,4"/>
                     <TextBox x:Name="txtbox_add_new_entry_subtitle" HorizontalAlignment="Stretch" PlaceholderText="Subtitle"

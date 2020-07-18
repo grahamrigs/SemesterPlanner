@@ -28,6 +28,11 @@
 
 
 
+            <SolidColorBrush x:Key="colour_ChangedGreenBorder" Color="#9917FF00"/>
+            <SolidColorBrush x:Key="colour_ChangedGreenFill" Color="#2617FF00"/>
+            <SolidColorBrush x:Key="colour_InvalidRedBorder" Color="#99C70000"/>
+            <SolidColorBrush x:Key="colour_InvalidRedFill" Color="#26C70000"/>
+
 
 
 
@@ -204,8 +209,12 @@
                 <Setter Property="Margin" Value="4"/>
             </Style>
             <Style x:Name="txtbox_Property_Changed" TargetType="TextBox" BasedOn="{StaticResource txtbox_Property}">
-                <Setter Property="BorderBrush" Value="#9917FF00"/>
-                <Setter Property="Background" Value="#2617FF00"/>
+                <Setter Property="BorderBrush" Value="{StaticResource colour_ChangedGreenBorder}"/>
+                <Setter Property="Background" Value="{StaticResource colour_ChangedGreenFill}"/>
+            </Style>
+            <Style x:Name="txtbox_Property_Invalid" TargetType="TextBox" BasedOn="{StaticResource txtbox_Property}">
+                <Setter Property="BorderBrush" Value="{StaticResource colour_InvalidRedBorder}"/>
+                <Setter Property="Background" Value="{StaticResource colour_InvalidRedFill}"/>
             </Style>
 
 

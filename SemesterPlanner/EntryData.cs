@@ -32,8 +32,8 @@ namespace SemesterPlanner
         private string colourhex_ = "";
         private string setcolid_ = "";
         private string actualcolid_ = "";
-        private int rowposition_ = -1;
-        private int colposition_ = -1;
+        private int rowposition_ = 0;
+        private int colposition_ = 0;
         private bool is_selected_ = false;
         private string stylename_title_ = stylename_title_lst_[0];
         private string stylename_calendar_ = stylename_calendar_lst_[0];
@@ -143,6 +143,8 @@ namespace SemesterPlanner
             get { return colposition_; }
             set
             {
+                //Debug.WriteLine(string.Format("  Setting ColPosition for '{0}'    from: {1}    to: {2}", EntryID, colposition_, value));
+
                 if (value != colposition_)
                 {
                     colposition_ = value;
@@ -242,10 +244,33 @@ namespace SemesterPlanner
 
 
 
-        private readonly List<string> Parameter_Names = new List<string> { "Entry_ProjectName", "EntryID", "Title", "Subtitle",
-            "ColourHex", "PrereqEntryIDs", "CoreqEntryIDs", "AvailColIDs", "SetColID", "RowPosition" };
-        private readonly List<string> Parameter_Save_Names = new List<string> { "", "entry-id", "title", "subtitle",
-            "colour", "prerequisites", "corequisites", "avail-col-ids", "set-col-id", "list-pos" };
+        private readonly List<string> Parameter_Names = new List<string> { 
+            "Entry_ProjectName", 
+            "EntryID", 
+            "Title", 
+            "Subtitle",
+            "ColourHex",
+            "SetColID",
+            "ActualColID",
+            "RowPosition",
+            "ColPosition",
+            "Is_Selected",
+            "PrereqEntryIDs",
+            "CoreqEntryIDs",
+            "AvailColIDs",
+        };
+        private readonly List<string> Parameter_Save_Names = new List<string> { 
+            "", 
+            "entry-id", 
+            "title", 
+            "subtitle",
+            "colour", 
+            "prerequisites", 
+            "corequisites", 
+            "avail-col-ids", 
+            "set-col-id", 
+            "list-pos" 
+        };
 
 
 
@@ -420,6 +445,7 @@ namespace SemesterPlanner
 
                 switch (cur_param_name)
                 {
+
                     case "Entry_ProjectName":
                         cur_param_val = Entry_ProjectName.ToString();
                         basic_formatting = true;
@@ -470,9 +496,19 @@ namespace SemesterPlanner
                         basic_formatting = true;
                         break;
 
+                    case "ColPosition":
+                        cur_param_val = ColPosition.ToString();
+                        basic_formatting = true;
+                        break;
+
                     case "AvailColIDs":
                         cur_param_lst = AvailColIDs;
                         list_formatting = true;
+                        break;
+
+                    case "Is_Selected":
+                        cur_param_val = Is_Selected.ToString();
+                        basic_formatting = true;
                         break;
 
                 }

@@ -1066,10 +1066,10 @@ namespace SemesterPlanner
                 List<string> entryIDs_in_titleblocks_not_in_datalists =
                     entryIDs_in_titleblocks.Except(entryIDs_in_datalists).ToList();
 
-                PrintList("tags_in_titleblocks", tags_in_titleblocks);
-                PrintList("entryIDs_in_titleblocks", entryIDs_in_titleblocks);
-                PrintList("entryIDs_in_datalists", entryIDs_in_datalists);
-                PrintList("entryIDs_in_titleblocks_not_in_datalists", entryIDs_in_titleblocks_not_in_datalists);
+                //PrintList("tags_in_titleblocks", tags_in_titleblocks);
+                //PrintList("entryIDs_in_titleblocks", entryIDs_in_titleblocks);
+                //PrintList("entryIDs_in_datalists", entryIDs_in_datalists);
+                //PrintList("entryIDs_in_titleblocks_not_in_datalists", entryIDs_in_titleblocks_not_in_datalists);
 
                 Debug.WriteLine("Titleblocks to delete: " + entryIDs_in_titleblocks_not_in_datalists.Count);
 
@@ -1310,17 +1310,16 @@ namespace SemesterPlanner
             //the corresponding ColumnData
             ColumnData cur_columnData = glo_ProjectData.GetColumnDataFromColID(cur_actual_colID);
 
-            //glo_ProjectData.PrintProjectDataValues(true, false, true);
 
-            int entry_row = creating_entryData.RowPosition;
-            int entry_col = cur_columnData.ColPosition;
+            //setting the column index (this is bound to the Grid.Column property of the borders and will auto-update)
+            creating_entryData.ColPosition = cur_columnData.ColPosition;
 
 
-            Border new_calendar_block = CreateCalendarBlock(creating_entryData, entry_row, entry_col) as Border;
+            Border new_calendar_block = CreateCalendarBlock(creating_entryData) as Border;
             grid_calendar.Children.Add(new_calendar_block);
             creating_entryData.CalendarBlock = new_calendar_block;
         }
-        private Border CreateCalendarBlock(EntryData cur_entryData, int entry_row, int entry_col)
+        private Border CreateCalendarBlock(EntryData cur_entryData)
         {
             Border outer_border = new Border();
 
@@ -1383,14 +1382,14 @@ namespace SemesterPlanner
             };
             outer_border.SetBinding(Grid.RowProperty, binding_row);
 
+            // Create the column binding
+            Binding binding_column = new Binding()
+            {
+                Path = new PropertyPath("ColPosition"),
+                Mode = BindingMode.OneWay
+            };
+            outer_border.SetBinding(Grid.ColumnProperty, binding_column);
 
-            //// Create the column binding
-            //Binding binding_column = new Binding()
-            //{
-            //    Path = new PropertyPath("ColPosition"),
-            //    Mode = BindingMode.OneWay
-            //};
-            //outer_border.SetBinding(Grid.ColumnProperty, binding_column);
 
 
 
@@ -1403,9 +1402,6 @@ namespace SemesterPlanner
 
 
             outer_border.Child = txtblc_title;
-
-            Grid.SetRow(outer_border, entry_row);
-            Grid.SetColumn(outer_border, entry_col);
 
 
             return outer_border;
@@ -1507,6 +1503,8 @@ namespace SemesterPlanner
             //this function will go through the title and calendar blocks and fix whatever data is specified
 
             Debug.WriteLine("FixBlockInfo");
+
+            return;
 
             List<string> properties_to_update = new List<string>();
 
@@ -2221,14 +2219,20 @@ namespace SemesterPlanner
         }
         public void SelectEntryData(string new_selected_entryID)
         {
-            SelectedEntryTitleCalendarBlockHighlighted(glo_selected_entryID, false);
-            SelectedEntryTitleCalendarBlockHighlighted(new_selected_entryID, true);
+            EntryData cur_selected = glo_selected_EntryData;
+            EntryData new_selected = glo_ProjectData.GetEntryDataFromEntryID(new_selected_entryID);
+
+
+            //if all goes correctly, these parameters should be bound to the style of their respective borders
+            cur_selected.Is_Selected = false;
+            new_selected.Is_Selected = true;
+
 
             //and we set the global flag
-            glo_selected_entryID = new_selected_entryID;
+            glo_selected_entryID = new_selected.EntryID;
 
             //and set the global EntryData
-            glo_selected_EntryData = glo_ProjectData.GetEntryDataFromEntryID(glo_selected_entryID);
+            glo_selected_EntryData = new_selected;
 
 
             Debug.WriteLine("The new selection:");
@@ -2238,8 +2242,8 @@ namespace SemesterPlanner
         {
             //this method will unselect whatever is the currently selected titleblock
 
-            //then we wish to unselect it as we tapped the already tapped one
-            SelectedEntryTitleCalendarBlockHighlighted(glo_selected_entryID, false);
+            //unselects the currently selected entrydata
+            glo_selected_EntryData.Is_Selected = false;
 
             //reset the global flag
             glo_selected_entryID = "";
@@ -2250,8 +2254,6 @@ namespace SemesterPlanner
             //changes the enabled of the buttons
             EnableTitleBlockButtons(false, -1);
 
-            //can now exit
-            return;
         }
         public async Task<bool> ChangeSelectionVerified()
         {
@@ -2709,6 +2711,13 @@ namespace SemesterPlanner
             int collateral_move = Math.Sign(index_change) * -1;
 
 
+            //stops if the requested index is out of bounds
+            if (move_to < 0 || max_index < move_to)
+            {
+                Debug.WriteLine("ERROR: move_to index (" + move_to + ") out of bounds");
+                return;
+            }
+
 
 
             //will go through all the EntryData's
@@ -2763,7 +2772,7 @@ namespace SemesterPlanner
 
 
             //this will refresh all the titleblocks to be in their new position
-            FixBlockInfo(false, false, false, true, false);
+            //FixBlockInfo(false, false, false, true, false);
 
 
 
@@ -2944,6 +2953,10 @@ namespace SemesterPlanner
             //glo_AddNew_EntryData.EntryID = new_entryID;
             ////Debug.WriteLine("glo_AddNew_EntryData.EntryID = " + glo_AddNew_EntryData.EntryID);
         }
+        public void ShowAddNewEntryTitleInvalidTeachingTip()
+        {
+            teach_addnewentry_title_invalid.IsOpen = true;
+        }
 
         private void AddEntryMethod()
         {
@@ -2996,6 +3009,7 @@ namespace SemesterPlanner
             //this will put the new entrydata into the lists and calendar display
             InsertNewEntryData(new_entryData);
 
+            UpdateCalendarLayout();
         }
         private void ApplyAddNewEntryDetailsToEntryData(ref EntryData new_entryData)
         {
@@ -3159,7 +3173,6 @@ namespace SemesterPlanner
 
             Debug.WriteLine("Delete of entryID  '" + selected_entryID_to_delete + "'  verified. Deleting...");
 
-            //TODO the rest of the delete
 
 
 
@@ -3173,8 +3186,10 @@ namespace SemesterPlanner
             RemoveDeletedBlocks("both");
 
             //and update all the other titleblocks and calendarblocks to update their rows
-            FixBlockInfo(false, false, false, true, false);
+            //FixBlockInfo(false, false, false, true, false);
 
+
+            UpdateCalendarLayout();
 
 
 

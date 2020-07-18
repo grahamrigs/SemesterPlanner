@@ -491,7 +491,7 @@ namespace SemesterPlanner
 
             return return_EntryData;
         }
-        public int GetListPositionFromEntryID(string given_entryID)
+        public int GetRowPositionFromEntryID(string given_entryID)
         {
             foreach (EntryData cur_entryData in EntryData_lst_param)
             {
@@ -829,8 +829,8 @@ namespace SemesterPlanner
             if (!entryIDs_lst_param.Contains(delete_entryID)) { return; }
 
 
-            //this is the list position of the entrydata to be deleted
-            int deleting_list_pos = GetListPositionFromEntryID(delete_entryID);
+            //this is the row position of the entrydata to be deleted
+            int deleting_row_pos = GetRowPositionFromEntryID(delete_entryID);
 
 
             //now we start by removing it from the main list
@@ -848,7 +848,7 @@ namespace SemesterPlanner
             //we now need to go back through the remaining EntryData's to update their list positions
             foreach (EntryData cur_entryData in EntryData_lst_param)
             {
-                if (cur_entryData.RowPosition >= deleting_list_pos)
+                if (cur_entryData.RowPosition >= deleting_row_pos)
                 {
                     cur_entryData.RowPosition -= 1;
                 }

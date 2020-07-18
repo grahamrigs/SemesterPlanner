@@ -22,7 +22,8 @@ namespace SemesterPlanner
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        static public List<string> Styles_TextBox_lst = new List<string> { "txtbox_Property", "txtbox_Property_Changed" };
+        static public List<string> Styles_TextBox_lst = new List<string> 
+        { "txtbox_Property", "txtbox_Property_Invalid" };
 
 
         private string entryID_add_ = "";
@@ -36,6 +37,8 @@ namespace SemesterPlanner
         private bool create_button_enabled_ = false;
         private bool title_valid_ = false;
         private bool entryID_valid_ = false;
+
+        private string title_txtbox_style_ = Styles_TextBox_lst[0];
 
 
 
@@ -166,6 +169,19 @@ namespace SemesterPlanner
             }
         }
 
+        public string Title_Txtbox_Style
+        {
+            get { return title_txtbox_style_; }
+            private set
+            {
+                if (value != title_txtbox_style_)
+                {
+                    title_txtbox_style_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
 
         public ProjectData glo_ProjectData_Reference { get; set; }
@@ -223,7 +239,19 @@ namespace SemesterPlanner
 
                 Debug.WriteLine("EntryID_Valid = " + EntryID_Valid.ToString() + "     EntryID_Add = " + EntryID_Add);
             }
+            else
+            {
+                EntryID_Add = "";
+                EntryID_Valid = false;
+
+                glo_MainPage_Reference.ShowAddNewEntryTitleInvalidTeachingTip();
+            }
+
+
+            if (!Title_Valid) { Title_Txtbox_Style = Styles_TextBox_lst[1]; }
+            else { Title_Txtbox_Style = Styles_TextBox_lst[0]; }
         }
+
         public void AddNewEntryValid()
         {
             //will determine if the add new entry is valid
