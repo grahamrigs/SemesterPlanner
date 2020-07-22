@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 using Size = Windows.Foundation.Size;
 
 namespace SemesterPlanner
@@ -88,6 +89,9 @@ namespace SemesterPlanner
         private int _lastScrollChange = Environment.TickCount;
 
         public static int MainPage_Instance_Count = 0;
+
+
+        public int gridlines_count = 0;
 
 
 
@@ -233,6 +237,7 @@ namespace SemesterPlanner
             Debug.WriteLine("Columndefinitions: " + grid_calendar.ColumnDefinitions.Count());
 
             //UpdateCalendarColRowSize();
+            CreateGridlines();
         }
         public void UpdateCalendarDisplay()
         {
@@ -245,6 +250,91 @@ namespace SemesterPlanner
 
             AddMissingBorders("calendar");
             RemoveDeletedBlocks("calendar");
+
+        }
+        public void CreateGridlines()
+        {
+            Debug.WriteLine("gridlines_count = " + gridlines_count);
+
+            //first clear all gridlines that may have been there
+            foreach (UIElement cur_control in grid_calendar.Children.ToList())
+            {
+                if (!(cur_control is Rectangle)) { continue; }
+
+                grid_calendar.Children.Remove(cur_control);
+                gridlines_count--;
+            }
+
+            Debug.WriteLine("gridlines_count = " + gridlines_count);
+
+            //now create new ones
+
+            int row_count = Glo_ProjectData.EntryData_lst_param.Count();
+            int col_count = Glo_ProjectData.ColumnData_lst_param.Count();
+
+            Debug.WriteLine("row_count = " + row_count + "     col_count = " + col_count);
+
+            //rows first
+            for (int i = 0; i <= row_count; i++)
+            {
+                Rectangle cur_hori_gridline = new Rectangle
+                {
+                    DataContext = Glo_ProjectData
+                };
+                Grid.SetRow(cur_hori_gridline, i);
+
+                if (i == row_count)
+                {
+                    cur_hori_gridline.VerticalAlignment = VerticalAlignment.Bottom;
+                }
+
+
+                // Create the style binding
+                Binding binding_style = new Binding()
+                {
+                    Path = new PropertyPath("Gridlines_Hori_Style"),
+                    Mode = BindingMode.OneWay,
+                    Converter = new Converter_StyleNameToStyle()
+                };
+                cur_hori_gridline.SetBinding(StyleProperty, binding_style);
+
+
+                grid_calendar.Children.Add(cur_hori_gridline);
+
+                gridlines_count++;
+            }
+
+            //cols now
+            for (int j = 0; j <= col_count; j++)
+            {
+                Rectangle cur_vert_gridline = new Rectangle
+                {
+                    DataContext = Glo_ProjectData
+                };
+                Grid.SetColumn(cur_vert_gridline, j);
+
+                if (j == col_count)
+                {
+                    cur_vert_gridline.HorizontalAlignment = HorizontalAlignment.Right;
+                }
+
+
+                // Create the style binding
+                Binding binding_style = new Binding()
+                {
+                    Path = new PropertyPath("Gridlines_Vert_Style"),
+                    Mode = BindingMode.OneWay,
+                    Converter = new Converter_StyleNameToStyle()
+                };
+                cur_vert_gridline.SetBinding(StyleProperty, binding_style);
+
+
+                grid_calendar.Children.Add(cur_vert_gridline);
+
+                gridlines_count++;
+            }
+
+            Debug.WriteLine("gridlines_count = " + gridlines_count);
 
         }
 
@@ -667,7 +757,7 @@ namespace SemesterPlanner
                 //solution here  https://codeaddiction.net/articles/7/remove-items-while-iterating-a-collection-in-c
 
                 //now to remove the blocks from the titleblocks pane
-                foreach (Border cur_border in grid_entry_title_blocks.Children.ToList())
+                foreach (Border cur_border in grid_entry_title_blocks.Children.OfType<Border>().ToList())
                 {
                     //the tag info from the border
                     List<string> tag_info = ExtractTagInfo(cur_border.Tag.ToString());
@@ -691,7 +781,7 @@ namespace SemesterPlanner
 
                 Debug.WriteLine("Calendarblocks to delete: " + entryIDs_in_calendarblocks_not_in_datalists.Count);
 
-                foreach (Border cur_border in grid_calendar.Children.ToList())
+                foreach (Border cur_border in grid_calendar.Children.OfType<Border>().ToList())
                 {
                     List<string> tag_info = ExtractTagInfo(cur_border.Tag.ToString());
 
@@ -988,10 +1078,18 @@ namespace SemesterPlanner
         {
             Border outer_border = new Border();
 
+            StackPanel name_stack = new StackPanel
+            {
+                Style = Application.Current.Resources["stack_EntryTitleBlockTitleStack_Hori"] as Style
+            };
+
             TextBlock txtblc_title = new TextBlock
             {
                 Style = Application.Current.Resources["txtblc_CalendarBlockTitle"] as Style
             };
+
+
+
 
 
 
@@ -1068,7 +1166,8 @@ namespace SemesterPlanner
             outer_border.ContextFlyout = CreateTitleCalendarBlockFlyout();
 
 
-            outer_border.Child = txtblc_title;
+            name_stack.Children.Add(txtblc_title);
+            outer_border.Child = name_stack;
 
 
             return outer_border;
@@ -1109,7 +1208,7 @@ namespace SemesterPlanner
 
 
 
-            foreach (Border cur_border in working_grid.Children)
+            foreach (Border cur_border in working_grid.Children.OfType<Border>())
             {
                 return_list.Add(cur_border.Tag.ToString());
             }
@@ -1187,7 +1286,7 @@ namespace SemesterPlanner
 
 
             //begin with the titleblocks
-            foreach (Border cur_titleblock in grid_entry_title_blocks.Children)
+            foreach (Border cur_titleblock in grid_entry_title_blocks.Children.OfType<Border>())
             {
 
                 //skips any null
@@ -1254,7 +1353,7 @@ namespace SemesterPlanner
             }
 
             //now do the calendarblocks
-            foreach (Border cur_calendarblock in grid_calendar.Children)
+            foreach (Border cur_calendarblock in grid_calendar.Children.OfType<Border>())
             {
 
                 //skips any null
@@ -1446,6 +1545,8 @@ namespace SemesterPlanner
             }
 
         }
+
+
         private bool CheckIfAllTitleBlocksValid()
         {
             Debug.WriteLine("CheckIfAllTitleblocksPresent");
@@ -1456,7 +1557,7 @@ namespace SemesterPlanner
             bool[] saw_entry = new bool[Glo_ProjectData.EntryData_lst_param.Count()];
 
             //will go through every border and match the entryID to the EntryData
-            foreach (Border cur_border1 in grid_entry_title_blocks.Children)
+            foreach (Border cur_border1 in grid_entry_title_blocks.Children.OfType<Border>())
             {
                 //Debug.WriteLine("cur_border1.Tag = '" + cur_border1.Tag + "'");
 
@@ -1542,15 +1643,12 @@ namespace SemesterPlanner
 
         //these methods deal with tapping on titleblocks and calendarblocks
 
-        private async void TitleCalendarBlockTapped(object sender, TappedRoutedEventArgs e)
+        private void TitleCalendarBlockTapped(object sender, TappedRoutedEventArgs e)
         {
             //this is the border if it was the tap_grid
             //Grid sending_grid = (Grid)sender;
             //Grid parent_grid = sending_grid.Parent as Grid;
             //Border sending_border = parent_grid.Parent as Border;
-
-
-
 
 
 
@@ -1566,12 +1664,6 @@ namespace SemesterPlanner
             }
 
 
-
-            //if the properties pane is open, this method will ask the user if he wishes to save his properties
-            bool change_verified = await ChangeSelectionVerified();
-            if (!change_verified) { return; }
-
-
             //the tag information
             List<string> tag_extracted = ExtractTagInfo(sending_tag.ToString());
 
@@ -1583,7 +1675,8 @@ namespace SemesterPlanner
 
 
             //this will determine if the selection needs to be changed, and to change it if it is
-            Glo_ProjectData.Glo_Selected_EntryID = tapped_entryID;
+            Glo_ProjectData.NewTappedSelection(tapped_entryID);
+            //Glo_ProjectData.Glo_Selected_EntryID = tapped_entryID;
 
         }
         private void TitleCalendarBlockRightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -1611,7 +1704,8 @@ namespace SemesterPlanner
 
 
             //this will determine if the selection needs to be changed, and to change it if it is
-            Glo_ProjectData.Glo_Selected_EntryID = tapped_entryID;
+            Glo_ProjectData.NewTappedSelection(tapped_entryID);
+            //Glo_ProjectData.Glo_Selected_EntryID = tapped_entryID;
         }
         private void TitleCalendarBlockDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
@@ -1627,7 +1721,7 @@ namespace SemesterPlanner
         }
 
 
-        public async Task<bool> ChangeSelectionVerified()
+        public async Task<string> ChangeSelectionVerified()
         {
             //this method will check if the properties pane is open with changed values
             //if so, it will ask the user if he wishes to change selection, and either save or discard changes
@@ -1636,10 +1730,11 @@ namespace SemesterPlanner
 
 
             //if the properties pane isn't open we don't need verification
-            if (!Glo_ProjectData.Glo_PropertyPaneOpen) { return true; }
+            if (!Glo_ProjectData.Glo_PropertyPaneOpen) { return "change_not-open"; }
 
 
-            //TODO if properties aren't changed
+            //if there are no changes, we don't need verification
+            if (!Glo_ProjectData.Glo_ChangedProperties.AnyProperties_Changed) { return "change_no-changes"; }
 
 
 
@@ -1660,17 +1755,17 @@ namespace SemesterPlanner
             {
 
 
-                return true;
+                return "change_save";
             }
             else if (result == ContentDialogResult.Secondary)
             {
 
 
-                return true;
+                return "change_discard";
             }
             else
             {
-                return false;
+                return "cancel";
             }
 
 
@@ -1956,22 +2051,29 @@ namespace SemesterPlanner
             //this prepares the ChangedProperties class which will keep track of all property editing
             Glo_ProjectData.PrepareChangedProperties();
 
-            //applies the datacontext of the pane
-            grid_properties_pane.DataContext = Glo_ProjectData.Glo_ChangedProperties;
-
             //will make the properties pane visible
             grid_properties_pane.Visibility = Visibility.Visible;
         }
+        public void SetDataContextPropertiesPane()
+        {
+            //applies the datacontext of the pane
+            grid_properties_pane.DataContext = Glo_ProjectData.Glo_ChangedProperties;
+        }
         private async void ClosePropertiesPane_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            //will determine if there are any changed properties
-            bool changed_properties = Glo_ProjectData.Glo_ChangedProperties.AnyProperties_Changed;
-
-            //if they confirm they want to close without saving
-            if (changed_properties && !await ExitNoApplyPropertiesConfirmationDialogue())
+            //if don't NOT want to be asked (so we do want to be asked)
+            if (!Glo_ProjectData.No_ApplyProperties_Verif_Wanted)
             {
-                return;
+                //will determine if there are any changed properties
+                bool changed_properties = Glo_ProjectData.Glo_ChangedProperties.AnyProperties_Changed;
+
+                //if they confirm they want to close without saving
+                if (changed_properties && !await ExitNoApplyPropertiesConfirmationDialogue())
+                {
+                    return;
+                }
             }
+
 
             Glo_ProjectData.Glo_PropertyPaneOpen = false;
             //this property value will toggle the visibility of the properties pane 
@@ -1980,6 +2082,53 @@ namespace SemesterPlanner
         {
             //closes the pane
             grid_properties_pane.Visibility = Visibility.Collapsed;
+        }
+        private async void ApplyPropertiesButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            //this will apply the properties, and then refresh the pane to edit more properties
+
+            bool apply_success = await Glo_ProjectData.ApplyPropertiesMethod(false);
+
+            if (apply_success)
+            {
+                Glo_ProjectData.Glo_PropertyPaneOpen = false;
+                //Glo_ProjectData.PrepareChangedProperties();
+            }
+        }
+        private async void OkPropertiesButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            //this will apply the properties, and then close the pane
+
+            bool apply_success = await Glo_ProjectData.ApplyPropertiesMethod(false);
+
+            if (apply_success)
+            {
+                Glo_ProjectData.Glo_PropertyPaneOpen = false;
+            }
+        }
+        public void ShowPropertiesTitleInvalidTeachingTip()
+        {
+            teach_properties_title_invalid.IsOpen = true;
+        }
+        public async Task<bool> ApplyPropertiesConfirmationDialogue()
+        {
+
+            chkbox_applyproperties_no_ask.DataContext = Glo_ProjectData;
+
+            contentdialog_confirm_applyproperties.Visibility = Visibility.Visible;
+
+            ContentDialogResult result = await contentdialog_confirm_applyproperties.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                //we apply the properties
+                return true;
+            }
+            else
+            {
+                //we do nothing
+                return false;
+            }
         }
         public async Task<bool> ExitNoApplyPropertiesConfirmationDialogue()
         {
@@ -1993,7 +2142,7 @@ namespace SemesterPlanner
 
             if (result == ContentDialogResult.Primary)
             {
-                //we delete the selected entry
+                //we exit without applying
                 return true;
             }
             else
@@ -2001,29 +2150,6 @@ namespace SemesterPlanner
                 //we do nothing
                 return false;
             }
-        }
-        private void ApplyPropertiesButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            //this will apply the properties, and then refresh the pane to edit more properties
-
-            if (Glo_ProjectData.ApplyPropertiesMethod(false))
-            {
-                Glo_ProjectData.Glo_PropertyPaneOpen = false;
-                //Glo_ProjectData.PrepareChangedProperties();
-            }
-        }
-        private void OkPropertiesButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            //this will apply the properties, and then close the pane
-
-            if (Glo_ProjectData.ApplyPropertiesMethod(false))
-            {
-                Glo_ProjectData.Glo_PropertyPaneOpen = false;
-            }
-        }
-        public void ShowPropertiesTitleInvalidTeachingTip()
-        {
-            teach_properties_title_invalid.IsOpen = true;
         }
 
 
@@ -2184,6 +2310,9 @@ namespace SemesterPlanner
             //string test_entryID = "geog_240";
 
             //Border test_border = Glo_ProjectData.GetEntryDataFromEntryID(test_entryID).TitleBlock;
+
+            Debug.WriteLine("Refreshing gridlines");
+            CreateGridlines();
         }
 
         private  void PrintAddNewEntryClass(object sender, TappedRoutedEventArgs e)

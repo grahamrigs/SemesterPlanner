@@ -10,13 +10,6 @@
 
     <Grid Background="{muxc:ThemeResource SystemControlChromeMediumAcrylicWindowMediumBrush}">
 
-        <Grid.Resources>
-            <AcrylicBrush x:Key="NavigationViewDefaultPaneBackground"
-                  BackgroundSource="HostBackdrop"
-                  TintColor="LightGray"
-                  TintOpacity="0.6"
-                  FallbackColor="LightGray"/>
-        </Grid.Resources>
         
         <muxc:NavigationView x:Name="NavView"
                              ItemInvoked="NavView_ItemInvoked"
@@ -61,6 +54,16 @@
             <Frame x:Name="frame_nav_content" IsTabStop="True" Visibility="Visible"
                    NavigationFailed="ContentFrame_NavigationFailed"/>
         </muxc:NavigationView>
+
+        <!--<Border Style="{StaticResource bor_EntryTitleBlock}" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                Background="#FFFF7272">
+            <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_Hori}"
+                        >
+                <TextBlock Text="Mech 2202" Style="{StaticResource txtblc_EntryTitleBlockTitle}"/>
+                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                <TextBlock Text="Thermodynamics" Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}"/>
+            </StackPanel>
+        </Border>-->
 
     </Grid>
 </Page>

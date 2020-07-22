@@ -24,6 +24,7 @@ namespace SemesterPlanner
     public sealed partial class NavigationViewMain : Page
     {
 
+        public string CurrentPage = "";
 
 
         public NavigationViewMain()
@@ -64,7 +65,9 @@ namespace SemesterPlanner
         {
             Debug.WriteLine("Navigating to " + page_str);
 
-            if (frame_nav_content == null) { return; }
+            if (frame_nav_content == null) { Debug.WriteLine("Frame is null. Exiting."); return; }
+
+            if (page_str == CurrentPage) { Debug.WriteLine("Requested current page. Exiting."); return; }
 
             switch (page_str)
             {
@@ -85,7 +88,14 @@ namespace SemesterPlanner
                     frame_nav_content.Navigate(typeof(PropertiesPage));
                     break;
 
+                default:
+                    Debug.WriteLine("Invalid page request. Exiting.");
+                    return;
+
             }
+
+            //it gets here if it succeeded in changing the page
+            CurrentPage = page_str;
 
 
 

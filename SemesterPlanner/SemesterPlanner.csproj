@@ -128,7 +128,6 @@
       <DependentUpon>CreateNewProjectForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="EntryData.cs" />
-    <Compile Include="EntryDataTest.cs" />
     <Compile Include="FileMenu.xaml.cs">
       <DependentUpon>FileMenu.xaml</DependentUpon>
     </Compile>

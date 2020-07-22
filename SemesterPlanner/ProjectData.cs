@@ -109,29 +109,29 @@ namespace SemesterPlanner
         public List<int> EntryDataRowPos_lst { get; set; }
 
 
-        private bool no_delete_verif_wanted = false;
+        private bool no_delete_verif_wanted_ = false;
         public bool No_Delete_Verif_Wanted
         {
-            get { return no_delete_verif_wanted; }
+            get { return no_delete_verif_wanted_; }
             set
             {
-                if (value != no_delete_verif_wanted)
+                if (value != no_delete_verif_wanted_)
                 {
-                    no_delete_verif_wanted = value;
+                    no_delete_verif_wanted_ = value;
                     Debug.WriteLine("No_Delete_Verif_Wanted set to: " + No_Delete_Verif_Wanted);
                 }
             }
         }
 
-        private bool no_applyproperties_verif_wanted = false;
+        private bool no_applyproperties_verif_wanted_ = false;
         public bool No_ApplyProperties_Verif_Wanted
         {
-            get { return no_applyproperties_verif_wanted; }
+            get { return no_applyproperties_verif_wanted_; }
             set
             {
-                if (value != no_applyproperties_verif_wanted)
+                if (value != no_applyproperties_verif_wanted_)
                 {
-                    no_applyproperties_verif_wanted = value;
+                    no_applyproperties_verif_wanted_ = value;
                     Debug.WriteLine("No_ApplyProperties_Verif_Wanted set to: " + No_ApplyProperties_Verif_Wanted);
                 }
             }
@@ -195,6 +195,96 @@ namespace SemesterPlanner
 
             }
         }
+
+
+
+
+        public static List<string> Gridlines_Vert_Styles = new List<string>
+        { "rect_Gridline_Vert_Visible", "rect_Gridline_Vert_Hidden" };
+        public static List<string> Gridlines_Hori_Styles = new List<string>
+        { "rect_Gridline_Hori_Visible", "rect_Gridline_Hori_Hidden" };
+
+        private bool gridlines_vert_visible_ = true;
+        private bool gridlines_hori_visible_ = true;
+
+        private string gridlines_vert_style_ = Gridlines_Vert_Styles[0];
+        private string gridlines_hori_style_ = Gridlines_Hori_Styles[0];
+
+        public bool Gridlines_Vert_Visible
+        {
+            get { return gridlines_vert_visible_; }
+            set
+            {
+                if (gridlines_vert_visible_ != value)
+                {
+                    gridlines_vert_visible_ = value;
+                    DetermineGridlineStyle();
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public bool Gridlines_Hori_Visible
+        {
+            get { return gridlines_hori_visible_; }
+            set
+            {
+                if (gridlines_hori_visible_ != value)
+                {
+                    gridlines_hori_visible_ = value;
+                    DetermineGridlineStyle();
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string Gridlines_Vert_Style
+        {
+            get { return gridlines_vert_style_; }
+            private set
+            {
+                gridlines_vert_style_ = value;
+                OnPropertyChanged();
+            }
+        }
+        public string Gridlines_Hori_Style
+        {
+            get { return gridlines_hori_style_; }
+            private set
+            {
+                gridlines_hori_style_ = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public void DetermineGridlineStyle()
+        {
+            if (Gridlines_Vert_Visible)
+            {
+                Gridlines_Vert_Style = Gridlines_Vert_Styles[0];
+            }
+            else
+            {
+                Gridlines_Vert_Style = Gridlines_Vert_Styles[1];
+            }
+
+            if (Gridlines_Hori_Visible)
+            {
+                Gridlines_Hori_Style = Gridlines_Hori_Styles[0];
+            }
+            else
+            {
+                Gridlines_Hori_Style = Gridlines_Hori_Styles[1];
+            }
+        }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -888,14 +978,91 @@ namespace SemesterPlanner
 
 
 
+        public async void NewTappedSelection(string tapped_entryID)
+        {
+            //nothing happens if it's the same entryID as selected
+            if (tapped_entryID == Glo_Selected_EntryID) { return; }
 
 
+            //we will first verify the change if the property pane is open
+
+
+
+            //this gets user verification on the delete
+            bool proceed = await VerifyChangeSelectionProperties();
+
+            if (!proceed)
+            {
+                Debug.WriteLine("Changing the selection was not verified. Exiting.");
+                return;
+            }
+
+
+            Debug.WriteLine("Changing the selection was verified. Changing...");
+
+            Glo_Selected_EntryID = tapped_entryID;
+
+        }
+        public async Task<bool> VerifyChangeSelectionProperties()
+        {
+            //by default, we will not change nor will we save
+            bool allow_change = false;
+            bool save_properties = false;
+
+
+            //if the properties pane is open, this method will ask the user if he wishes to save his properties
+            string change_verified = await MasterClass.Cur_MainPage.ChangeSelectionVerified();
+
+
+            switch (change_verified)
+            {
+                case "change_not-open":
+                    allow_change = true;
+                    break;
+
+                case "change_no-changes":
+                    allow_change = true;
+                    break;
+
+                case "change_save":
+                    allow_change = true;
+                    save_properties = true;
+                    break;
+
+                case "change_discard":
+                    allow_change = true;
+                    break;
+
+                case "cancel":
+                    break;
+
+            }
+
+
+            //if change is not allowed ("cancel") then we return with false
+            if (!allow_change) { return false; }
+
+
+            //otherwise, we are going to return true, but may need to save first
+
+
+
+            if (save_properties)
+            {
+                await ApplyPropertiesMethod(true);
+            }
+
+
+            //now we've authorized the change, and may have saved
+            return true;
+        }
         public void ChangeSelectedEntry()
         {
 
             //will be triggered if  Glo_Selected_EntryID  is changed
 
 
+            //just incase the entryID was set to blank
             if (Glo_Selected_EntryID == "")
             {
                 ClearSelection();
@@ -913,6 +1080,12 @@ namespace SemesterPlanner
 
             Debug.WriteLine("The new selection:");
             Glo_Selected_EntryData.PrintEntryDataValues();
+
+
+            if (Glo_PropertyPaneOpen)
+            {
+                PrepareChangedProperties();
+            }
         }
         public void UnselectEntryData()
         {
@@ -1353,64 +1526,37 @@ namespace SemesterPlanner
             Glo_ChangedProperties.Glo_ProjectData_Reference = this;
             Glo_ChangedProperties.Glo_MainPage_Reference = MasterClass.Cur_MainPage;
 
+            //applies the datacontext of the pane
+            MasterClass.Cur_MainPage.SetDataContextPropertiesPane();
         }
         public void PrintPropertiesEntryDatas()
         {
             Glo_ChangedProperties.PrintProperties(glo_selected_entryData);
         }
-        public bool ApplyPropertiesMethod(bool changing_selection)
+        public async Task<bool> ApplyPropertiesMethod(bool changing_selection)
         {
             Debug.WriteLine("\nApplyPropertiesMethod");
 
 
-            //apply the new properties
-            bool proceed_with_apply = false;
-
-
-            //if the setting for requiring verification is enabled...
-            //if the bool is TRUE, then we do NOT want verification
-            if (!No_ApplyProperties_Verif_Wanted)
+            //if we are not changing selection (will have been verified already), we may need to confirm
+            if (!changing_selection)
             {
-                //ContentDialog applyPropertiesDialog = new ContentDialog
-                //{
-                //    Title = "Apply property changes?",
-                //    Content = "You will not be able to undo these changes", //TODO add a list of all the changes to be made 
-                //    PrimaryButtonText = "Apply Changes",
-                //    CloseButtonText = "Cancel"
-                //};
+                //this gets user verification on the apply
+                bool proceed = await VerifyApplyProperties();
 
-                //ContentDialogResult result = await applyPropertiesDialog.ShowAsync();
-
-                //// Apply the changes if the user clicked the primary button.
-                ///// Otherwise, do nothing.
-                //if (result == ContentDialogResult.Primary)
-                //{
-                //    // Delete the file.
-                //}
-                //else
-                //{
-                //    // The user clicked the CLoseButton, pressed ESC, Gamepad B, or the system back button.
-                //    // Do nothing.
-                //}
-
-
-                proceed_with_apply = true; //TODO get rid of this override
-            }
-
-            //if the setting isn't enabled, then just proceed
-            else
-            {
-                proceed_with_apply = true;
+                if (!proceed)
+                {
+                    Debug.WriteLine("Applying properties was not verified. Exiting.");
+                    return false;
+                }
             }
 
 
 
-            //exit if not proceeding
-            if (!proceed_with_apply) { return false; }
 
 
             //if proceeding...
-            Debug.WriteLine("\nProceeding with apply");
+            Debug.WriteLine("Applying properties verified. Applying...");
 
 
             //the entryID of the EntryData we are changing
@@ -1426,6 +1572,19 @@ namespace SemesterPlanner
             Glo_ChangedProperties = null;
 
             return true;
+        }
+        public async Task<bool> VerifyApplyProperties()
+        {
+
+            //if we are asked not to ask for verification, we return true
+            if (No_ApplyProperties_Verif_Wanted) { return true; }
+
+
+            //otherwise, we have to open a verification dialog box
+
+
+            return await MasterClass.Cur_MainPage.ApplyPropertiesConfirmationDialogue();
+
         }
         public void ApplyNewPropertiesToEntryData(EntryData master_entryData)
         {

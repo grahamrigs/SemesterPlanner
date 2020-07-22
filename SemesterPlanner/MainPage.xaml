@@ -260,31 +260,44 @@
         </DataTemplate>
 
         
-        
-
-
-
-        <x:Double x:Key="ContentDialogMaxWidth">1000</x:Double>
-        <x:Double x:Key="ContentDialogMaxHeight">756</x:Double>
     </Page.Resources>
 
-    <Grid x:Name="grid_overall_window">
+    <Grid x:Name="grid_overall_window" Background="{StaticResource colour_CalendarBackground}">
         <Grid.Resources>
             <Windows10version1903:ThemeShadow x:Name="SharedShadow"/>
         </Grid.Resources>
 
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="row_commandbar" Height="auto"/>
-            <RowDefinition x:Name="row_workspace" Height="*"/>
-            <RowDefinition x:Name="row_footer" Height="auto"/>
+            <RowDefinition x:Name="row_commandbar" Height="Auto"/>
+            <RowDefinition x:Name="row_header" Height="Auto"/>
+            <RowDefinition x:Name="row_entries" Height="*"/>
+            <RowDefinition x:Name="row_footer" Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="column_titleblocks" Width="280"/>
+            <ColumnDefinition x:Name="column_calendar" Width="*"/>
+            <ColumnDefinition x:Name="column_properties" Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
 
 
         <CommandBar x:Name="combar_top_right" Grid.Column="1" DefaultLabelPosition="Right" 
                     VerticalContentAlignment="Center"
-                    Background="#FFE6E6E6" Margin="0,0,0,1">
+                    Background="{StaticResource colour_CommandBarBackground}" Margin="0,0,0,1" Grid.ColumnSpan="2">
             <AppBarButton Icon="Add" Label="Add Entry" Click="AddButtonTapped"/>
+
+            <AppBarButton Icon="View" Label="View">
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Gridlines" FontWeight="SemiBold"/>
+                            <CheckBox Content="Horizontal" IsChecked="{Binding Gridlines_Hori_Visible, Mode=TwoWay}"/>
+                            <CheckBox Content="Vertical" IsChecked="{Binding Gridlines_Vert_Visible, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+            
             <AppBarSeparator/>
 
             <AppBarButton Icon="OpenFile" Label="Open Test File" Click="LoadTestDataButton"/>
@@ -294,202 +307,190 @@
             <AppBarButton Icon="Contact" Label="Contact" Click="ContactButton"/>
             <AppBarButton Icon="Globe"  Label="Globe" Click="GlobeButton"/>
 
-            <CommandBar.SecondaryCommands>
+            <!--<CommandBar.SecondaryCommands>
                 <AppBarButton Icon="Setting" Label="Settings">
                     <AppBarButton.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="I" />
                     </AppBarButton.KeyboardAccelerators>
                 </AppBarButton>
-            </CommandBar.SecondaryCommands>
+            </CommandBar.SecondaryCommands>-->
 
-            <CommandBar.Content>
-                <TextBlock x:Name="txtblc_project_name" Text="{Binding ProjectName, Mode=OneWay}" Margin="12,0,0,0" FontSize="16" VerticalAlignment="Stretch"/>
-            </CommandBar.Content>
         </CommandBar>
 
-        
+
+
 
         <Rectangle x:Name="rect_commandbar_edge" Grid.Row="0" Fill="#FFA4A4A4" HorizontalAlignment="Stretch" 
                    Height="1" VerticalAlignment="Bottom"/>
 
 
 
-        <Grid x:Name="grid_calendar_workspace" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="column_titleblocks" Width="280"/>
-                <ColumnDefinition x:Name="column_calendar" Width="*"/>
-                <ColumnDefinition x:Name="column_properties" Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition x:Name="row_header" Height="Auto"/>
-                <RowDefinition x:Name="row_entries" Height="*"/>
-            </Grid.RowDefinitions>
 
-            <Rectangle x:Name="rect_title_blocks_background" Grid.RowSpan="2" Fill="#FFF0F0F0"/>
-            <Rectangle x:Name="rect_title_blocks_edge" Grid.RowSpan="2" Fill="#FFCFCFCF" HorizontalAlignment="Right" Width="1"/>
+        <Rectangle x:Name="rect_title_blocks_background" Grid.RowSpan="3" Fill="{StaticResource CustomAcrylic}"/>
+        <!--<Rectangle x:Name="rect_title_blocks_edge" Grid.RowSpan="2" Fill="#FFCFCFCF" HorizontalAlignment="Right" Width="1"/>-->
 
+        <TextBlock x:Name="txtblc_project_name" Text="{Binding ProjectName, Mode=OneWay}" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-            <StackPanel Orientation="Horizontal" Spacing="4" Margin="8,12,9,8" HorizontalAlignment="Center">
-                <Button x:Name="btn_move_up" Style="{StaticResource btn_EntryTitleBlockSectionButtons}" Content="&#xE110;" Tapped="MoveButtonTapped">
-                    <ToolTipService.ToolTip>
-                        <TextBlock Text="Move up" Style="{StaticResource txtblc_Default_small}"/>
-                    </ToolTipService.ToolTip>
-                </Button>
-                <Button x:Name="btn_move_down" Style="{StaticResource btn_EntryTitleBlockSectionButtons}" Content="&#xE74B;" Tapped="MoveButtonTapped">
-                    <ToolTipService.ToolTip>
-                        <TextBlock Text="Move down" Style="{StaticResource txtblc_Default_small}"/>
-                    </ToolTipService.ToolTip>
-                </Button>
-                <Button x:Name="btn_clear_selection" Style="{StaticResource btn_EntryTitleBlockSectionButtons}" Content="&#xE1C5;" Tapped="ClearSelectionButtonTapped">
-                    <ToolTipService.ToolTip>
-                        <TextBlock Text="Clear selection" Style="{StaticResource txtblc_Default_small}"/>
-                    </ToolTipService.ToolTip>
-                </Button>
-                <Button x:Name="btn_delete" Style="{StaticResource btn_EntryTitleBlockSectionButtons}" Content="&#xE107;" Tapped="DeleteButtonTapped">
-                    <ToolTipService.ToolTip>
-                        <TextBlock Text="Delete" Style="{StaticResource txtblc_Default_small}"/>
-                    </ToolTipService.ToolTip>
-                </Button>
-                <Button x:Name="btn_properties" Style="{StaticResource btn_EntryTitleBlockSectionButtons}" Content="&#xE946;" Tapped="PropertiesButtonTapped">
-                    <ToolTipService.ToolTip>
-                        <TextBlock Text="Properties" Style="{StaticResource txtblc_Default_small}"/>
-                    </ToolTipService.ToolTip>
-                </Button>
-            </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="4" Margin="8,12,9,8" HorizontalAlignment="Center" Grid.Row="1">
+            <Button x:Name="btn_move_up" Style="{StaticResource btn_EntryTitleBlockSectionButtons}" Content="&#xE110;" Tapped="MoveButtonTapped">
+                <ToolTipService.ToolTip>
+                    <TextBlock Text="Move up" Style="{StaticResource txtblc_Default_small}"/>
+                </ToolTipService.ToolTip>
+            </Button>
+            <Button x:Name="btn_move_down" Style="{StaticResource btn_EntryTitleBlockSectionButtons}" Content="&#xE74B;" Tapped="MoveButtonTapped">
+                <ToolTipService.ToolTip>
+                    <TextBlock Text="Move down" Style="{StaticResource txtblc_Default_small}"/>
+                </ToolTipService.ToolTip>
+            </Button>
+            <Button x:Name="btn_clear_selection" Style="{StaticResource btn_EntryTitleBlockSectionButtons}" Content="&#xE1C5;" Tapped="ClearSelectionButtonTapped">
+                <ToolTipService.ToolTip>
+                    <TextBlock Text="Clear selection" Style="{StaticResource txtblc_Default_small}"/>
+                </ToolTipService.ToolTip>
+            </Button>
+            <Button x:Name="btn_delete" Style="{StaticResource btn_EntryTitleBlockSectionButtons}" Content="&#xE107;" Tapped="DeleteButtonTapped">
+                <ToolTipService.ToolTip>
+                    <TextBlock Text="Delete" Style="{StaticResource txtblc_Default_small}"/>
+                </ToolTipService.ToolTip>
+            </Button>
+            <Button x:Name="btn_properties" Style="{StaticResource btn_EntryTitleBlockSectionButtons}" Content="&#xE946;" Tapped="PropertiesButtonTapped">
+                <ToolTipService.ToolTip>
+                    <TextBlock Text="Properties" Style="{StaticResource txtblc_Default_small}"/>
+                </ToolTipService.ToolTip>
+            </Button>
+        </StackPanel>
 
 
-            <ScrollViewer x:Name="scroll_entry_title_blocks" Grid.Column="0" Grid.Row="1" Style="{StaticResource scroll_BasicScrollViewer}" ViewChanged="SynchronizedScrollerOnViewChanged" Margin="0,0,1,0" Tapped="TitleBlockScrollViewerTapped">
-                <Grid x:Name="grid_entry_title_blocks" Margin="4,4,4,12"  HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-
-                    <!--<Border Grid.Row="1" Style="{StaticResource bor_EntryTitleBlock}">
-                        <Grid Style="{StaticResource grid_EntryTitleBlockInnerGrid}" Padding="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_Hori}">
-                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
-                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
-                                <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
-                            </StackPanel>
-
-                            --><!--<Grid Style="{StaticResource grid_EntryTitleBlockTapGrid}"/>-->
-
-                            <!--<Button Grid.Column="1" Style="{StaticResource btn_EntryTitleBlockInfoButton}" Tapped="PropertiesButtonTapped"/>--><!--
-                        </Grid>
-
-
-
-
-                    </Border>-->
-                </Grid>
-            </ScrollViewer>
-
-
-
-            <ScrollViewer x:Name="scroll_column_headers" Grid.Column="1" Grid.Row="0" Style="{StaticResource scroll_BasicScrollViewer_NoHoriBar}" ViewChanged="SynchronizedScrollerOnViewChanged">
-                <Grid x:Name="grid_column_headers" Margin="8,0,8,0" VerticalAlignment="Stretch" HorizontalAlignment="Left">
-                    <!--column headers-->
-                </Grid>
-            </ScrollViewer>
-
-            <ScrollViewer x:Name="scroll_calendar" Grid.Column="1" Grid.Row="1" Style="{StaticResource scroll_BasicScrollViewer}" ViewChanged="SynchronizedScrollerOnViewChanged">
-                <Grid x:Name="grid_calendar" Margin="8,4,8,12" VerticalAlignment="Top" HorizontalAlignment="Left" 
-                      Background="#FFFFDADA" AllowDrop="True">
-                    <!--calendar entries-->
-                </Grid>
-            </ScrollViewer>
-
-
-
-            <Grid x:Name="grid_properties_pane" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Background="#FFEEEEEE" Visibility="Collapsed">
+        <ScrollViewer x:Name="scroll_entry_title_blocks" Grid.Column="0" Grid.Row="2" Style="{StaticResource scroll_BasicScrollViewer}" ViewChanged="SynchronizedScrollerOnViewChanged" Margin="4,0,4,0" Tapped="TitleBlockScrollViewerTapped">
+            <Grid x:Name="grid_entry_title_blocks" Margin="4,4,4,12"  HorizontalAlignment="Stretch" VerticalAlignment="Top">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <Rectangle x:Name="rect_properties_edge" Grid.Row="0" Grid.RowSpan="3" Fill="#FFCFCFCF" HorizontalAlignment="Left" Width="1"/>
-
-                <TextBlock Text="Properties" Style="{StaticResource txtblc_Default_medium}" Margin="12" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1"/>
-                <Button x:Name="btn_close_properties_pane" Style="{StaticResource btn_Default_symbol_small}" Content="&#xE89F;" 
-                        Margin="12" HorizontalAlignment="Right" Background="#00000000" Tapped="ClosePropertiesPane_Tapped" 
-                        ToolTipService.ToolTip="Collapse the properties pane"/>
-
-                <ScrollViewer x:Name="scroll_properties" Style="{StaticResource scroll_BasicScrollViewer}" ViewChanged="SynchronizedScrollerOnViewChanged" Grid.Row="1" Grid.Column="2"  >
-                    <Grid x:Name="grid_properties" Margin="8" VerticalAlignment="Top" HorizontalAlignment="Stretch" Tag="unchanged">
-                        
+                <!--<Border Grid.Row="1" Style="{StaticResource bor_EntryTitleBlock}">
+                    <Grid Style="{StaticResource grid_EntryTitleBlockInnerGrid}" Padding="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="148"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
 
-                        <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="0" Grid.Column="0" Text="EntryID"/>
-                        <TextBox x:Name="txtbox_prop_entryID" Style="{Binding EntryID_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="0" Grid.Column="1"
-                                 Text="{Binding EntryID_New, Mode=OneWay}" PlaceholderText="EntryID"
-                                 IsEnabled="False"/>
-
-                        <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="1" Grid.Column="0" Text="Title"/>
-                        <TextBox x:Name="txtbox_prop_title" 
-                                 Style="{Binding Title_Txtbox_Style, Mode=OneWay, Converter={StaticResource StyleNameToStyleConverter}}"
-                                 Grid.Row="1" Grid.Column="1"
-                                 Text="{Binding Title_New, Mode=TwoWay}" PlaceholderText="Title"/>
-
-                        <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="2" Grid.Column="0" Text="Subtitle"/>
-                        <TextBox x:Name="txtbox_prop_subtitle" Style="{Binding Subtitle_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="2" Grid.Column="1"
-                                 Text="{Binding Subtitle_New, Mode=TwoWay}" PlaceholderText="Subtitle"/>
-
-                        <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="3" Grid.Column="0" Text="Display Colour"/>
-                        <StackPanel Grid.Row="3" Grid.Column="1" Margin="4" Orientation="Horizontal" Spacing="8">
-                            <Grid x:Name="grid_prop_current_colour" Width="32" CornerRadius="2" 
-                                  Background="{Binding ColourHex_New, Mode=OneWay, Converter={StaticResource ColourHexToSolidColorBrushConverter}}"/>
-                            <Button x:Name="btn_properties_change_colour" Content="Modify" Flyout="{StaticResource flyout_colour_picker}" HorizontalAlignment="Center"/>
+                        <StackPanel Style="{StaticResource stack_EntryTitleBlockTitleStack_Hori}">
+                            <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
+                            <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
+                            <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                         </StackPanel>
 
-                        <!--calendar entries-->
+                        --><!--<Grid Style="{StaticResource grid_EntryTitleBlockTapGrid}"/>-->
 
-
-
+                        <!--<Button Grid.Column="1" Style="{StaticResource btn_EntryTitleBlockInfoButton}" Tapped="PropertiesButtonTapped"/>--><!--
                     </Grid>
-                </ScrollViewer>
-                <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" Margin="8,8,8,8" Spacing="8">
-
-                    <Button x:Name="btn_properties_ok" Content="Ok" Tapped="OkPropertiesButton_Tapped"
-                             IsEnabled="{Binding AnyProperties_Changed, Mode=OneWay}" Width="60" Visibility="Collapsed"/>
-
-                    <Button x:Name="btn_properties_apply" Content="Apply" Tapped="ApplyPropertiesButton_Tapped"
-                             IsEnabled="{Binding AnyProperties_Changed, Mode=OneWay}" Width="60"/>
-
-                </StackPanel>
 
 
 
+
+                </Border>-->
             </Grid>
+        </ScrollViewer>
 
 
-            <!--<StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Border x:Name="test_border_datatemplate"/>
-                <Button x:Name="test_button_datatemplate"/>
-            </StackPanel>-->
-            
+
+        <ScrollViewer x:Name="scroll_column_headers" Grid.Column="1" Grid.Row="1" Style="{StaticResource scroll_BasicScrollViewer_NoHoriBar}" ViewChanged="SynchronizedScrollerOnViewChanged">
+            <Grid x:Name="grid_column_headers" Margin="8,0,8,0" VerticalAlignment="Stretch" HorizontalAlignment="Left">
+                <!--column headers-->
+            </Grid>
+        </ScrollViewer>
+
+        <ScrollViewer x:Name="scroll_calendar" Grid.Column="1" Grid.Row="2" Style="{StaticResource scroll_BasicScrollViewer}" ViewChanged="SynchronizedScrollerOnViewChanged">
+            <Grid x:Name="grid_calendar" Margin="8,4,8,12" VerticalAlignment="Top" HorizontalAlignment="Left" 
+                    AllowDrop="True">
+                <!--calendar entries-->
+            </Grid>
+        </ScrollViewer>
+
+
+
+        <Grid x:Name="grid_properties_pane" Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" Background="#FFEEEEEE" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Rectangle x:Name="rect_properties_edge" Grid.Row="0" Grid.RowSpan="3" Fill="#FFCFCFCF" HorizontalAlignment="Left" Width="1"/>
+
+            <TextBlock Text="Properties" Style="{StaticResource txtblc_Default_medium}" Margin="12" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1"/>
+            <Button x:Name="btn_close_properties_pane" Style="{StaticResource btn_Default_symbol_small}" Content="&#xE89F;" 
+                    Margin="12" HorizontalAlignment="Right" Background="#00000000" Tapped="ClosePropertiesPane_Tapped" 
+                    ToolTipService.ToolTip="Collapse the properties pane"/>
+
+            <ScrollViewer x:Name="scroll_properties" Style="{StaticResource scroll_BasicScrollViewer}" ViewChanged="SynchronizedScrollerOnViewChanged" Grid.Row="1" Grid.Column="2"  >
+                <Grid x:Name="grid_properties" Margin="8" VerticalAlignment="Top" HorizontalAlignment="Stretch" Tag="unchanged">
+                        
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="148"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="0" Grid.Column="0" Text="EntryID"/>
+                    <TextBox x:Name="txtbox_prop_entryID" Style="{Binding EntryID_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="0" Grid.Column="1"
+                                Text="{Binding EntryID_New, Mode=OneWay}" PlaceholderText="EntryID"
+                                IsEnabled="False"/>
+
+                    <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="1" Grid.Column="0" Text="Title"/>
+                    <TextBox x:Name="txtbox_prop_title" 
+                                Style="{Binding Title_Txtbox_Style, Mode=OneWay, Converter={StaticResource StyleNameToStyleConverter}}"
+                                Grid.Row="1" Grid.Column="1"
+                                Text="{Binding Title_New, Mode=TwoWay}" PlaceholderText="Title"/>
+
+                    <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="2" Grid.Column="0" Text="Subtitle"/>
+                    <TextBox x:Name="txtbox_prop_subtitle" Style="{Binding Subtitle_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="2" Grid.Column="1"
+                                Text="{Binding Subtitle_New, Mode=TwoWay}" PlaceholderText="Subtitle"/>
+
+                    <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="3" Grid.Column="0" Text="Display Colour"/>
+                    <StackPanel Grid.Row="3" Grid.Column="1" Margin="4" Orientation="Horizontal" Spacing="8">
+                        <Grid x:Name="grid_prop_current_colour" Width="32" CornerRadius="2" 
+                                Background="{Binding ColourHex_New, Mode=OneWay, Converter={StaticResource ColourHexToSolidColorBrushConverter}}"/>
+                        <Button x:Name="btn_properties_change_colour" Content="Modify" Flyout="{StaticResource flyout_colour_picker}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!--calendar entries-->
+
+
+
+                </Grid>
+            </ScrollViewer>
+            <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" Margin="8,8,8,8" Spacing="8">
+
+                <Button x:Name="btn_properties_ok" Content="Ok" Tapped="OkPropertiesButton_Tapped"
+                            IsEnabled="{Binding AnyProperties_Changed, Mode=OneWay}" Width="60" Visibility="Collapsed"/>
+
+                <Button x:Name="btn_properties_apply" Content="Apply" Tapped="ApplyPropertiesButton_Tapped"
+                            IsEnabled="{Binding AnyProperties_Changed, Mode=OneWay}" Width="60"/>
+
+            </StackPanel>
 
 
 
         </Grid>
+
+
+        <!--<StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border x:Name="test_border_datatemplate"/>
+            <Button x:Name="test_button_datatemplate"/>
+        </StackPanel>-->
+            
+
+
+
         
         
 
@@ -624,23 +625,39 @@
                 </StackPanel>
                 <TextBlock Text="Do you wish to permanently delete this entry?"/>
                 <CheckBox x:Name="chkbox_delete_no_ask" Content="Do not ask me again" 
-                          IsChecked="{Binding No_Delete_Verif_Wanted}" />
+                          IsChecked="{Binding No_Delete_Verif_Wanted, Mode=TwoWay}" />
             </StackPanel>
         </ContentDialog>
-        
-        <ContentDialog x:Name="contentdialog_confirm_exitnoapplyproperties"
+
+        <ContentDialog x:Name="contentdialog_confirm_applyproperties"
                        Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed"
-                       Title="Exit without saving property changes?"
-                       PrimaryButtonText="Delete"
+                       Title="Apply property changes?"
+                       PrimaryButtonText="Apply"
                        IsPrimaryButtonEnabled="True"
                        SecondaryButtonText="Cancel"
                        Background="#FFF6F6F6"
                        DefaultButton="Primary">
 
             <StackPanel Spacing="16">
-                <TextBlock Text="To save your changes, press Cancel and then Apply your properties"/>
+                <TextBlock Text="You will not be able to undo these changes."/>
+                <CheckBox x:Name="chkbox_applyproperties_no_ask" Content="Do not ask me again" 
+                          IsChecked="{Binding No_ApplyProperties_Verif_Wanted, Mode=TwoWay}" />
+            </StackPanel>
+        </ContentDialog>
+
+        <ContentDialog x:Name="contentdialog_confirm_exitnoapplyproperties"
+                       Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed"
+                       Title="Exit without saving property changes?"
+                       PrimaryButtonText="Discard Changes"
+                       IsPrimaryButtonEnabled="True"
+                       CloseButtonText="Cancel"
+                       Background="#FFF6F6F6"
+                       DefaultButton="Close">
+
+            <StackPanel Spacing="16">
+                <TextBlock Text="To save your changes, press Cancel and then Apply your properties."/>
                 <CheckBox x:Name="chkbox_exit_properties_no_ask" Content="Do not ask me again" 
-                          IsChecked="{Binding No_ApplyProperties_Verif_Wanted}" />
+                          IsChecked="{Binding No_ApplyProperties_Verif_Wanted, Mode=TwoWay}" />
             </StackPanel>
             
         </ContentDialog>
