@@ -12,7 +12,7 @@ namespace SemesterPlanner
     class Converter_EntryIDToBorderTag : IValueConverter
     {
         //should be  "entryID|"
-        string entryID_prefix = MainPage.glo_tag_entryID_prefix;
+        string entryID_prefix = MasterClass.Glo_Tag_EntryID_Prefix;
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -72,7 +72,7 @@ namespace SemesterPlanner
     class Converter_ColIDToBorderTag : IValueConverter
     {
         //should be  "colID|"
-        string colID_prefix = MainPage.glo_tag_colID_prefix;
+        string colID_prefix = MasterClass.Glo_Tag_ColID_Prefix;
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -96,7 +96,7 @@ namespace SemesterPlanner
         public object Convert(object value, Type targetType, object parameter, string language)
         {
 
-            SolidColorBrush solid_colour_brush = MainPage.GetSolidColorBrushFromHex((string)value);
+            SolidColorBrush solid_colour_brush = MasterClass.GetSolidColorBrushFromHex((string)value);
 
             return solid_colour_brush;
         }
@@ -136,4 +136,28 @@ namespace SemesterPlanner
             throw new NotImplementedException();
         }
     }
+
+
+    class Converter_HexColourToColourPicker : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+
+            SolidColorBrush solid_colour_brush = MasterClass.GetSolidColorBrushFromHex((string)value);
+
+            return solid_colour_brush.Color;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            Windows.UI.Color given_colour = (Windows.UI.Color)value;
+
+            return MasterClass.GetHexFromColorPicker(given_colour);
+        }
+    }
+
+
+
+
+    
 }

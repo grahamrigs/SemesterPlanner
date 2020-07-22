@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace SemesterPlanner
 {
-    class ColumnData : INotifyPropertyChanged
+    public class ColumnData : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -98,7 +98,31 @@ namespace SemesterPlanner
         public List<string> Parameter_Names = new List<string> { "Col_ProjectName", "ColID", "ColTitle", "ColSubtitle", "ColPosition" };
         public List<string> Parameter_Save_Names = new List<string> { "", "col-id", "col-title", "col-subtitle", "col-pos" };
 
-        public Border ColumnHeader { get; set; }
+        private Border column_header_;
+        public Border ColumnHeader 
+        {
+            get { return column_header_; }
+            set
+            {
+                if (column_header_ != value)
+                {
+                    column_header_ = value;
+                }
+            }
+        }
+
+
+
+        public ColumnData()
+        {
+            //creating a blank entrydata
+        }
+        public ColumnData(string project_name, string cur_line)
+        {
+            //creating an entrydata from a savefile line
+
+            GetColumnDataFromLine(project_name, cur_line);
+        }
 
 
         public void GetColumnDataFromLine(string project_name, string cur_line)

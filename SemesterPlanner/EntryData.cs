@@ -12,7 +12,7 @@ using Windows.Web.Syndication;
 
 namespace SemesterPlanner
 {
-    class EntryData : INotifyPropertyChanged
+    public class EntryData : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -37,7 +37,6 @@ namespace SemesterPlanner
         private bool is_selected_ = false;
         private string stylename_title_ = stylename_title_lst_[0];
         private string stylename_calendar_ = stylename_calendar_lst_[0];
-        private string stylename_preview_ = stylename_preview_lst_[0];
 
 
         static private readonly List<string> stylename_title_lst_ = new List<string>
@@ -45,9 +44,6 @@ namespace SemesterPlanner
 
         static private readonly List<string> stylename_calendar_lst_ = new List<string>
         { "bor_EntryCalendarBlock", "bor_EntryCalendarBlock_Selected" };
-
-        static private readonly List<string> stylename_preview_lst_ = new List<string>
-        { "bor_AddNewEntryPreviewTitleBlock", "bor_AddNewEntryPreviewTitleBlock_Selected" };
 
 
 
@@ -189,18 +185,6 @@ namespace SemesterPlanner
                 }
             }
         }
-        public string StyleName_Preview
-        {
-            get { return stylename_preview_; }
-            private set
-            {
-                if (value != stylename_preview_)
-                {
-                    stylename_preview_ = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
         private void DetermineStyles()
         {
@@ -213,7 +197,6 @@ namespace SemesterPlanner
 
             StyleName_Title = stylename_title_lst_[name_index];
             StyleName_Calendar = stylename_calendar_lst_[name_index];
-            StyleName_Preview = stylename_preview_lst_[name_index];
         }
 
 
@@ -238,8 +221,33 @@ namespace SemesterPlanner
         public List<string> AvailColIDs { get; set; }
 
 
-        public Border TitleBlock { get; set; }
-        public Border CalendarBlock { get; set; }
+
+
+        private Border title_block_;
+        private Border calendar_block_;
+
+        public Border TitleBlock
+        {
+            get { return title_block_; }
+            set
+            {
+                if (title_block_ != value)
+                {
+                    title_block_ = value;
+                }
+            }
+        }
+        public Border CalendarBlock
+        {
+            get { return calendar_block_; }
+            set
+            {
+                if (calendar_block_ != value)
+                {
+                    calendar_block_ = value;
+                }
+            }
+        }
 
 
 
@@ -273,6 +281,17 @@ namespace SemesterPlanner
         };
 
 
+
+        public EntryData()
+        {
+            //creating a blank entrydata
+        }
+        public EntryData(string project_name, string cur_line)
+        {
+            //creating an entrydata from a savefile line
+
+            GetEntryDataFromLine(project_name, cur_line);
+        }
 
 
         public void GetEntryDataFromLine(string project_name, string cur_line)

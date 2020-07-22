@@ -6,16 +6,24 @@
 
 
     <Application.Resources>
-
-
-
         <ResourceDictionary>
-
             <!--this makes rounded corners-->
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
             </ResourceDictionary.MergedDictionaries>
 
+            
+            
+            <AcrylicBrush x:Key="CustomAcrylicDark"
+                      BackgroundSource="HostBackdrop"
+                      TintColor="Gray"
+                      TintOpacity="0.6"
+                      FallbackColor="Black"/>
+            <AcrylicBrush x:Key="CustomAcrylicLight"
+                      BackgroundSource="HostBackdrop"
+                      TintColor="White"
+                      TintOpacity="0.6"
+                      FallbackColor="White"/>
 
 
 

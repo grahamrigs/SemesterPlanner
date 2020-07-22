@@ -24,7 +24,6 @@ namespace SemesterPlanner
 
 
 
-        public Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 
 
 

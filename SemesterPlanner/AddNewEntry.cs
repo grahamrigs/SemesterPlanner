@@ -10,7 +10,7 @@ using Windows.Devices.Bluetooth.Advertisement;
 
 namespace SemesterPlanner
 {
-    class AddNewEntry : INotifyPropertyChanged
+    public class AddNewEntry : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -18,7 +18,7 @@ namespace SemesterPlanner
         // The calling member's name will be used as the parameter.
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
-            Debug.WriteLine("OnPropertyChanged     " + name);
+            //Debug.WriteLine("OnPropertyChanged     " + name);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
@@ -26,13 +26,19 @@ namespace SemesterPlanner
         { "txtbox_Property", "txtbox_Property_Invalid" };
 
 
+        static private readonly List<string> stylename_preview_lst_ = new List<string>
+        { "bor_AddNewEntryPreviewTitleBlock", "bor_AddNewEntryPreviewTitleBlock_Selected" };
+
+
         private string entryID_add_ = "";
         private string title_add_ = "";
         private string subtitle_add_ = "";
-        private string colourhex_add_ = MainPage.glo_default_titleblock_colour_hex;
+        private string colourhex_add_ = MasterClass.glo_default_titleblock_colour_hex;
         private List<string> prereq_entryIDs_add_ = new List<string>();
         private List<string> coreq_entryIDs_add_ = new List<string>();
         private List<string> avail_colIDs_add_ = new List<string>();
+        private bool is_selected_ = false;
+        private string stylename_preview_ = stylename_preview_lst_[0];
 
         private bool create_button_enabled_ = false;
         private bool title_valid_ = false;
@@ -62,8 +68,10 @@ namespace SemesterPlanner
                 if (value != title_add_)
                 {
                     title_add_ = value;
+
                     TitleSubtitleChanged();
                     UpdatePreviewBlock();
+
                     OnPropertyChanged();
                 }
             }
@@ -131,6 +139,31 @@ namespace SemesterPlanner
                 }
             }
         }
+        public bool Is_Selected
+        {
+            get { return is_selected_; }
+            set
+            {
+                if (value != is_selected_)
+                {
+                    is_selected_ = value;
+                    DetermineStyles();
+                    //OnPropertyChanged();
+                }
+            }
+        }
+        public string StyleName_Preview
+        {
+            get { return stylename_preview_; }
+            private set
+            {
+                if (value != stylename_preview_)
+                {
+                    stylename_preview_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
 
         public bool CreateButton_Enabled
@@ -184,8 +217,9 @@ namespace SemesterPlanner
 
 
 
-        public ProjectData glo_ProjectData_Reference { get; set; }
-        public MainPage glo_MainPage_Reference { get; set; }
+
+        public ProjectData Glo_ProjectData_Reference { get; set; }
+        public MainPage Glo_MainPage_Reference { get; set; }
 
 
 
@@ -202,18 +236,30 @@ namespace SemesterPlanner
         }
         public EntryData GetEntryDataForPreview()
         {
-            EntryData return_entryData = new EntryData();
-
-
-
-            return_entryData.Title = Title_Add;
-            return_entryData.Subtitle = Subtitle_Add;
-            return_entryData.ColourHex = ColourHex_Add;
-            return_entryData.EntryID = "preview";
+            EntryData return_entryData = new EntryData
+            {
+                Title = Title_Add,
+                Subtitle = Subtitle_Add,
+                ColourHex = ColourHex_Add,
+                EntryID = "preview"
+            };
 
 
 
             return return_entryData;
+        }
+
+
+        private void DetermineStyles()
+        {
+            int name_index = 0;
+
+            if (is_selected_)
+            {
+                name_index = 1;
+            }
+
+            StyleName_Preview = stylename_preview_lst_[name_index];
         }
 
 
@@ -244,7 +290,7 @@ namespace SemesterPlanner
                 EntryID_Add = "";
                 EntryID_Valid = false;
 
-                glo_MainPage_Reference.ShowAddNewEntryTitleInvalidTeachingTip();
+                Glo_MainPage_Reference.ShowAddNewEntryTitleInvalidTeachingTip();
             }
 
 
@@ -260,7 +306,7 @@ namespace SemesterPlanner
             List<string> check_title_subtitle = new List<string> { Title_Add, Subtitle_Add };
             List<string> exclude_lst = new List<string>();
 
-            glo_ProjectData_Reference.IsNewTitleValid(check_title_subtitle, exclude_lst, out bool valid_entry,
+            Glo_ProjectData_Reference.IsNewTitleValid(check_title_subtitle, exclude_lst, out bool valid_entry,
                 out bool is_duplicate, out bool is_title_exist);
 
 
@@ -275,6 +321,7 @@ namespace SemesterPlanner
                 Debug.WriteLine(string.Format("    {0,-15} = {1}", "valid_entry", valid_entry));
                 Debug.WriteLine("");
             }
+
 
 
             Title_Valid = valid_entry;
@@ -333,7 +380,7 @@ namespace SemesterPlanner
             int designation_number;
 
             //now will check if this truncated title portion already exists
-            bool trunc_title_exists = glo_ProjectData_Reference.entryIDs_text_lst_param.Contains(trunc_title);
+            bool trunc_title_exists = Glo_ProjectData_Reference.EntryIDs_Text_lst.Contains(trunc_title);
 
 
             //if it doesn't exist, then it's simple
@@ -344,7 +391,7 @@ namespace SemesterPlanner
             //otherwise we need to increase the counter
             else
             {
-                designation_number = glo_ProjectData_Reference.GetMaxDesignationForEntryIDTitle(trunc_title) + 1;
+                designation_number = Glo_ProjectData_Reference.GetMaxDesignationForEntryIDTitle(trunc_title) + 1;
             }
 
             //this was the error number for designation
@@ -378,7 +425,7 @@ namespace SemesterPlanner
 
         private void UpdatePreviewBlock()
         {
-            glo_MainPage_Reference.AddNewEntryUpdatePreview();
+            Glo_MainPage_Reference.AddNewEntryUpdatePreview();
         }
 
 

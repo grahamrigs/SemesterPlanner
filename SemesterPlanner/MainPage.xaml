@@ -24,15 +24,18 @@
                 </Grid.ColumnDefinitions>
 
                 <Viewbox Margin="4" MaxWidth="200" Stretch="Fill" Grid.ColumnSpan="2">
-                    <ColorPicker x:Name="myColorPicker" ColorSpectrumShape="Ring" IsColorPreviewVisible="True" IsHexInputVisible="False" IsColorChannelTextInputVisible="False" ColorChanged="ColourPicker_ColourChanged"/>
+                    <ColorPicker x:Name="myColorPicker" ColorSpectrumShape="Ring" IsColorPreviewVisible="True" 
+                                 IsHexInputVisible="False" IsColorChannelTextInputVisible="False" 
+                                 ColorChanged="ColourPicker_ColourChanged"
+                                 Color="{Binding ColourHex_Picker, Mode=TwoWay, Converter={StaticResource HexColourToColourPickerConverter}}"/>
                 </Viewbox>
 
                 <TextBlock Grid.Row="1" Text="Colours in use:" Style="{StaticResource txtblc_Default_medium}" Margin="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"/>
 
                 <VariableSizedWrapGrid x:Name="vargrid_used_colours" MaximumRowsOrColumns="6" ItemHeight="34" ItemWidth="34" Grid.Row="2" HorizontalAlignment="Stretch" Orientation="Horizontal" Margin="0,0,0,12" Grid.ColumnSpan="2"/>
 
-                <Button Content="OK" Click="confirmColor_Click" Margin="4" HorizontalAlignment="Stretch" Grid.Row="3" VerticalAlignment="Stretch" Width="96"/>
-                <Button Content="Cancel" Click="cancelColor_Click" Margin="4" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="3" VerticalAlignment="Stretch" Width="96"/>
+                <Button Content="OK" Click="ConfirmColour_Click" Margin="4" HorizontalAlignment="Stretch" Grid.Row="3" VerticalAlignment="Stretch" Width="96"/>
+                <Button Content="Cancel" Click="CancelColour_Click" Margin="4" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="3" VerticalAlignment="Stretch" Width="96"/>
             </Grid>
         </Flyout>
 
@@ -46,70 +49,70 @@
                 </Grid.RowDefinitions>
 
                 <ScrollViewer Margin="0,0,0,8" Background="#66FFFFFF">
-                    <ListView>
-                        <ToggleButton>
+                    <ListView SelectionMode="Multiple">
+                        <Border>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton>
+                        </Border>
+                        <Border>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton>
+                        </Border>
+                        <Border>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton>
+                        </Border>
+                        <Border>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton>
+                        </Border>
+                        <Border>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton>
+                        </Border>
+                        <Border>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton>
+                        </Border>
+                        <Border>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton>
+                        </Border>
+                        <Border>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton>
+                        </Border>
+                        <Border>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockTitle}" Text="Title"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSeparator_Hori}"/>
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
-                        </ToggleButton>
+                        </Border>
 
 
 
@@ -222,10 +225,18 @@
         <local:Converter_TextBoxChangedToStyle x:Key="TextBoxChangedToStyleConverter"/>
         <local:Converter_ColourHexToSolidColorBrush x:Key="ColourHexToSolidColorBrushConverter"/>
         <local:Converter_StyleNameToStyle x:Key="StyleNameToStyleConverter"/>
-
+        <local:Converter_HexColourToColourPicker x:Key="HexColourToColourPickerConverter"/>
 
         <muxc:TeachingTip x:Name="teach_addnewentry_title_invalid"
                           Target="{x:Bind txtbox_add_new_entry_title}"
+                          Title="Invalid Title"
+                          Subtitle="Cannot be blank or duplicate" 
+                          PreferredPlacement="Left"
+                          IsLightDismissEnabled="True">
+        </muxc:TeachingTip>
+        
+        <muxc:TeachingTip x:Name="teach_properties_title_invalid"
+                          Target="{x:Bind txtbox_prop_title}"
                           Title="Invalid Title"
                           Subtitle="Cannot be blank or duplicate" 
                           PreferredPlacement="Left"
@@ -270,23 +281,19 @@
 
 
 
-
-        <CommandBar x:Name="combar_top_left" DefaultLabelPosition="Right" VerticalContentAlignment="Center" Background="LightGray" Margin="0,0,0,1" BorderThickness="0,0,0,1">
-            <AppBarButton Label="File Menu" Click="FileMenuButton">
-                <AppBarButton.Icon>
-                    <FontIcon Glyph="&#xF12B;"/>
-                </AppBarButton.Icon>
-            </AppBarButton>
+        <CommandBar x:Name="combar_top_right" Grid.Column="1" DefaultLabelPosition="Right" 
+                    VerticalContentAlignment="Center"
+                    Background="#FFE6E6E6" Margin="0,0,0,1">
             <AppBarButton Icon="Add" Label="Add Entry" Click="AddButtonTapped"/>
             <AppBarSeparator/>
-            
+
             <AppBarButton Icon="OpenFile" Label="Open Test File" Click="LoadTestDataButton"/>
             <AppBarButton Icon="Calculator" Label="Compute" Click="ComputeCalendarButton"/>
             <AppBarButton Icon="Print" Label="Print" Click="PrintGlobalData"/>
             <AppBarButton Icon="Edit" Label="Edit" Click="EditButton"/>
             <AppBarButton Icon="Contact" Label="Contact" Click="ContactButton"/>
             <AppBarButton Icon="Globe"  Label="Globe" Click="GlobeButton"/>
-            
+
             <CommandBar.SecondaryCommands>
                 <AppBarButton Icon="Setting" Label="Settings">
                     <AppBarButton.KeyboardAccelerators>
@@ -296,16 +303,11 @@
             </CommandBar.SecondaryCommands>
 
             <CommandBar.Content>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
-                    <TextBlock Text="Test Semesters 1" Margin="12,0,0,0" FontSize="16" VerticalAlignment="Stretch"/>
-                    <Grid Margin="20,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="&#xEA3B;" FontSize="14" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF4ABDFF"/>
-                        <TextBlock Text="&#xE930;" FontSize="14" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Grid>
-                    <TextBlock Text="Saved" Margin="4,0,0,0" FontSize="12" VerticalAlignment="Center"/>
-                </StackPanel>
+                <TextBlock x:Name="txtblc_project_name" Text="{Binding ProjectName, Mode=OneWay}" Margin="12,0,0,0" FontSize="16" VerticalAlignment="Stretch"/>
             </CommandBar.Content>
         </CommandBar>
+
+        
 
         <Rectangle x:Name="rect_commandbar_edge" Grid.Row="0" Fill="#FFA4A4A4" HorizontalAlignment="Stretch" 
                    Height="1" VerticalAlignment="Bottom"/>
@@ -362,7 +364,7 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="1" Style="{StaticResource bor_EntryTitleBlock}">
+                    <!--<Border Grid.Row="1" Style="{StaticResource bor_EntryTitleBlock}">
                         <Grid Style="{StaticResource grid_EntryTitleBlockInnerGrid}" Padding="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -375,15 +377,15 @@
                                 <TextBlock Style="{StaticResource txtblc_EntryTitleBlockSubtitle_Hori}" Text="Subtitle"/>
                             </StackPanel>
 
-                            <!--<Grid Style="{StaticResource grid_EntryTitleBlockTapGrid}"/>-->
+                            --><!--<Grid Style="{StaticResource grid_EntryTitleBlockTapGrid}"/>-->
 
-                            <!--<Button Grid.Column="1" Style="{StaticResource btn_EntryTitleBlockInfoButton}" Tapped="PropertiesButtonTapped"/>-->
+                            <!--<Button Grid.Column="1" Style="{StaticResource btn_EntryTitleBlockInfoButton}" Tapped="PropertiesButtonTapped"/>--><!--
                         </Grid>
 
 
 
 
-                    </Border>
+                    </Border>-->
                 </Grid>
             </ScrollViewer>
 
@@ -396,7 +398,8 @@
             </ScrollViewer>
 
             <ScrollViewer x:Name="scroll_calendar" Grid.Column="1" Grid.Row="1" Style="{StaticResource scroll_BasicScrollViewer}" ViewChanged="SynchronizedScrollerOnViewChanged">
-                <Grid x:Name="grid_calendar" Margin="8,4,8,12" VerticalAlignment="Top" HorizontalAlignment="Left" Background="#FFFFDADA">
+                <Grid x:Name="grid_calendar" Margin="8,4,8,12" VerticalAlignment="Top" HorizontalAlignment="Left" 
+                      Background="#FFFFDADA" AllowDrop="True">
                     <!--calendar entries-->
                 </Grid>
             </ScrollViewer>
@@ -441,7 +444,9 @@
                                  IsEnabled="False"/>
 
                         <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="1" Grid.Column="0" Text="Title"/>
-                        <TextBox x:Name="txtbox_prop_title" Style="{Binding Title_Changed, Mode=OneWay, Converter={StaticResource TextBoxChangedToStyleConverter}}" Grid.Row="1" Grid.Column="1"
+                        <TextBox x:Name="txtbox_prop_title" 
+                                 Style="{Binding Title_Txtbox_Style, Mode=OneWay, Converter={StaticResource StyleNameToStyleConverter}}"
+                                 Grid.Row="1" Grid.Column="1"
                                  Text="{Binding Title_New, Mode=TwoWay}" PlaceholderText="Title"/>
 
                         <TextBlock Style="{StaticResource txtblc_PropertyName}" Grid.Row="2" Grid.Column="0" Text="Subtitle"/>
@@ -461,17 +466,15 @@
 
                     </Grid>
                 </ScrollViewer>
-                <Grid Grid.Column="1" Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" Margin="8,8,8,8" Spacing="8">
 
-                    <Button x:Name="btn_properties_apply" HorizontalAlignment="Center" Content="Apply" Margin="12" Tapped="ApplyPropertiesButton_Tapped"
-                             Grid.Row="5" IsEnabled="{Binding ApplyButton_Enabled, Mode=OneWay}"/>
-                    <!---->
-                    <TextBlock x:Name="txtblc_properties_unsaved" HorizontalAlignment="Center" Text="unsaved = false" Tapped="ApplyPropertiesButton_Tapped" Grid.Column="2" VerticalAlignment="Center" />
-                </Grid>
+                    <Button x:Name="btn_properties_ok" Content="Ok" Tapped="OkPropertiesButton_Tapped"
+                             IsEnabled="{Binding AnyProperties_Changed, Mode=OneWay}" Width="60" Visibility="Collapsed"/>
+
+                    <Button x:Name="btn_properties_apply" Content="Apply" Tapped="ApplyPropertiesButton_Tapped"
+                             IsEnabled="{Binding AnyProperties_Changed, Mode=OneWay}" Width="60"/>
+
+                </StackPanel>
 
 
 
@@ -534,7 +537,7 @@
                             Flyout="{StaticResource flyout_colour_picker}" Grid.Column="2" Width="100" Grid.Row="1"/>
 
                     <TextBlock Text="Text Colour" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4,8,4,4" Grid.Row="2"/>
-                    <ComboBox x:Name="combo_add_new_entry_text_colour" Grid.Row="3" Grid.Column="2" SelectedIndex="0" HorizontalAlignment="Stretch">
+                    <ComboBox x:Name="combo_add_new_entry_text_colour" Grid.Row="3" Grid.Column="2" SelectedIndex="0" HorizontalAlignment="Stretch" IsEnabled="False">
                         <ComboBoxItem Content="Black"/>
                         <ComboBoxItem Content="White"/>
                     </ComboBox>
@@ -616,12 +619,30 @@
             <StackPanel Spacing="16">
                 <TextBlock Text="The entry to be deleted:"/>
                 <StackPanel Margin="20,0,0,0">
-                    <TextBlock x:Name="txtblc_to_be_deleted_title" Text="Title"/>
-                    <TextBlock x:Name="txtblc_to_be_deleted_subtitle" Text="Subtitle"/>
+                    <TextBlock x:Name="txtblc_to_be_deleted_title" Text="{Binding Title}"/>
+                    <TextBlock x:Name="txtblc_to_be_deleted_subtitle" Text="{Binding Subtitle}"/>
                 </StackPanel>
                 <TextBlock Text="Do you wish to permanently delete this entry?"/>
-                <CheckBox x:Name="chkbox_delete_no_ask" Content="Do not ask me again" IsChecked="False" Checked="DeleteDoNotAskAgainChecked" Unchecked="DeleteDoNotAskAgainUnchecked" />
+                <CheckBox x:Name="chkbox_delete_no_ask" Content="Do not ask me again" 
+                          IsChecked="{Binding No_Delete_Verif_Wanted}" />
             </StackPanel>
+        </ContentDialog>
+        
+        <ContentDialog x:Name="contentdialog_confirm_exitnoapplyproperties"
+                       Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed"
+                       Title="Exit without saving property changes?"
+                       PrimaryButtonText="Delete"
+                       IsPrimaryButtonEnabled="True"
+                       SecondaryButtonText="Cancel"
+                       Background="#FFF6F6F6"
+                       DefaultButton="Primary">
+
+            <StackPanel Spacing="16">
+                <TextBlock Text="To save your changes, press Cancel and then Apply your properties"/>
+                <CheckBox x:Name="chkbox_exit_properties_no_ask" Content="Do not ask me again" 
+                          IsChecked="{Binding No_ApplyProperties_Verif_Wanted}" />
+            </StackPanel>
+            
         </ContentDialog>
 
         <ContentDialog x:Name="contentdialog_file_menu"

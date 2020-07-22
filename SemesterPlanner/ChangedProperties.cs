@@ -10,7 +10,7 @@ using Windows.Devices.Bluetooth.Advertisement;
 
 namespace SemesterPlanner
 {
-    class ChangedProperties : INotifyPropertyChanged
+    public class ChangedProperties : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -22,13 +22,14 @@ namespace SemesterPlanner
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        static public List<string> Styles_TextBox_lst = new List<string> { "txtbox_Property", "txtbox_Property_Changed" };
+        static public List<string> Styles_TextBox_lst = new List<string>
+        { "txtbox_Property", "txtbox_Property_Changed" , "txtbox_Property_Invalid" };
 
 
         private string entryID_new_ = "";
         private string title_new_ = "";
         private string subtitle_new_ = "";
-        private string colourhex_new_ = "";
+        private string colourhex_new_ = MasterClass.glo_default_titleblock_colour_hex;
         private string setcolid_new_ = "";
         private List<string> prereq_entryIDs_new_ = new List<string>();
         private List<string> coreq_entryIDs_new_ = new List<string>();
@@ -47,6 +48,8 @@ namespace SemesterPlanner
         private bool apply_button_enabled_ = false;
         private bool title_valid_ = true;
         private bool subtitle_valid_ = true;
+
+        private string title_txtbox_style_ = Styles_TextBox_lst[0];
 
 
 
@@ -83,10 +86,10 @@ namespace SemesterPlanner
                 {
                     title_new_ = value;
 
-                    //IsValidChangeTitleSubtitle();
+                    IsValidChangeTitleSubtitle();
                     UpdateChangedBool("title");
 
-                    //glo_MainPage_Reference.CheckIfPropertiesChanged(true);
+                    //Glo_MainPage_Reference.CheckIfPropertiesChanged(true);
 
                     OnPropertyChanged();
                 }
@@ -104,7 +107,7 @@ namespace SemesterPlanner
                     //IsValidChangeTitleSubtitle();
                     UpdateChangedBool("subtitle");
 
-                    //glo_MainPage_Reference.CheckIfPropertiesChanged(true);
+                    //Glo_MainPage_Reference.CheckIfPropertiesChanged(true);
 
                     OnPropertyChanged();
                 }
@@ -198,6 +201,7 @@ namespace SemesterPlanner
                 if (value != title_changed_)
                 {
                     title_changed_ = value;
+                    DetermineTitleTextboxStyle();
                     OnPropertyChanged();
                 }
             }
@@ -275,7 +279,7 @@ namespace SemesterPlanner
             }
         }
 
-        public bool ApplyButton_Enabled
+        public bool AnyProperties_Changed
         {
             get { return apply_button_enabled_; }
             private set
@@ -292,6 +296,7 @@ namespace SemesterPlanner
                 if (value != title_valid_)
                 {
                     title_valid_ = value;
+                    DetermineTitleTextboxStyle();
                     OnPropertyChanged();
                 }
             }
@@ -309,9 +314,23 @@ namespace SemesterPlanner
             }
         }
 
+        public string Title_Txtbox_Style
+        {
+            get { return title_txtbox_style_; }
+            private set
+            {
+                if (value != title_txtbox_style_)
+                {
+                    title_txtbox_style_ = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
 
-        public ProjectData glo_ProjectData_Reference { get; set; }
+
+        public ProjectData Glo_ProjectData_Reference { get; set; }
+        public MainPage Glo_MainPage_Reference { get; set; }
 
 
 
@@ -422,7 +441,7 @@ namespace SemesterPlanner
             bool[] changed_lst = new bool[] { entryID_changed_, title_changed_, subtitle_changed_, colourhex_changed_, 
                 setcolid_changed_, prereq_entryIDs_changed_, coreq_entryIDs_changed_, avail_colIDs_changed_ };
 
-            ApplyButton_Enabled = changed_lst.Contains(true) && title_valid_ && subtitle_valid_;
+            AnyProperties_Changed = changed_lst.Contains(true) && title_valid_ && subtitle_valid_;
 
             Debug.WriteLine("after any assignment");
             Debug.WriteLine("apply_button_enabled_ = " + apply_button_enabled_);
@@ -437,10 +456,22 @@ namespace SemesterPlanner
             List<string> check_title_subtitle = new List<string> { title_new_, subtitle_new_ };
             List<string> exclude_lst = new List<string> { Title_Old, Subtitle_Old };
 
-            glo_ProjectData_Reference.IsNewTitleValid(check_title_subtitle, exclude_lst, out bool valid_entry,
-                out bool is_duplicate, out bool is_title_exist);
+            if (Glo_ProjectData_Reference == null) { return; }
+
+            Glo_ProjectData_Reference.IsNewTitleValid(check_title_subtitle, exclude_lst, out bool valid_entry,
+                out _, out _);
+
+
 
             Title_Valid = valid_entry;
+
+
+            if (!Title_Valid)
+            {
+                Glo_MainPage_Reference.ShowPropertiesTitleInvalidTeachingTip();
+            }
+
+
         }
 
         public void PrintProperties(EntryData given_selected_entryData)
@@ -482,10 +513,10 @@ namespace SemesterPlanner
 
             List<string> changed_names = new List<string> { "EntryID_Changed", "Title_Changed", "Subtitle_Changed",
                 "ColourHex_Changed", "SetColID_Changed", "PrereqEntryIDs_Changed", "CoreqEntryIDs_Changed",
-                "AvailColIDs_Changed", "ApplyButton_Enabled","Title_Valid", "Subtitle_Valid" };
+                "AvailColIDs_Changed", "AnyProperties_Changed","Title_Valid", "Subtitle_Valid" };
 
             List<bool> changed_bools = new List<bool> { EntryID_Changed, Title_Changed, Subtitle_Changed, ColourHex_Changed, 
-                SetColID_Changed, PrereqEntryIDs_Changed, CoreqEntryIDs_Changed, AvailColIDs_Changed, ApplyButton_Enabled,
+                SetColID_Changed, PrereqEntryIDs_Changed, CoreqEntryIDs_Changed, AvailColIDs_Changed, AnyProperties_Changed,
                 Title_Valid, Subtitle_Valid};
 
             Debug.WriteLine("");
@@ -496,7 +527,25 @@ namespace SemesterPlanner
         }
 
 
+        private void DetermineTitleTextboxStyle()
+        {
+            string style_name;
 
+            if (!Title_Valid)
+            {
+                style_name = Styles_TextBox_lst[2];
+            }
+            else if (Title_Changed)
+            {
+                style_name = Styles_TextBox_lst[1];
+            }
+            else
+            {
+                style_name = Styles_TextBox_lst[0];
+            }
+
+            Title_Txtbox_Style = style_name;
+        }
 
     }
 }
