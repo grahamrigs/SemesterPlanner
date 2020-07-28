@@ -838,7 +838,8 @@ namespace SemesterPlanner
                     //will place the entrydata if it has no pre-coreqs, or if those pre/coreqs have already been placed
 
 
-                    //first takes  placed_entryID_lst  and trims out anything not in  cur_entryData.PrereqEntryIDs, then checks that its the same length as  cur_entryData.PrereqEntryIDs
+                    //first takes  placed_entryID_lst  and trims out anything not in  cur_entryData.PrereqEntryIDs, 
+                    //  then checks that its the same length as  cur_entryData.PrereqEntryIDs
                     //essentially, ensures that everying in  cur_entryData.PrereqEntryIDs  is in  placed_entryID_lst
                     //i.e. all prereqs placed already; if no prereqs at all then it also works
                     if (placed_entryID_lst.Intersect(cur_entryData.PrereqEntryIDs).ToList().Count() == cur_entryData.PrereqEntryIDs.Count())
