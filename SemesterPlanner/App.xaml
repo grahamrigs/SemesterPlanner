@@ -70,6 +70,9 @@
             <Style x:Key="txtblc_Default_large" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_medium}">
                 <Setter Property="FontSize" Value="20"/>
             </Style>
+            <Style x:Key="txtblc_Default_medium_symbol" TargetType="TextBlock" BasedOn="{StaticResource txtblc_Default_medium}">
+                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            </Style>
 
             <Style x:Key="btn_Default_symbol_small" TargetType="Button">
                 <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
